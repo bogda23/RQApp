@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="transparent">#00FBFBFB</color>
+
+    <color name="colorPurpleOpacity_80">#CC907CA6</color>
+    <color name="colorRedOpacity_80">#CCFF6F91</color>
+    <color name="colorPurpleOpacity_50">#80907CA6</color>
+    <color name="colorRedOpacity_50">#80FF6F91</color>
+
+    <color name="colorGrey">#9B99A9</color>
+    <color name="colorGreyDark">#393939</color>
+    <color name="colorGreyDarkOpacity_90">#E6393939</color>
+
+    <color name="colorGreyLight">#FBFBFB</color>
+    <color name="colorGreyLightOpacity_90">#E6FBFBFB</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+    <!-- Main Gradient Colors -->
+    <color name="gradientStartOpacity_80">@color/colorPurpleOpacity_80</color>
+    <color name="gradientEndOpacity_80">@color/colorRedOpacity_80</color>
+
+    <!-- Second Gradient Colors -->
+    <color name="gradientStartOpacity_50">@color/colorPurpleOpacity_50</color>
+    <color name="gradientEndOpacity_50">@color/colorRedOpacity_50</color>
 </resources>
