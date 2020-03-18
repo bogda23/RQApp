@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:foregroundGravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/dimen_padding_10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_78"
+            android:background="@drawable/logo_light"
+
+            android:contentDescription="@string/app_name"
+            app:layout_constraintBottom_toTopOf="@id/edt_email_login"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/edt_email_login"
+            style="@style/edtStyle_Light"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
+            android:autofillHints=""
+            android:drawableStart="@drawable/email"
+            android:drawablePadding="@dimen/dimen_padding_10"
+            android:hint="@string/email_example"
+
+            android:inputType="textEmailAddress"
+            android:textIsSelectable="true"
+            app:layout_constraintBottom_toTopOf="@id/edt_password_login"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_logo" />
+
+        <EditText
+            android:id="@+id/edt_password_login"
+            style="@style/edtStyle_Light"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:drawableStart="@drawable/lock_ico"
+            android:drawablePadding="@dimen/dimen_padding_10"
+            android:hint="@string/parola"
+            android:inputType="textPassword"
+
+            app:layout_constraintBottom_toTopOf="@id/tv_forgot_password"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edt_email_login" />
+
+        <TextView
+            android:id="@+id/tv_forgot_password"
+            style="@style/infoItalic_Monsterrat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_margin_20"
+            android:text="Ai uitat parola?"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/dimen_font_12"
+
+            app:layout_constraintBottom_toTopOf="@id/btn_login"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edt_password_login" />
+
+        <Button
+            android:id="@+id/btn_login"
+            style="@style/btnStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/logeaza_te"
+
+            app:layout_constraintBottom_toTopOf="@id/ll_info_login"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_forgot_password"
+
+            />
+
+        <LinearLayout
+            android:id="@+id/ll_info_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_margin_78"
+            android:layout_marginBottom="@dimen/dimen_margin_0"
+            android:orientation="vertical"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_login">
+
+            <TextView
+                android:id="@+id/tv_register"
+                style="@style/infoNormal_Monsterrat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/dimen_margin_20"
+                android:text="@string/inregistreaza_te_underline"
+                android:textColor="@color/colorWhite"
+
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/dimen_margin_20"
+                    android:background="@drawable/facebook" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/google"
+
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
