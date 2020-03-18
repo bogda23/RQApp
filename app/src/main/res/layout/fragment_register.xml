@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constr_register_master"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:foregroundGravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/dimen_padding_10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_78"
+            android:background="@drawable/logo_light"
+
+            android:contentDescription="@string/app_name"
+            app:layout_constraintBottom_toTopOf="@id/edt_nume_register"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/edt_nume_register"
+            style="@style/edtStyle_Light"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
+            android:autofillHints=""
+            android:drawableStart="@drawable/user"
+            android:drawablePadding="@dimen/dimen_padding_10"
+            android:hint="@string/nume"
+            android:inputType="textPassword"
+
+            app:layout_constraintBottom_toTopOf="@id/edt_prenume_register"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_logo" />
+
+        <EditText
+            android:id="@+id/edt_prenume_register"
+            style="@style/edtStyle_Light"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
+            android:autofillHints=""
+            android:drawableStart="@drawable/user"
+            android:drawablePadding="@dimen/dimen_padding_10"
+            android:hint="@string/prenume"
+            android:inputType="textPassword"
+
+            app:layout_constraintBottom_toTopOf="@id/edt_email_register"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edt_nume_register" />
+
+        <EditText
+            android:id="@+id/edt_email_register"
+            style="@style/edtStyle_Light"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
+            android:autofillHints=""
+            android:drawableStart="@drawable/email"
+            android:drawablePadding="@dimen/dimen_padding_10"
+            android:hint="@string/email_example"
+
+            android:inputType="textEmailAddress"
+            android:textIsSelectable="true"
+            app:layout_constraintBottom_toTopOf="@id/edt_password_register"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edt_prenume_register" />
+
+        <EditText
+            android:id="@+id/edt_password_register"
+            style="@style/edtStyle_Light"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
+            android:autofillHints=""
+            android:drawableStart="@drawable/lock_ico"
+            android:drawablePadding="@dimen/dimen_padding_10"
+            android:hint="@string/parola"
+            android:inputType="textPassword"
+
+            app:layout_constraintBottom_toTopOf="@id/btn_register"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edt_email_register" />
+
+        <Button
+            android:id="@+id/btn_register"
+            style="@style/btnStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_78"
+            android:text="@string/inregistreaza_te"
+
+            app:layout_constraintBottom_toTopOf="@id/tv_register"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edt_password_register"
+
+            />
+
+
+        <TextView
+            android:id="@+id/tv_register"
+            style="@style/infoItalic_Monsterrat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/dimen_margin_0"
+            android:text="@string/am_deja_cont"
+            android:textColor="@color/colorWhite"
+
+
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_register"
+
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
