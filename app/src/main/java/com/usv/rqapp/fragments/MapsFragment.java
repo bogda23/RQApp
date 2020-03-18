@@ -53,7 +53,7 @@ public class MapsFragment extends Fragment {
                 map = mMap;
 
                 // For showing a move to my location button
-              //  map.setMyLocationEnabled(true);
+                //  map.setMyLocationEnabled(true);
 
                 // For dropping a marker at a point on the Map
                 LatLng sydney = new LatLng(-34, 151);
