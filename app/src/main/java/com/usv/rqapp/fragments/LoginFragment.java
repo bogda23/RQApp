@@ -1,19 +1,24 @@
 package com.usv.rqapp.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.R;
 
 public class LoginFragment extends Fragment {
@@ -22,6 +27,7 @@ public class LoginFragment extends Fragment {
     private TextView tvForgotPassword;
     private View loginView;
     private Button btnLogin;
+    private AdView adView;
 
 
     @Nullable
@@ -31,9 +37,26 @@ public class LoginFragment extends Fragment {
 
         /***/
         initUI();
+        testAds();
         uiHandler();
 
         return loginView;
+    }
+
+    private void testAds() {
+
+        MobileAds.initialize(getContext(), CONSTANTS.BANNER_ID_SAMPLE);
+        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Toast.makeText(getContext(), initializationStatus.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice(CONSTANTS.HUAWEI_ID).build();
+        adView.loadAd(adRequest);
+
+
     }
 
     private void uiHandler() {
@@ -77,6 +100,7 @@ public class LoginFragment extends Fragment {
         tvRegister = loginView.findViewById(R.id.tv_register);
         tvForgotPassword = loginView.findViewById(R.id.tv_forgot_password);
         btnLogin = loginView.findViewById(R.id.btn_login);
+        adView = loginView.findViewById(R.id.adView);
     }
 
     public static LoginFragment newInstance() {

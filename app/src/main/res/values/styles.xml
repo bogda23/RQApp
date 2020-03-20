@@ -3,9 +3,10 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimary">@color/colorGreyDark</item>
         <item name="colorPrimaryDark">@color/colorPurpleOpacity_50</item>
         <item name="colorAccent">@color/colorGreyDarkOpacity_90</item>
+        <item name="android:actionBarWidgetTheme">@style/searchStyle_Light</item>
     </style>
 
     <!-- Information Styles-->
@@ -60,6 +61,24 @@
         <item name="android:textColorHint">@color/colorGrey</item>
         <item name="android:background">@drawable/round_edt_dark</item>
         <item name="android:drawablePadding">@dimen/dimen_padding_10</item>
+    </style>
+
+    <!-- SearchView Styles -->
+    <style name="searchStyle_Light" >
+        <item name="android:fontFamily">@font/font_opensans_regular</item>
+        <item name="android:textSize">@dimen/dimen_font_14</item>
+        <item name="android:paddingStart">@dimen/dimen_padding_10</item>
+        <item name="android:paddingEnd">@dimen/dimen_padding_10</item>
+        <item name="android:textColor">@color/colorGreyDark</item>
+        <item name="android:textColorHint">@color/colorGreyDarkOpacity_90</item>
+
+        <item name="android:background">@drawable/round_edt_light</item>
+        <item name="android:drawablePadding">@dimen/dimen_padding_10</item>
+        <!--This line changes the color of text in Toolbar-->
+        <item name="android:textColorPrimary">@color/colorGreyDark</item>
+        <!--This line changes the color of icons in toolbar (back, overflow menu icons)-->
+        <item name="android:textColorSecondary">@color/colorGreyDark</item>
+
     </style>
 
     <!--Button Styles-->

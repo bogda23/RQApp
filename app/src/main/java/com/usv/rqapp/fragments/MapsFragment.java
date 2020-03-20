@@ -2,12 +2,16 @@ package com.usv.rqapp.fragments;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,17 +25,25 @@ import com.usv.rqapp.R;
 
 public class MapsFragment extends Fragment {
 
-    MapView mMapView;
+    private MapView mMapView;
     private GoogleMap map;
     private View rootView;
+    private EditText autoComplete;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_maps, container, false);
+        loadUI();
         loadMap(savedInstanceState);
 
         return rootView;
+    }
+
+    @SuppressLint("ResourceType")
+    private void loadUI() {
+        autoComplete = rootView.findViewById(R.id.search_destination);
+
     }
 
 
