@@ -39,4 +39,14 @@
     <!-- Map related strings -->
     <string name="destinatie">Destinație</string>
 
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">161520014978516</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb161520014978516</string>
+
+    <!-- Internet status -->
+    <string name="nu_e_ti_conectat_la_internet">Nu ești conectat la internet!</string>
+    <string name="date_mobile_activate">Date mobile activate</string>
+    <string name="wifi_activat">Wifi activat</string>
+
+
 </resources>

@@ -8,6 +8,7 @@
 <!-- Padding -->
 <dimen name="dimen_padding_0">0dp</dimen>
 <dimen name="dimen_padding_10">10dp</dimen>
+<dimen name="dimen_padding_12">12dp</dimen>
 <dimen name="dimen_padding_15">15dp</dimen>
 <dimen name="dimen_padding_20">20dp</dimen>
 <!-- Margin -->

@@ -7,8 +7,9 @@
     <color name="colorGrey">#9B99A9</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreyLight">#FBFBFB</color>
-    <color name="colorPurple">#CC907CA6</color>     <!--Opacity 80%-->
-    <color name="colorRed">#CCFF6F91</color>        <!--Opacity 80%-->
+    <color name="colorPurple">#CC907CA6</color>       <!--Opacity 80%-->
+    <color name="colorRed">#CCFF6F91</color>          <!--Opacity 80%-->
+    <color name="colorGreen">#CC00CA9D</color>        <!--Opacity 80%-->
 
     <!--Opacity colors-->
     <color name="colorGreyLightOpacity_90">#E6FBFBFB</color>
