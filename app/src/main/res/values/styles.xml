@@ -64,7 +64,7 @@
     </style>
 
     <!-- SearchView Styles -->
-    <style name="searchStyle_Light" >
+    <style name="searchStyle_Light">
         <item name="android:fontFamily">@font/font_opensans_regular</item>
         <item name="android:textSize">@dimen/dimen_font_14</item>
         <item name="android:paddingStart">@dimen/dimen_padding_10</item>
@@ -88,7 +88,6 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:background">@drawable/round_btn_grey_dark</item>
-
     </style>
 
     <!-- Titles Style -->
@@ -98,6 +97,18 @@
         <item name="fontFamily">@font/font_mosterat_semibold</item>
         <item name="android:textSize">@dimen/dimen_font_title</item>
 
+    </style>
+
+    <!-- Error messages -->
+    <style name="errorStyle">
+        <item name="android:fontFamily">@font/font_opensans_regular</item>
+        <item name="android:textSize">@dimen/dimen_font_14</item>
+        <item name="android:padding">@dimen/dimen_padding_12</item>
+        <item name="android:paddingStart">@dimen/dimen_padding_20</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="android:background">@color/colorRed</item>
+        <item name="android:drawablePadding">@dimen/dimen_padding_10</item>
     </style>
 
 </resources>
