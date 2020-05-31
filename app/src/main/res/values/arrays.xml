@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="my_color_array">
+        <item>@color/colorRed</item>
+        <item>@color/colorPurple</item>
+        <item>@color/colorWhite</item>
+        <item>@color/colorGreen</item>
+    </integer-array>
+</resources>
