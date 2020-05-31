@@ -119,16 +119,68 @@
             style="@style/btnStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dimen_margin_78"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
             android:text="@string/inregistreaza_te"
+            android:visibility="gone"
 
-            app:layout_constraintBottom_toTopOf="@id/tv_register"
+            app:layout_constraintBottom_toTopOf="@id/cl_reCaptcha"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edt_password_register"
 
             />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_reCaptcha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
+            android:background="@color/colorWhite"
+            android:orientation="horizontal"
+
+            app:layout_constraintBottom_toTopOf="@id/tv_register"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_register">
+
+            <CheckBox
+                android:id="@+id/ck_not_robot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_margin_10"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tv_not_a_robot"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_not_a_robot"
+                style="@style/infoNormal_OpenSans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_margin_10"
+                android:text="@string/nu_sunt_robot"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/ck_not_robot"
+                app:layout_constraintRight_toLeftOf="@id/img_reCaptcha"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/img_reCaptcha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_margin_10"
+                android:layout_marginRight="@dimen/dimen_margin_10"
+                android:background="@drawable/recaptcha"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/tv_not_a_robot"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tv_register"
@@ -141,11 +193,10 @@
             android:textColor="@color/colorWhite"
 
 
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_register"
+            app:layout_constraintTop_toBottomOf="@id/cl_reCaptcha"
 
             />
 
