@@ -2,17 +2,20 @@ package com.usv.rqapp.fragments;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -21,37 +24,78 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
+import com.usv.rqapp.databinding.FragmentMapsBinding;
 
 public class MapsFragment extends Fragment {
 
-    private MapView mMapView;
+    private static FirebaseAuth auth;
+
+
     private GoogleMap map;
     private View rootView;
-    private EditText autoComplete;
+    private FragmentMapsBinding binding;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_maps, container, false);
-        loadUI();
+        binding = FragmentMapsBinding.inflate(inflater, container, false);
+        rootView = binding.getRoot();
+        auth = FirebaseAuth.getInstance();
+
         loadMap(savedInstanceState);
+        signOutHandler();
 
         return rootView;
     }
 
-    @SuppressLint("ResourceType")
-    private void loadUI() {
-        autoComplete = rootView.findViewById(R.id.search_destination);
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            // todo:  setTextToUI();
+        }
+    }
 
+    private void updateUI() {
+        FragmentManager manager = getFragmentManager();
+        manager.beginTransaction().setCustomAnimations(CustomAnimation.animationExit[0], CustomAnimation.animationExit[1]).
+                replace(R.id.fragment_frame, LoginFragment.newInstance()).commit();
+    }
+
+    private void signOutHandler() {
+        binding.imgReport.setOnClickListener(v -> {
+            signOut();
+        });
     }
 
 
-    private void loadMap(Bundle savedInstanceState) {
-        mMapView = (MapView) rootView.findViewById(R.id.map);
-        mMapView.onCreate(savedInstanceState);
+    public void signOut() {
+        // [START auth_sign_out]
+        auth.signOut();
+        AuthUI.getInstance().signOut(getContext()).addOnCompleteListener(task -> {
+            try {
+                finalize();
+                Toast.makeText(getContext(), "Sign out", Toast.LENGTH_LONG).show();
+                LoginManager.getInstance().logOut();
+                updateUI();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+        // [END auth_sign_out]
+    }
 
-        mMapView.onResume(); // needed to get the map to display immediately
+    private void loadMap(Bundle savedInstanceState) {
+
+        binding.map.onCreate(savedInstanceState);
+
+        binding.map.onResume(); // needed to get the map to display immediately
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -59,7 +103,7 @@ public class MapsFragment extends Fragment {
             e.printStackTrace();
         }
 
-        mMapView.getMapAsync(new OnMapReadyCallback() {
+        binding.map.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 map = mMap;
@@ -90,24 +134,25 @@ public class MapsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        binding.map.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        binding.map.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        binding.map.onDestroy();
+        binding = null;
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mMapView.onLowMemory();
+        binding.map.onLowMemory();
     }
 }
