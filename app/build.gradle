@@ -2,6 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'  // For firebase
 
 android {
+    viewBinding.enabled = true
+    dataBinding {
+        enabled true
+    }
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.usv.rqapp"
@@ -17,6 +24,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 }
 
@@ -38,7 +49,23 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions:19.0.2'
     implementation 'com.google.firebase:firebase-database:19.2.1'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
-    implementation 'com.google.android.gms:play-services-ads:19.0.1' // ads
+    implementation 'com.google.firebase:firebase-auth:19.3.0' // auth
+    implementation 'com.google.android.gms:play-services-auth:17.0.0' // auth
+    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
+    // Required only if Facebook login support is required
+    // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
+    implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
+    implementation 'com.google.android.gms:play-services-ads:19.0.1'
+    implementation 'com.google.android.gms:play-services-safetynet:17.0.0'// ads
+
+    //reCaptcha
+
+    //UI
+    implementation 'com.jpardogo.googleprogressbar:library:1.2.0'
+
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
 
 
 }
