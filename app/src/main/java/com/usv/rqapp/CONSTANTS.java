@@ -21,4 +21,7 @@ public final class CONSTANTS {
     public static final String DATA_ACTIVATED ="Date mobile activate";
     public static final String NO_INTERNET = "Nu ești conectat la internet!";
 
+    //reCaptcha
+    public static final String SITE_KEY ="6Lf29eQUAAAAAM83w-hHl8B9sN4RFyP4ca6DX7Fm";
+
 }
