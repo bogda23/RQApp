@@ -11,24 +11,31 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.usv.rqapp.R;
+import com.usv.rqapp.databinding.FragmentRecoveryBinding;
 
 public class RecoveryFragment extends Fragment {
     private View recoveryView;
-    private TextView tvBackPress;
+    private FragmentRecoveryBinding binding;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        recoveryView = inflater.inflate(R.layout.fragment_recovery, container, false);
+        binding = FragmentRecoveryBinding.inflate(inflater, container, false);
+        recoveryView = binding.getRoot();
 
-        initUI();
         backPRessHandler();
 
         return recoveryView;
     }
 
     private void backPRessHandler() {
-        tvBackPress.setOnClickListener(new View.OnClickListener() {
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFragmentManager().popBackStackImmediate();
@@ -37,9 +44,6 @@ public class RecoveryFragment extends Fragment {
         });
     }
 
-    private void initUI() {
-        tvBackPress = recoveryView.findViewById(R.id.btn_back);
-    }
 
     public static RecoveryFragment newInstance() {
         RecoveryFragment fragment = new RecoveryFragment();
