@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">RQApp</string>
+    <string name="recaptcha_site_key">6Lf29eQUAAAAAM83w-hHl8B9sN4RFyP4ca6DX7Fm</string>
 
     <!--Login Strings-->
     <string name="email_example">example@email.com</string>
@@ -47,6 +48,7 @@
     <string name="nu_e_ti_conectat_la_internet">Nu ești conectat la internet!</string>
     <string name="date_mobile_activate">Date mobile activate</string>
     <string name="wifi_activat">Wifi activat</string>
+    <string name="nu_sunt_robot">Nu sunt robot</string>
 
 
 </resources>
