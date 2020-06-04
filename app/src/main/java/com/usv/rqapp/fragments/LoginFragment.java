@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -56,8 +57,8 @@ public class LoginFragment extends Fragment {
 
     private CallbackManager callbackManager;
     private GoogleSignInClient googleSignInClient;
-    private static final int RC_SIGN_IN = 0;
-    private static final int FB_SIGN_IN = 1;
+    private static final int RC_SIGN_IN = 1;
+    private static final int FB_SIGN_IN = 2;
     private static FirebaseAuth auth;
 
     private View loginView;
@@ -82,6 +83,8 @@ public class LoginFragment extends Fragment {
     }
 
 
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -101,24 +104,27 @@ public class LoginFragment extends Fragment {
         switch (requestCode) {
             case RC_SIGN_IN:
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                try {
-                    // Google Sign In was successful, authenticate with Firebase
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
-                    if (account != null) {
-                        firebaseAuthWithGoogle(account);
-                    }
-
-                } catch (ApiException e) {
-                    // Google Sign In failed, update UI appropriately
-                    Log.w(TAG, "Google sign in failed", e);
-                    // ...
-                } finally {
-                    binding.imgGoogleLogin.setEnabled(true);
-                }
-
+                handleGoogleResultTask(task);
                 break;
         }
     }
+
+    private void handleGoogleResultTask(Task<GoogleSignInAccount> task) {
+        try {
+            // Google Sign In was successful, authenticate with Firebase
+            GoogleSignInAccount account = task.getResult(ApiException.class);
+            if (account != null) {
+                firebaseAuthWithGoogle(account);
+            }
+
+        } catch (ApiException e) {
+            Log.e(TAG, "Google sign in failed", e);                                             //todo: Google Sign In failed, update UI appropriately
+
+        } finally {
+            binding.imgGoogleLogin.setEnabled(true);
+        }
+    }
+
 
     private void uiHandler() {
         registerHandler();
@@ -137,7 +143,7 @@ public class LoginFragment extends Fragment {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        googleSignInClient = GoogleSignIn.getClient(getContext(), gso);
+        googleSignInClient = GoogleSignIn.getClient(this.getActivity(), gso);
         binding.imgGoogleLogin.setOnClickListener(v -> signInGoogle());
     }
 
@@ -155,7 +161,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        //  Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());                                   //todo: get the id of the user
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         auth.signInWithCredential(credential)
@@ -201,8 +207,8 @@ public class LoginFragment extends Fragment {
     }
 
     private void configurateFacebookLogin() {
-        FacebookSdk.sdkInitialize(getContext());
-        AppEventsLogger.activateApp(getContext());
+        //  FacebookSdk.sdkInitialize(getView().getContext().getApplicationContext());  --------------> todo: Commented due to the corona virus
+        //  AppEventsLogger.activateApp(getView().getContext().getApplicationContext());
         // logger.logPurchase(BigDecimal.valueOf(4.32), Currency.getInstance("USD"));
         callbackManager = CallbackManager.Factory.create();
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -246,6 +252,16 @@ public class LoginFragment extends Fragment {
             FragmentManager manager = getFragmentManager();
             manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
                     CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, MapsFragment.newInstance()).commit();
+
+            // Get data from google account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext());
+            if (acct != null) {
+                String nickName = acct.getDisplayName();
+                String lastName = acct.getGivenName();
+                String firstName = acct.getFamilyName();
+
+                Toast.makeText(getContext(), nickName + " " + lastName + " " + firstName, Toast.LENGTH_LONG).show();
+            }
         }
     }
 

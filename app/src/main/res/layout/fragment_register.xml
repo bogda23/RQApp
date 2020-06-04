@@ -46,7 +46,8 @@
             android:drawableStart="@drawable/user"
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/nume"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
+            android:textIsSelectable="true"
 
             app:layout_constraintBottom_toTopOf="@id/edt_prenume_register"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +67,8 @@
             android:drawableStart="@drawable/user"
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/prenume"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
+            android:textIsSelectable="true"
 
             app:layout_constraintBottom_toTopOf="@id/edt_email_register"
             app:layout_constraintEnd_toEndOf="parent"
@@ -86,9 +88,9 @@
             android:drawableStart="@drawable/email"
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/email_example"
-
             android:inputType="textEmailAddress"
             android:textIsSelectable="true"
+
             app:layout_constraintBottom_toTopOf="@id/edt_password_register"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -106,6 +108,7 @@
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/parola"
             android:inputType="textPassword"
+            android:textIsSelectable="false"
 
             app:layout_constraintBottom_toTopOf="@id/btn_register"
             app:layout_constraintEnd_toEndOf="parent"
@@ -121,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dimen_margin_20"
             android:text="@string/inregistreaza_te"
-            android:visibility="gone"
+            android:visibility="visible"
 
             app:layout_constraintBottom_toTopOf="@id/cl_reCaptcha"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -138,7 +141,7 @@
             android:background="@color/colorWhite"
             android:orientation="horizontal"
 
-            app:layout_constraintBottom_toTopOf="@id/tv_register"
+            app:layout_constraintBottom_toTopOf="@id/tv_iHave_account"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_register">
@@ -183,7 +186,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/tv_register"
+            android:id="@+id/tv_iHave_account"
             style="@style/infoNormal_Monsterrat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

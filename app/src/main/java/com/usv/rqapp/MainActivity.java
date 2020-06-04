@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements DataInterface {
 
     private void manageFragments() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WelcomeFragment()).commit();
-        // getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new LoginFragment()).commit();
+       //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new LoginFragment()).commit();
 
     }
 

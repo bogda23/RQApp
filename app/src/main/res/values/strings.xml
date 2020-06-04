@@ -9,6 +9,7 @@
     <string name="nu_esti_membru_inca">Nu ești membru încă?</string>
 
     <string name="inregistreaza_te_underline"><u>Înregistrează-te</u></string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

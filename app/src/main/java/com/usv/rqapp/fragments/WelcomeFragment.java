@@ -59,7 +59,7 @@ public class WelcomeFragment extends Fragment {
     }
 
     private void loadApp() {
-        CustomAnimation.applyAnimationTo(binding.clRootWelcome, R.anim.fade_out);
+       // CustomAnimation.applyAnimationTo(binding.clRootWelcome, R.anim.fade_out);
         FragmentManager manager = getFragmentManager();
         manager.beginTransaction().setCustomAnimations(CustomAnimation.animationFadeExit[0], CustomAnimation.animationFadeExit[1]).replace(R.id.fragment_frame, LoginFragment.newInstance()).commit();
 
