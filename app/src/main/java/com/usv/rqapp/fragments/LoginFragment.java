@@ -1,19 +1,17 @@
 package com.usv.rqapp.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -26,8 +24,6 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -44,8 +40,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+import com.usv.rqapp.controller.FragmentOpener;
+import com.usv.rqapp.data.User;
 import com.usv.rqapp.databinding.FragmentLoginBinding;
 
 
@@ -55,16 +51,24 @@ public class LoginFragment extends Fragment {
 
     private static final String TAG = "LoginFragment";
 
+    private FragmentManager manager;
+
     private CallbackManager callbackManager;
     private GoogleSignInClient googleSignInClient;
     private static final int RC_SIGN_IN = 1;
     private static final int FB_SIGN_IN = 2;
     private static FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authStateListener;
 
     private View loginView;
     private FragmentLoginBinding binding;
     private AdView adView;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        manager = getFragmentManager();
+    }
 
     @Nullable
     @Override
@@ -75,24 +79,63 @@ public class LoginFragment extends Fragment {
         /***/
         initFirebase();
         testAds();
-        uiHandler();
+        configurateNormalLoginToFirebase();
         configurateGoogleLogin();
         configurateFacebookLogin();
+        uiHandler();
+        onTogglePasswordPressed();
+
 
         return loginView;
     }
 
+    private void setInputTypePAssword() {
+        binding.edtPasswordLogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    }
 
+    private void onTogglePasswordPressed() {
+        setInputTypePAssword();
+        binding.tvTogglePasswordLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.tvTogglePasswordLogin.getText() == CONSTANTS.SHOW) {
+                    binding.tvTogglePasswordLogin.setText(CONSTANTS.HIDE);
+                    binding.edtPasswordLogin.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    binding.edtPasswordLogin.setSelection(binding.edtPasswordLogin.length());
+                } else {
+                    binding.tvTogglePasswordLogin.setText(CONSTANTS.SHOW);
+                    binding.edtPasswordLogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    binding.edtPasswordLogin.setSelection(binding.edtPasswordLogin.length());
+                }
+            }
+        });
+    }
+
+    private void configurateNormalLoginToFirebase() {
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = auth.getCurrentUser();
+                if (user != null) {
+                    //  Toast.makeText(getContext(), "Logare normala cu succes", Toast.LENGTH_LONG).show();
+
+                    manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
+                            CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, MapsFragment.newInstance()).commit();
+                }
+            }
+        };
+    }
 
 
     @Override
     public void onStart() {
         super.onStart();
-
+        auth.addAuthStateListener(authStateListener);
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
             updateUI(currentUser);
         }
+
     }
 
     @Override
@@ -279,12 +322,49 @@ public class LoginFragment extends Fragment {
 
     private void loginHandler() {
         binding.btnLogin.setOnClickListener(v -> {
-            FragmentManager manager = getFragmentManager();
-            manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
-                    CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, MapsFragment.newInstance()).commit();
+            String email = binding.edtEmailLogin.getText().toString();
+            String password = binding.edtPasswordLogin.getText().toString();
+            User user = new User(email, password);
+            if (fieldsFromUserAreValid(user)) {
+                signInWithEmailAndPassword(auth, user);
+            }
+
 
         });
     }
+
+    private boolean fieldsFromUserAreValid(User user) {
+        boolean validForSignIn = false;
+        if (user.getUserEmail().isEmpty()) {
+            binding.edtEmailLogin.setError(CONSTANTS.INVALIDE_EMAIL);
+            binding.edtEmailLogin.requestFocus();
+        } else if (user.getUserPassword().isEmpty()) {
+            binding.edtPasswordLogin.setError(CONSTANTS.INVALIDE_PASSWORD);
+            binding.edtPasswordLogin.requestFocus();
+        } else if (user.getUserEmail().isEmpty() && user.getUserPassword().isEmpty()) {
+            binding.edtEmailLogin.setError(CONSTANTS.INVALIDE_EMAIL);
+            binding.edtEmailLogin.requestFocus();
+            binding.edtPasswordLogin.setError(CONSTANTS.INVALIDE_PASSWORD);
+            binding.edtPasswordLogin.requestFocus();
+        } else if (!user.getUserEmail().isEmpty() && !user.getUserPassword().isEmpty()) {
+            validForSignIn = true;
+        } else {
+            Toast.makeText(getContext(), "Eroare la inregistrare", Toast.LENGTH_LONG).show();
+            validForSignIn = false;
+        }
+        return validForSignIn;
+    }
+
+    private void signInWithEmailAndPassword(FirebaseAuth auth, User user) {
+        auth.signInWithEmailAndPassword(user.getUserEmail(), user.getUserPassword()).addOnCompleteListener(getActivity(), task -> {
+            if (task.isSuccessful()) {
+                FragmentOpener.loadNextFragment(MapsFragment.newInstance(), getFragmentManager());
+            } else {
+                Toast.makeText(getContext(), "Logare normala nereusita", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
     private void forgotPasswordHandler() {
         binding.tvForgotPassword.setOnClickListener(v -> {
