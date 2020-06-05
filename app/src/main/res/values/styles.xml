@@ -42,6 +42,11 @@
 
     <!-- EditText Styles -->
     <style name="edtStyle_Light">
+
+        <item name="android:shadowColor">@color/text_shadow_color</item>
+        <item name="android:shadowDx">0.1</item>
+        <item name="android:shadowDy">0.1</item>
+        <item name="android:shadowRadius">0.1</item>
         <item name="android:fontFamily">@font/font_opensans_regular</item>
         <item name="android:textSize">@dimen/dimen_font_14</item>
         <item name="android:padding">@dimen/dimen_padding_15</item>
@@ -89,6 +94,14 @@
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:background">@drawable/round_btn_grey_dark</item>
     </style>
+    <style name="btnStyleShowPassword">
+        <item name="android:fontFamily">@font/font_opensans_regular</item>
+        <item name="android:padding">@dimen/dimen_padding_10</item>
+        <item name="android:textSize">@dimen/dimen_font_10</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/colorGreyLight</item>
+        <item name="android:background">@drawable/round_btn_show_password</item>
+    </style>
 
     <!-- Titles Style -->
     <style name="titleStyle">
@@ -122,4 +135,5 @@
         <item name="android:background">@drawable/round_edt_light</item>
     </style>
 
+    <color name="text_shadow_color">#000000</color>
 </resources>

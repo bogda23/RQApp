@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!-- Font dimens -->
+<dimen name="dimen_font_10">12sp</dimen>
 <dimen name="dimen_font_12">16sp</dimen>
 <dimen name="dimen_font_14">18sp</dimen>
 <dimen name="dimen_font_title">35sp</dimen>
