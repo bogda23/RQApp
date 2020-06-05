@@ -41,7 +41,7 @@
     <string name="title_activity_maps">Map</string>
 
     <!-- Map related strings -->
-    <string name="destinatie">Destinație</string>
+    <string name="destinatie">Unde vrei să mergem?</string>
 
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">161520014978516</string>

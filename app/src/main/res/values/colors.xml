@@ -17,6 +17,7 @@
     <color name="colorPurpleOpacity_50">#80907CA6</color>
     <color name="colorRedOpacity_50">#80FF6F91</color>
     <color name="colorGreyLightOpacity_50">#80FBFBFB</color>
+    <color name="colorGreyDarkOpacity_50">#80393939</color>
 
     <!-- Main Gradient Colors -->
     <color name="gradientStartOpacity_80">@color/colorPurple</color>
