@@ -8,6 +8,9 @@ public final class CONSTANTS {
 
     //Login
     public static final String INVALIDE_EMAIL = "Email invalid";
+    public static final String EMAIL_ALREADY_EXISTS = "Aveti deja cont cu acest email";
+    public static final String VERIFY_EMAIL = "Email-ul este corect?";
+    public static final String VERIFY_PASSWORD = "Parola este corectă?";
     public static final String MIN_SIX_CHARS_PASSWORD = "minim 6 caractere";
     public static final String INVALIDE_PASSWORD = "Parola invalida";
     public final static String SHOW = "SHOW";
