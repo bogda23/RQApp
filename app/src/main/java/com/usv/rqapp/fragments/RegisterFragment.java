@@ -1,6 +1,7 @@
 package com.usv.rqapp.fragments;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +20,14 @@ import com.google.android.gms.safetynet.SafetyNetApi;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
+import com.usv.rqapp.controller.Verifier;
 import com.usv.rqapp.data.User;
 import com.usv.rqapp.databinding.FragmentRegisterBinding;
 
@@ -51,9 +56,38 @@ public class RegisterFragment extends Fragment {
         initFirebase();
         buttonHandler();
         configurateNormalRegister();
+        onTogglePasswordPressed();
 
         return registerView;
     }
+
+    private void setInputTypePAssword() {
+        binding.edtPasswordRegister.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    }
+
+    private void setInputTypeEmail() {
+        binding.edtEmailRegister.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+    }
+
+    private void onTogglePasswordPressed() {
+        setInputTypeEmail();
+        setInputTypePAssword();
+        binding.tvTogglePasswordRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.tvTogglePasswordRegister.getText() == CONSTANTS.SHOW) {
+                    binding.tvTogglePasswordRegister.setText(CONSTANTS.HIDE);
+                    binding.edtPasswordRegister.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    binding.edtPasswordRegister.setSelection(binding.edtPasswordRegister.length());
+                } else {
+                    binding.tvTogglePasswordRegister.setText(CONSTANTS.SHOW);
+                    binding.edtPasswordRegister.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    binding.edtPasswordRegister.setSelection(binding.edtPasswordRegister.length());
+                }
+            }
+        });
+    }
+
 
     private void initFirebase() {
         auth = FirebaseAuth.getInstance();
@@ -66,15 +100,19 @@ public class RegisterFragment extends Fragment {
             String email = binding.edtEmailRegister.getText().toString();
             String password = binding.edtPasswordRegister.getText().toString();
             User user = new User(email, password);
-            validateFieldsFromUser(user);
+            if (validateFieldsFromUser(user)) {
+                createFirebaseUser(user);
+            }
+            ;
         });
     }
 
-    private void validateFieldsFromUser(User user) {
+    private boolean validateFieldsFromUser(User user) {
+        boolean isValid = false;
         if (user.getUserEmail().isEmpty()) {
             binding.edtEmailRegister.setError(CONSTANTS.INVALIDE_EMAIL);
             binding.edtEmailRegister.requestFocus();
-        } else if (user.getUserPassword().isEmpty() || user.getUserPassword().length() < 6) {
+        } else if (user.getUserPassword().isEmpty()) {
             binding.edtPasswordRegister.setError(CONSTANTS.MIN_SIX_CHARS_PASSWORD);
             binding.edtPasswordRegister.requestFocus();
         } else if (user.getUserEmail().isEmpty() && user.getUserPassword().isEmpty()) {
@@ -82,11 +120,11 @@ public class RegisterFragment extends Fragment {
             binding.edtEmailRegister.requestFocus();
             binding.edtPasswordRegister.setError(CONSTANTS.MIN_SIX_CHARS_PASSWORD);
             binding.edtPasswordRegister.requestFocus();
-        } else if (!user.getUserEmail().isEmpty() && !user.getUserPassword().isEmpty() && user.getUserPassword().length() >= 6) {
-            createFirebaseUser(user);
         } else {
             Toast.makeText(getContext(), "Eroare la inregistrare", Toast.LENGTH_LONG).show();
+            isValid = true;
         }
+        return isValid;
     }
 
     private void createFirebaseUser(User user) {
@@ -100,8 +138,27 @@ public class RegisterFragment extends Fragment {
                         updateUI();
 
                     } else {
-                        Log.w(TAG, "Sign in:failure", task.getException());
-                        Toast.makeText(getContext(), "Inregistrare cu succes", Toast.LENGTH_LONG).show();
+                        try {
+                            throw task.getException();
+                        }
+                        // if user enters wrong email.
+                        catch (FirebaseAuthWeakPasswordException weakPassword) {
+                            Log.d(TAG, "onComplete: weak_password");
+                            binding.edtPasswordRegister.setError(CONSTANTS.MIN_SIX_CHARS_PASSWORD);
+                            binding.edtPasswordRegister.requestFocus();
+                        }
+                        // if user enters wrong password.
+                        catch (FirebaseAuthInvalidCredentialsException malformedEmail) {
+                            Log.d(TAG, "onComplete: malformed_email");
+                            binding.edtEmailRegister.setError(CONSTANTS.VERIFY_EMAIL);
+                            binding.edtEmailRegister.requestFocus();
+                        } catch (FirebaseAuthUserCollisionException existEmail) {
+                            Log.d(TAG, "onComplete: exist_email");
+                            binding.edtEmailRegister.setError(CONSTANTS.EMAIL_ALREADY_EXISTS);
+                            binding.edtEmailRegister.requestFocus();
+                        } catch (Exception e) {
+                            Log.d(TAG, "onComplete: " + e.getMessage());
+                        }
                     }
                 });
     }
