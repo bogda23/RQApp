@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGreyDark">
+    android:background="@drawable/map">
+
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:elevation="@dimen/dimen_margin_39"
 
         app:layout_constraintBottom_toTopOf="@id/search_destination"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,12 +24,24 @@
         android:layout_height="0dp"
         android:background="@drawable/round_transparent"
         android:orientation="horizontal"
+        android:elevation="@dimen/dimen_margin_39"
 
         app:layout_constraintBottom_toBottomOf="@id/map"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/down_opacity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/round_transparent"
+        android:orientation="horizontal"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map_holder" />
 
     <EditText
         android:id="@+id/search_destination"
@@ -35,21 +49,35 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_margin_10"
+        android:drawableStart="@drawable/search_location"
         android:hint="@string/destinatie"
         android:inputType="textEmailAddress"
         android:textIsSelectable="true"
-        android:drawableStart="@drawable/search_location"
         app:commitIcon="@drawable/search_location"
         app:goIcon="@drawable/search_location"
-        app:queryHint="@string/destinatie"
-        app:searchHintIcon="@drawable/search_location"
-        app:searchIcon="@drawable/search_location"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/img_report"
+        android:elevation="@dimen/dimen_margin_39"
+
         app:layout_constraintTop_toBottomOf="@id/map"
-       />
+        app:queryHint="@string/destinatie"
+        app:searchHintIcon="@drawable/search_location"
+        app:searchIcon="@drawable/search_location" />
+
+    <ImageView
+        android:id="@+id/img_report_shadow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="@dimen/dimen_padding_20"
+        android:background="@drawable/shadow_down"
+
+        app:layout_constraintLeft_toLeftOf="@id/img_report"
+        app:layout_constraintRight_toRightOf="@id/img_report"
+        app:layout_constraintTop_toTopOf="@id/img_report"
+        app:layout_constraintBottom_toBottomOf="@id/img_report"
+        />
+
 
     <ImageView
         android:id="@+id/img_report"
@@ -59,6 +87,7 @@
         android:layout_marginRight="@dimen/dimen_margin_10"
         android:layout_marginBottom="@dimen/dimen_margin_10"
         android:background="@drawable/report_light"
+        android:elevation="@dimen/dimen_margin_39"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

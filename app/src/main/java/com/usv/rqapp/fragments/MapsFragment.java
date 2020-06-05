@@ -5,20 +5,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -45,12 +41,18 @@ public class MapsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMapsBinding.inflate(inflater, container, false);
         rootView = binding.getRoot();
-        auth = FirebaseAuth.getInstance();
 
+        initFirebaseAuth();
         loadMap(savedInstanceState);
         signOutHandler();
+        binding.map.setClipToOutline(true);
+
 
         return rootView;
+    }
+
+    private void initFirebaseAuth() {
+        auth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -82,7 +84,7 @@ public class MapsFragment extends Fragment {
             try {
                 finalize();
                 Toast.makeText(getContext(), "Sign out", Toast.LENGTH_LONG).show();
-                LoginManager.getInstance().logOut();
+                FirebaseAuth.getInstance().signOut();
                 updateUI();
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
