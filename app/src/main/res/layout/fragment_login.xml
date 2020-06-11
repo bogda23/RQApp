@@ -54,7 +54,6 @@
             app:layout_constraintTop_toBottomOf="@id/img_logo" />
 
 
-
         <EditText
             android:id="@+id/edt_password_login"
             style="@style/edtStyle_Light"
@@ -62,11 +61,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:paddingEnd="@dimen/dimen_padding_20"
             android:drawableStart="@drawable/lock_ico"
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/parola"
             android:inputType="textPassword"
+            android:paddingEnd="@dimen/dimen_padding_20"
 
             app:layout_constraintBottom_toTopOf="@id/tv_forgot_password"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,20 +73,20 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edt_email_login" />
+
         <TextView
             android:id="@+id/tv_toggle_password_login"
+            style="@style/btnStyleShowPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/show_password"
-            android:elevation="@dimen/dimen_margin_39"
             android:layout_marginEnd="@dimen/dimen_margin_10"
-            style="@style/btnStyleShowPassword"
+            android:elevation="@dimen/dimen_margin_39"
+            android:text="@string/show_password"
 
 
-            app:layout_constraintRight_toRightOf="@id/edt_password_login"
             app:layout_constraintBottom_toBottomOf="@id/edt_password_login"
-            app:layout_constraintTop_toTopOf="@id/edt_password_login"
-            />
+            app:layout_constraintRight_toRightOf="@id/edt_password_login"
+            app:layout_constraintTop_toTopOf="@id/edt_password_login" />
 
         <TextView
             android:id="@+id/tv_forgot_password"
@@ -191,5 +190,53 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".94" />
 
+    <FrameLayout
+        android:id="@+id/progressBarHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.4"
+        android:animateLayoutChanges="true"
+        android:background="@color/colorGreyDark"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/colorGreen" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/validateEmailFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:background="@color/colorGreyDark"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            style="@style/titleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="1"
+            android:background="@color/colorGreyDark"
+            android:text="@string/verificare_email"
+
+            />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
