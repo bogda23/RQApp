@@ -3,8 +3,8 @@ package com.usv.rqapp.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +23,6 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -38,13 +37,13 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.SignInMethodQueryResult;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
+import com.usv.rqapp.controller.DbController;
 import com.usv.rqapp.controller.FragmentOpener;
 import com.usv.rqapp.controller.Verifier;
-import com.usv.rqapp.data.User;
+import com.usv.rqapp.data.db.User;
 import com.usv.rqapp.databinding.FragmentLoginBinding;
 
 
@@ -58,19 +57,21 @@ public class LoginFragment extends Fragment {
 
     private CallbackManager callbackManager;
     private GoogleSignInClient googleSignInClient;
+    private DbController db;
     private static final int RC_SIGN_IN = 1;
     private static final int FB_SIGN_IN = 2;
     private static FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authStateListener;
-
+    private int sureYouHaveAcount;
     private View loginView;
     private FragmentLoginBinding binding;
-    private AdView adView;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         manager = getFragmentManager();
+        sureYouHaveAcount = 0;
     }
 
     @Nullable
@@ -80,9 +81,10 @@ public class LoginFragment extends Fragment {
         loginView = binding.getRoot();
 
         /***/
+        initFirestoreDatabase();
         initFirebase();
         testAds();
-        configurateNormalLoginToFirebase();
+        handleAlreadyLogedUserToFirebase();
         configurateGoogleLogin();
         configurateFacebookLogin();
         uiHandler();
@@ -90,6 +92,10 @@ public class LoginFragment extends Fragment {
 
 
         return loginView;
+    }
+
+    private void initFirestoreDatabase() {
+        db = new DbController();
     }
 
     private void setInputTypePAssword() {
@@ -119,7 +125,7 @@ public class LoginFragment extends Fragment {
         binding.edtEmailLogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     }
 
-    private void configurateNormalLoginToFirebase() {
+    private void handleAlreadyLogedUserToFirebase() {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -143,6 +149,12 @@ public class LoginFragment extends Fragment {
             updateUI(currentUser);
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FirebaseAuth.getInstance().signOut();
     }
 
     @Override
@@ -329,31 +341,32 @@ public class LoginFragment extends Fragment {
 
     private void loginHandler() {
         binding.btnLogin.setOnClickListener(v -> {
+            binding.progressBarHolder.setVisibility(View.VISIBLE);
             String email = binding.edtEmailLogin.getText().toString();
             String password = binding.edtPasswordLogin.getText().toString();
             User user = new User(email, password);
             if (fieldsFromUserAreValid(user)) {
                 signInWithEmailAndPassword(auth, user);
+            }else {
+                binding.progressBarHolder.setVisibility(View.GONE);
             }
-
-
         });
     }
 
     private boolean fieldsFromUserAreValid(User user) {
         boolean validForSignIn = false;
-        if (user.getUserEmail().isEmpty() || !Verifier.validEmail(user.getUserEmail())) {
+        if (TextUtils.isEmpty(user.getEmail()) || !Verifier.validEmail(user.getEmail())) {
             binding.edtEmailLogin.setError(CONSTANTS.INVALIDE_EMAIL);
             binding.edtEmailLogin.requestFocus();
-        } else if (user.getUserPassword().isEmpty()) {
+        } else if (TextUtils.isEmpty(user.getParola())) {
             binding.edtPasswordLogin.setError(CONSTANTS.INVALIDE_PASSWORD);
             binding.edtPasswordLogin.requestFocus();
-        } else if (user.getUserEmail().isEmpty() && user.getUserPassword().isEmpty()) {
+        } else if (TextUtils.isEmpty(user.getEmail()) && TextUtils.isEmpty(user.getParola())) {
             binding.edtEmailLogin.setError(CONSTANTS.INVALIDE_EMAIL);
             binding.edtEmailLogin.requestFocus();
             binding.edtPasswordLogin.setError(CONSTANTS.INVALIDE_PASSWORD);
             binding.edtPasswordLogin.requestFocus();
-        } else if (!user.getUserEmail().isEmpty() && !user.getUserPassword().isEmpty()) {
+        } else if (!TextUtils.isEmpty(user.getEmail()) && !TextUtils.isEmpty(user.getParola())) {
             validForSignIn = true;
         } else {
             Toast.makeText(getContext(), "Eroare la inregistrare", Toast.LENGTH_LONG).show();
@@ -363,21 +376,13 @@ public class LoginFragment extends Fragment {
     }
 
     private void signInWithEmailAndPassword(FirebaseAuth auth, User user) {
-        auth.signInWithEmailAndPassword(user.getUserEmail(), user.getUserPassword()).addOnCompleteListener(getActivity(), task -> {
+        auth.signInWithEmailAndPassword(user.getEmail(), user.getParola()).addOnCompleteListener(getActivity(), task -> {
             if (task.isSuccessful()) {
+                binding.progressBarHolder.setVisibility(View.GONE);
                 FragmentOpener.loadNextFragment(MapsFragment.newInstance(), getFragmentManager());
             } else {
-                Toast.makeText(getContext(), "Logare normala nereusita", Toast.LENGTH_LONG).show();
-                if (user != null) {
-                    auth.fetchSignInMethodsForEmail(user.getUserEmail()).addOnCompleteListener(tsk -> {
-                                binding.edtEmailLogin.setError(CONSTANTS.VERIFY_EMAIL);
-                                binding.edtEmailLogin.requestFocus();
-                                binding.edtPasswordLogin.setError(CONSTANTS.VERIFY_PASSWORD);
-                                binding.edtPasswordLogin.requestFocus();
-                            }
-                    );
-                }
-
+                Verifier.showErrorsAtSignInFail(binding, getContext(), task);
+                binding.progressBarHolder.setVisibility(View.GONE);
             }
         });
     }
@@ -400,7 +405,6 @@ public class LoginFragment extends Fragment {
         });
     }
 
-
     public static LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
         /**
@@ -408,6 +412,4 @@ public class LoginFragment extends Fragment {
          */
         return fragment;
     }
-
-
 }
