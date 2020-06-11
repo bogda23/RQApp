@@ -1,5 +1,6 @@
 package com.usv.rqapp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -25,12 +26,20 @@ public class WelcomeFragment extends Fragment {
 
     private View welcomeView;
     private FragmentWelcomeBinding binding;
+    private FragmentManager manager;
 
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        manager = getFragmentManager();
+
     }
 
     @Nullable
@@ -59,8 +68,8 @@ public class WelcomeFragment extends Fragment {
     }
 
     private void loadApp() {
-       // CustomAnimation.applyAnimationTo(binding.clRootWelcome, R.anim.fade_out);
-        FragmentManager manager = getFragmentManager();
+        // CustomAnimation.applyAnimationTo(binding.clRootWelcome, R.anim.fade_out);
+
         manager.beginTransaction().setCustomAnimations(CustomAnimation.animationFadeExit[0], CustomAnimation.animationFadeExit[1]).replace(R.id.fragment_frame, LoginFragment.newInstance()).commit();
 
     }
