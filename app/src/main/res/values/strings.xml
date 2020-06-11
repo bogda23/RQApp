@@ -53,6 +53,7 @@
     <string name="wifi_activat">Wifi activat</string>
     <string name="nu_sunt_robot">Nu sunt robot</string>
     <string name="ai_uitat_parola">Ai uitat parola?</string>
+    <string name="verificare_email"><![CDATA[Pentru a intra în cont trebuie să verificăm dacă adresa de email îți aparține!</br>]]></string>
 
 
 </resources>
