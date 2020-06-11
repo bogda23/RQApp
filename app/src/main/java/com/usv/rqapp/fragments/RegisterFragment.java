@@ -1,5 +1,6 @@
 package com.usv.rqapp.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -16,9 +17,6 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.safetynet.SafetyNet;
-import com.google.android.gms.safetynet.SafetyNetApi;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -27,11 +25,22 @@ import com.google.firebase.auth.FirebaseUser;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
-import com.usv.rqapp.controller.Verifier;
-import com.usv.rqapp.data.User;
+import com.usv.rqapp.controller.DateHandler;
+import com.usv.rqapp.controller.DbController;
+import com.usv.rqapp.controller.FragmentOpener;
+import com.usv.rqapp.data.captcha.CaptchaResponse;
+import com.usv.rqapp.data.db.User;
 import com.usv.rqapp.databinding.FragmentRegisterBinding;
+import com.usv.rqapp.reCaptcha.IreCaptcha;
+import com.usv.rqapp.reCaptcha.ReCaptcha;
 
-import java.util.concurrent.Executor;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import dmax.dialog.SpotsDialog;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterFragment extends Fragment {
 
@@ -40,6 +49,8 @@ public class RegisterFragment extends Fragment {
     private View registerView;
     private FragmentRegisterBinding binding;
     private FirebaseAuth auth;
+    private DbController db;
+    private IreCaptcha captcha;
 
     @Override
     public void onDestroy() {
@@ -53,12 +64,85 @@ public class RegisterFragment extends Fragment {
         binding = FragmentRegisterBinding.inflate(inflater, container, false);
         registerView = binding.getRoot();
 
+        initCaptcha();
         initFirebase();
+        initFirestoreDatabase();
         buttonHandler();
         configurateNormalRegister();
         onTogglePasswordPressed();
 
+
         return registerView;
+    }
+
+    private void initFirestoreDatabase() {
+        db = new DbController();
+    }
+
+    private void emailVerification() {
+        final FirebaseUser user = auth.getCurrentUser();
+        user.sendEmailVerification()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getActivity(),
+                                "Verification email sent to " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e(TAG, "sendEmailVerification", task.getException());
+                        Toast.makeText(getActivity(),
+                                "Failed to send verification email.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                });
+    }
+
+    private void initCaptcha() {
+        captcha = ReCaptcha.getCaptchaApi();
+    }
+
+    private void handleCaptchaValidation() {
+        SafetyNet.getClient(getActivity().getApplicationContext()).verifyWithRecaptcha(CONSTANTS.RECAPTCHA_SITE_KEY)
+                .addOnSuccessListener(response -> {
+                    if (!response.getTokenResult().isEmpty()) {
+                        verifyCaptchaTokenOnServer(response.getTokenResult());
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (e instanceof ApiException) {
+                        ApiException apiException = (ApiException) e;
+                        int statusCode = apiException.getStatusCode();
+                        Log.e(TAG, "ERROR_SERVER: " + CommonStatusCodes.getStatusCodeString(statusCode));
+                    } else {
+                        // A different, unknown type of error occurred.
+                        Log.e(TAG, "ERROR_UNKNOWN: " + e.getMessage());
+                    }
+                });
+
+    }
+
+    private void verifyCaptchaTokenOnServer(String tokenResult) {
+        AlertDialog dialog = new SpotsDialog(getContext());
+        dialog.show();
+        dialog.setMessage("Vă rog așteptați...");
+        captcha.captchaValidate(tokenResult).enqueue(new Callback<CaptchaResponse>() {
+            @Override
+            public void onResponse(Call<CaptchaResponse> call, Response<CaptchaResponse> response) {
+                dialog.dismiss();
+                if (response.body().isSuccess()) {
+                    Toast.makeText(getContext(), "Nu sunteți robot", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getContext(), "Sunteți robot", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CaptchaResponse> call, Throwable t) {
+                dialog.dismiss();
+                Log.e(TAG + "-Captcha", "Eroare la verificare token");
+            }
+        });
     }
 
     private void setInputTypePAssword() {
@@ -88,56 +172,61 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-
     private void initFirebase() {
         auth = FirebaseAuth.getInstance();
     }
 
     private void configurateNormalRegister() {
         binding.btnRegister.setOnClickListener(click -> {
-            //   String firstName = binding.edtNumeRegister.getText().toString();
-            //  String lastName = binding.edtPrenumeRegister.getText().toString();
+            binding.progressBarHolder.setVisibility(View.VISIBLE);
+            String firstName = binding.edtNumeRegister.getText().toString();
+            String lastName = binding.edtPrenumeRegister.getText().toString();
             String email = binding.edtEmailRegister.getText().toString();
             String password = binding.edtPasswordRegister.getText().toString();
-            User user = new User(email, password);
-            if (validateFieldsFromUser(user)) {
+            Date signUpDate = DateHandler.getCurrentDate();
+            Timestamp lastLogin = DateHandler.getCurrentTimestamp();
+            System.out.println("SignUpDate--------------------->>>>>>>>>>>>>>>" + signUpDate);
+            if (validateFieldsFromUser()) {
+                User user = new User(firstName, lastName, email, password, signUpDate, lastLogin, false);
+                //todo: RESOLVE THIS PROBLEM --> handleCaptchaValidation();
                 createFirebaseUser(user);
+            } else {
+                binding.progressBarHolder.setVisibility(View.GONE);
             }
-            ;
         });
     }
 
-    private boolean validateFieldsFromUser(User user) {
+    private boolean validateFieldsFromUser() {
         boolean isValid = false;
-        if (user.getUserEmail().isEmpty()) {
+        if (binding.edtEmailRegister.getText().toString().isEmpty()) {
             binding.edtEmailRegister.setError(CONSTANTS.INVALIDE_EMAIL);
             binding.edtEmailRegister.requestFocus();
-        } else if (user.getUserPassword().isEmpty()) {
+        } else if (binding.edtPasswordRegister.getText().toString().isEmpty()) {
             binding.edtPasswordRegister.setError(CONSTANTS.MIN_SIX_CHARS_PASSWORD);
             binding.edtPasswordRegister.requestFocus();
-        } else if (user.getUserEmail().isEmpty() && user.getUserPassword().isEmpty()) {
+        } else if (binding.edtEmailRegister.getText().toString().isEmpty() && binding.edtPasswordRegister.getText().toString().isEmpty()) {
             binding.edtEmailRegister.setError(CONSTANTS.INVALIDE_EMAIL);
             binding.edtEmailRegister.requestFocus();
             binding.edtPasswordRegister.setError(CONSTANTS.MIN_SIX_CHARS_PASSWORD);
             binding.edtPasswordRegister.requestFocus();
         } else {
-            Toast.makeText(getContext(), "Eroare la inregistrare", Toast.LENGTH_LONG).show();
             isValid = true;
         }
         return isValid;
     }
 
     private void createFirebaseUser(User user) {
-        auth.createUserWithEmailAndPassword(user.getUserEmail(), user.getUserPassword())
+        auth.createUserWithEmailAndPassword(user.getEmail(), user.getParola())
                 .addOnCompleteListener(getActivity(), task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Sign in:success");
-                        Toast.makeText(getContext(), "Inregistrare cu succes", Toast.LENGTH_LONG).show();
-                        FirebaseUser firebaseUser = auth.getCurrentUser();
-                        System.out.println("---------------------------------------------------..................................>>>>>>>>>>>>>" + firebaseUser.getEmail());
-                        updateUI();
+                        user.setId_utilizator(auth.getUid());
+                        emailVerification();
+                        createNodeInFirebaseDatabase(user);
+                        binding.progressBarHolder.setVisibility(View.GONE);
 
                     } else {
+                        binding.progressBarHolder.setVisibility(View.GONE);
                         try {
                             throw task.getException();
                         }
@@ -150,7 +239,7 @@ public class RegisterFragment extends Fragment {
                         // if user enters wrong password.
                         catch (FirebaseAuthInvalidCredentialsException malformedEmail) {
                             Log.d(TAG, "onComplete: malformed_email");
-                            binding.edtEmailRegister.setError(CONSTANTS.VERIFY_EMAIL);
+                            binding.edtEmailRegister.setError(CONSTANTS.INVALIDE_EMAIL);
                             binding.edtEmailRegister.requestFocus();
                         } catch (FirebaseAuthUserCollisionException existEmail) {
                             Log.d(TAG, "onComplete: exist_email");
@@ -163,50 +252,18 @@ public class RegisterFragment extends Fragment {
                 });
     }
 
+    private void createNodeInFirebaseDatabase(User user) {
+        if (db.addUserToFireStore(User.UTILIZATORI, user.convertUserToMap(user))) {
+            binding.progressBarHolder.setVisibility(View.GONE);
+            signInWithEmailAndPassword(auth, user);
+        }
+    }
+
     private void updateUI() {
         FragmentManager manager = getFragmentManager();
         manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
                 CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, MapsFragment.newInstance()).commit();
     }
-
-    private void loadReCaptcha() {
-        SafetyNet.getClient(getContext()).verifyWithRecaptcha(CONSTANTS.SITE_KEY)
-                .addOnSuccessListener((Executor) this,
-                        new OnSuccessListener<SafetyNetApi.RecaptchaTokenResponse>() {
-                            @Override
-                            public void onSuccess(SafetyNetApi.RecaptchaTokenResponse response) {
-                                // Indicates communication with reCAPTCHA service was
-                                // successful.
-                                userResponseToken = response.getTokenResult();
-                                if (!userResponseToken.isEmpty()) {
-                                    // Validate the user response token using the
-                                    // reCAPTCHA siteverify API.
-                                    //todo: We need retrofit
-                                }
-                            }
-                        })
-                .addOnFailureListener((Executor) this, new OnFailureListener() {
-
-
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        if (e instanceof ApiException) {
-                            // An error occurred when communicating with the
-                            // reCAPTCHA service. Refer to the status code to
-                            // handle the error appropriately.
-                            ApiException apiException = (ApiException) e;
-                            int statusCode = apiException.getStatusCode();
-                            Log.d(TAG, "Error: " + CommonStatusCodes
-                                    .getStatusCodeString(statusCode));
-                        } else {
-                            // A different, unknown type of error occurred.
-                            Log.d(TAG, "Error: " + e.getMessage());
-                        }
-                    }
-                });
-
-    }
-
 
     private void buttonHandler() {
         binding.tvIHaveAccount.setOnClickListener(v -> {
@@ -214,6 +271,13 @@ public class RegisterFragment extends Fragment {
         });
     }
 
+    private void signInWithEmailAndPassword(FirebaseAuth auth, User user) {
+        auth.signInWithEmailAndPassword(user.getEmail(), user.getParola()).addOnCompleteListener(getActivity(), task -> {
+            if (task.isSuccessful()) {
+                FragmentOpener.loadNextFragment(MapsFragment.newInstance(), getFragmentManager());
+            }
+        });
+    }
 
     public static RegisterFragment newInstance() {
         RegisterFragment fragment = new RegisterFragment();
