@@ -6,8 +6,9 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.usv.rqapp.data.db.User;
 
 import java.util.Map;
@@ -32,7 +33,7 @@ public class DbController {
      */
     public Boolean addUserToFireStore(String colectie, Map<String, Object> map) {
         final Boolean[] dataStored = {false};
-        db.collection(colectie).document()
+        db.collection(colectie).document(map.get(User.ID_UTILIZATOR).toString())
                 .set(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -55,14 +56,14 @@ public class DbController {
      * @param user
      * @return
      */
-    public Boolean checkIfUserExists(User user) {
+/*    public Boolean checkIfUserExists(User user) {
         final Boolean[] userExists = {false};
         db.collection(User.UTILIZATORI)
-                .whereEqualTo(User.EMAIL, user.getEmail())
+                .whereEqualTo(User.ID_UTILIZATOR, user.getId_utilizator())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if (task.getResult().getDocuments().size() > 0) {
+                        if (Objects.requireNonNull(task.getResult()).getDocuments().size() > 0) {
                             userExists[0] = true;
                             Log.e(TAG, String.format("Userul exista---->>>>>>> %s", task.getResult().getDocuments().toString()));
                         }
@@ -74,6 +75,6 @@ public class DbController {
 
         });
         return userExists[0];
-    }
+    }*/
 
 }
