@@ -29,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.data.DataHolder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -37,9 +38,13 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
+import com.usv.rqapp.controller.DateHandler;
 import com.usv.rqapp.controller.DbController;
 import com.usv.rqapp.controller.FragmentOpener;
 import com.usv.rqapp.controller.Verifier;
@@ -48,6 +53,9 @@ import com.usv.rqapp.databinding.FragmentLoginBinding;
 
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginFragment extends Fragment {
 
@@ -57,7 +65,8 @@ public class LoginFragment extends Fragment {
 
     private CallbackManager callbackManager;
     private GoogleSignInClient googleSignInClient;
-    private DbController db;
+    private DbController dbController;
+    private FirebaseFirestore db;
     private static final int RC_SIGN_IN = 1;
     private static final int FB_SIGN_IN = 2;
     private static FirebaseAuth auth;
@@ -65,6 +74,7 @@ public class LoginFragment extends Fragment {
     private int sureYouHaveAcount;
     private View loginView;
     private FragmentLoginBinding binding;
+    private String userID;
 
 
     @Override
@@ -95,7 +105,8 @@ public class LoginFragment extends Fragment {
     }
 
     private void initFirestoreDatabase() {
-        db = new DbController();
+        dbController = new DbController();
+        db = FirebaseFirestore.getInstance();
     }
 
     private void setInputTypePAssword() {
@@ -230,14 +241,27 @@ public class LoginFragment extends Fragment {
                 .addOnCompleteListener(getActivity(), task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Sign in:success");
-                        FirebaseUser user = auth.getCurrentUser();
-                        updateUI(user);
+                        FirebaseUser firebaseUser = auth.getCurrentUser();
+                        // Get data from google account
+                        GoogleSignInAccount googleAccount = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext());
+                        if (googleAccount != null) {
+                            User user = new User(googleAccount.getFamilyName(), googleAccount.getGivenName(), googleAccount.getEmail(), DateHandler.getCurrentDate(), DateHandler.getCurrentTimestamp(), false);
+                            user.setId_utilizator(firebaseUser.getUid());
+                            createUserNodeInFirestoreDatabase(user);
+                        }
+                        updateUI(firebaseUser);
+
                     } else {
                         Log.w(TAG, "Sign in:failure", task.getException());
                         updateUI(null);
                     }
 
                 });
+    }
+
+    private void createUserNodeInFirestoreDatabase(User user) {
+        userExistsLoginHandler(user);
+
     }
 
     private void facebookLoginButtonHandler() {
@@ -290,9 +314,12 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.e(TAG, "SignInWithCredential:success");
-                            FirebaseUser user = auth.getCurrentUser();
+                            FirebaseUser firebaseUser = task.getResult().getUser();
+                            User user = new User("", firebaseUser.getDisplayName(), task.getResult().getUser().getEmail(), DateHandler.getCurrentDate(), DateHandler.getCurrentTimestamp(), false);
+                            user.setId_utilizator(firebaseUser.getUid());
+                            createUserNodeInFirestoreDatabase(user);
                             binding.imgFacebookLogin.setClickable(true);
-                            updateUI(user);
+                            updateUI(firebaseUser);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.e(TAG, "SignInWithCredential:failure", task.getException());
@@ -315,15 +342,6 @@ public class LoginFragment extends Fragment {
             manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
                     CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, MapsFragment.newInstance()).commit();
 
-            // Get data from google account
-            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext());
-            if (acct != null) {
-                String nickName = acct.getDisplayName();
-                String lastName = acct.getGivenName();
-                String firstName = acct.getFamilyName();
-
-                Toast.makeText(getContext(), nickName + " " + lastName + " " + firstName, Toast.LENGTH_LONG).show();
-            }
         }
     }
 
@@ -347,7 +365,7 @@ public class LoginFragment extends Fragment {
             User user = new User(email, password);
             if (fieldsFromUserAreValid(user)) {
                 signInWithEmailAndPassword(auth, user);
-            }else {
+            } else {
                 binding.progressBarHolder.setVisibility(View.GONE);
             }
         });
@@ -411,5 +429,44 @@ public class LoginFragment extends Fragment {
          // do some initial setup if needed, for example Listener etc
          */
         return fragment;
+    }
+
+
+    public void userExistsLoginHandler(User user) {
+
+        DocumentReference documentReference = db.collection(User.UTILIZATORI).document(user.getId_utilizator());
+        documentReference.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    Log.e(TAG + " User_exists", documentSnapshot.getId());
+                    userID = documentSnapshot.getId();
+                    user.setFirstTime(false);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put(User.ULTIMA_LOGARE, DateHandler.getCurrentTimestamp());
+                    db.collection(User.UTILIZATORI).document(user.getId_utilizator()).update(map);
+
+                } else {
+                    Log.e(TAG + " User_exists", "Data Empty");
+                    user.setFirstTime(true);
+                    if (dbController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
+                        binding.progressBarHolder.setVisibility(View.GONE);
+                        Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
+                    }
+
+
+                }
+            }
+        })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG + "_", e.getMessage());
+                    user.setFirstTime(true);
+                    if (dbController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
+                        binding.progressBarHolder.setVisibility(View.GONE);
+                        Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
+                    }
+                });
+
+
     }
 }
