@@ -6,6 +6,12 @@ import com.google.android.gms.common.util.Strings;
 
 public final class CONSTANTS {
 
+
+    //LastName  First Name
+    public static final CharSequence INVALID_LASTNAME = "Introduceți numele";
+    public static final CharSequence INVALID_FIRSTNAME = "Introduceți prenumele";
+    public static final int MINIMUM_LENGTH_FOR_NAME = 3;
+
     //Login email
     public static final CharSequence EMPTY_EMAIL = "Introduce-ți un email";
     public static final String INVALIDE_EMAIL = "Email invalid";
@@ -41,5 +47,6 @@ public final class CONSTANTS {
 
     public static final String EMAIL_SENT_SUCCESS = "Verifică email-ul";
     public static final String EMAIL_SENT_ERROR = "Email-ul nu a fost trimis";
+
 
 }
