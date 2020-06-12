@@ -3,6 +3,7 @@ package com.usv.rqapp.fragments;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -198,7 +199,13 @@ public class RegisterFragment extends Fragment {
 
     private boolean validateFieldsFromUser() {
         boolean isValid = false;
-        if (binding.edtEmailRegister.getText().toString().isEmpty()) {
+        if (TextUtils.isEmpty(binding.edtNumeRegister.getText().toString()) || binding.edtNumeRegister.getText().length() < CONSTANTS.MINIMUM_LENGTH_FOR_NAME) {
+            binding.edtNumeRegister.setError(CONSTANTS.INVALID_LASTNAME);
+            binding.edtNumeRegister.requestFocus();
+        } else if (TextUtils.isEmpty(binding.edtPrenumeRegister.getText().toString()) || binding.edtPrenumeRegister.getText().length() < CONSTANTS.MINIMUM_LENGTH_FOR_NAME) {
+            binding.edtPrenumeRegister.setError(CONSTANTS.INVALID_FIRSTNAME);
+            binding.edtPrenumeRegister.requestFocus();
+        } else if (binding.edtEmailRegister.getText().toString().isEmpty()) {
             binding.edtEmailRegister.setError(CONSTANTS.INVALIDE_EMAIL);
             binding.edtEmailRegister.requestFocus();
         } else if (binding.edtPasswordRegister.getText().toString().isEmpty()) {
@@ -253,7 +260,8 @@ public class RegisterFragment extends Fragment {
     }
 
     private void createNodeInFirebaseDatabase(User user) {
-        if (db.addUserToFireStore(User.UTILIZATORI, user.convertUserToMap(user))) {
+        user.setFirstTime(true);
+        if (db.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
             binding.progressBarHolder.setVisibility(View.GONE);
             signInWithEmailAndPassword(auth, user);
         }
