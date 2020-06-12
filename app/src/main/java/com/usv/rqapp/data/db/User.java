@@ -21,6 +21,7 @@ public class User {
     private Date data_inscriere;
     private Timestamp ultima_logare;
     private Boolean vip;
+    private Boolean firstTime;
 
     // Keys
     public final static String UTILIZATORI = "utilizatori";
@@ -40,7 +41,7 @@ public class User {
      * @param user
      * @return
      */
-    public Map<String, Object> convertUserToMap(User user) {
+    public Map<String, Object> convertUsereToMap(User user) {
         Map<String, Object> map = new HashMap<>();
 
         if (user != null) {
@@ -48,7 +49,9 @@ public class User {
             map.put(NUME, user.getNume());
             map.put(PRENUME, user.getPrenume());
             map.put(EMAIL, user.getEmail());
-            map.put(DATA_INSCRIERE, user.getData_inscriere());
+            if(user.getFirstTime()){
+                map.put(DATA_INSCRIERE, user.getData_inscriere());
+            }
             map.put(ULTIMA_LOGARE, user.getUltima_logare());
             map.put(VIP, user.getVip());
         }
@@ -73,12 +76,29 @@ public class User {
      * @param nume
      * @param prenume
      * @param email
-     * @param parola
      * @param data_inscriere
      * @param ultima_logare
      * @param vip
      */
     public User(String nume, String prenume, String email, String parola, Date data_inscriere, Timestamp ultima_logare, Boolean vip) {
+        this.nume = nume;
+        this.prenume = prenume;
+        this.email = email;
+        this.parola = parola;
+        this.data_inscriere = data_inscriere;
+        this.ultima_logare = ultima_logare;
+        this.vip = vip;
+    }
+
+    /**
+     * @param nume
+     * @param prenume
+     * @param email
+     * @param data_inscriere
+     * @param ultima_logare
+     * @param vip
+     */
+    public User(String nume, String prenume, String email, Date data_inscriere, Timestamp ultima_logare, Boolean vip) {
         this.nume = nume;
         this.prenume = prenume;
         this.email = email;
@@ -182,6 +202,14 @@ public class User {
 
     public void setVip(Boolean vip) {
         this.vip = vip;
+    }
+
+    public Boolean getFirstTime() {
+        return firstTime;
+    }
+
+    public void setFirstTime(Boolean firstTime) {
+        this.firstTime = firstTime;
     }
 
     @Override
