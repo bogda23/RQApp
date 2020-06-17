@@ -1,14 +1,12 @@
 package com.usv.rqapp.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
-import com.usv.rqapp.controller.Verifier;
+import com.usv.rqapp.controllers.Verifier;
 import com.usv.rqapp.databinding.FragmentRecoveryBinding;
 
 public class RecoveryFragment extends Fragment {

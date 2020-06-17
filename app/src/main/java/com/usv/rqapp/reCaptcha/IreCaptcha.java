@@ -1,6 +1,6 @@
 package com.usv.rqapp.reCaptcha;
 
-import com.usv.rqapp.data.captcha.CaptchaResponse;
+import com.usv.rqapp.models.captcha.CaptchaResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
