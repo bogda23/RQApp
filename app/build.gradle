@@ -2,7 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'  // For firebase
 
 android {
-    viewBinding.enabled = true
+    buildFeatures {
+        viewBinding true
+    }
     dataBinding {
         enabled true
     }
@@ -38,7 +40,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.firebase:firebase-firestore:21.4.3'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -46,18 +47,17 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
 
     //firebase
-    implementation 'com.google.firebase:firebase-analytics:17.4.2'
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
     implementation 'com.google.firebase:firebase-auth:19.3.1'
-    implementation 'com.google.firebase:firebase-core:17.4.2'
+    implementation 'com.google.firebase:firebase-core:17.4.3'
     implementation 'com.google.firebase:firebase-functions:19.0.2'
     implementation 'com.google.firebase:firebase-database:19.3.0'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.google.firebase:firebase-auth:19.3.1' // auth
     implementation 'com.google.android.gms:play-services-auth:18.0.0' // auth
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
-    // Required only if Facebook login support is required
-    // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
-    // implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
+
+    //Facebook
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
     implementation 'com.google.android.gms:play-services-safetynet:17.0.0'// ads + reCaptcha
@@ -71,5 +71,32 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
+    //Location & Maps
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    //Permissions library
+    implementation 'com.karumi:dexter:6.2.0'
+
+    //SearchBar
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.2'
+
+    //Places
+    implementation 'com.google.android.libraries.places:places:2.2.0'
+
+    //Ripple background effect on map
+    implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
+
+    //NavigationTabBar
+    implementation 'devlight.io:navigationtabbar:1.2.5'
+
+    //ShineButton
+    implementation 'com.sackcentury:shinebutton:1.0.0'
+
+    //Circle imageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    // Floating action button
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
 
 }
