@@ -1,4 +1,4 @@
-package com.usv.rqapp.controller;
+package com.usv.rqapp.controllers;
 
 import android.util.Log;
 
@@ -6,13 +6,10 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.usv.rqapp.data.db.User;
+import com.usv.rqapp.models.db.User;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class DbController {
 

@@ -1,10 +1,8 @@
-package com.usv.rqapp.controller;
+package com.usv.rqapp.controllers;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-
-import com.usv.rqapp.R;
 
 public class DialogController {
     public static void alertView(Context context, String message, int icon) {

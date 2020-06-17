@@ -4,10 +4,11 @@
 
     <!--Main colors-->
     <color name="colorGreyDark">#393939</color>
+    <color name="colorPurple">#907CA6</color>       <!--Opacity 80%-->
     <color name="colorGrey">#9B99A9</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreyLight">#FBFBFB</color>
-    <color name="colorPurple">#CC907CA6</color>       <!--Opacity 80%-->
+    <color name="colorPurpleOpacity_80">#CC907CA6</color>       <!--Opacity 80%-->
     <color name="colorRed">#CCFF6F91</color>          <!--Opacity 80%-->
     <color name="colorGreen">#CC00CA9D</color>        <!--Opacity 80%-->
 
@@ -20,7 +21,7 @@
     <color name="colorGreyDarkOpacity_50">#80393939</color>
 
     <!-- Main Gradient Colors -->
-    <color name="gradientStartOpacity_80">@color/colorPurple</color>
+    <color name="gradientStartOpacity_80">@color/colorPurpleOpacity_80</color>
     <color name="gradientEndOpacity_80">@color/colorRed</color>
 
     <!-- Second Gradient Colors -->

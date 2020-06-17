@@ -1,4 +1,4 @@
-package com.usv.rqapp.controller;
+package com.usv.rqapp.controllers;
 
 import android.content.Context;
 import android.util.Log;
@@ -99,7 +99,7 @@ public class Verifier {
                     break;
             }
         } catch (Exception e) {
-            binding.edtPasswordLogin.setError(CONSTANTS.INVALIDE_PASSWORD);
+            binding.edtPasswordLogin.setError(CONSTANTS.TO_MANY_REQUESTS);
             binding.edtPasswordLogin.requestFocus();
             Log.e(TAG + " Exeption", e.getMessage());
             e.printStackTrace();

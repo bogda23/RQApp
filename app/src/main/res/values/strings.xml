@@ -41,7 +41,8 @@
     <string name="title_activity_maps">Map</string>
 
     <!-- Map related strings -->
-    <string name="destinatie">Unde vrei să mergem?</string>
+    <string name="destinatie" formatted="true">Unde vrei să mergem?</string>
+    <string name="introduceti_locatie">Introduceți o locație</string>
 
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">161520014978516</string>
@@ -54,6 +55,13 @@
     <string name="nu_sunt_robot">Nu sunt robot</string>
     <string name="ai_uitat_parola">Ai uitat parola?</string>
     <string name="verificare_email"><![CDATA[Pentru a intra în cont trebuie să verificăm dacă adresa de email îți aparține!</br>]]></string>
+
+    <!-- Permissions related -->
+    <string name="allow_location_message" formatted="true">Pentru a vă oferi serviciile dorite este necesar accesul  la locația dispozitivului.\n Vă mulțumim pentru înțelegere.</string>
+    <string name="grant_permission">Acordă permisiuni</string>
+    <string name="sterge_contul">Șterge contul</string>
+    <string name="delogheazate">Delogheză-te</string>
+    <string name="anuleaza">Anulează</string>
 
 
 </resources>

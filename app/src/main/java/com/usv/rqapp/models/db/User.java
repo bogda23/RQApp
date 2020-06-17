@@ -1,4 +1,4 @@
-package com.usv.rqapp.data.db;
+package com.usv.rqapp.models.db;
 
 import java.sql.Blob;
 import java.sql.Timestamp;

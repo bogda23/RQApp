@@ -1,4 +1,4 @@
-package com.usv.rqapp.controller;
+package com.usv.rqapp.controllers;
 
 import android.content.Context;
 import android.content.Intent;

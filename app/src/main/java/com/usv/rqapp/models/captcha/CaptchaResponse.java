@@ -1,4 +1,4 @@
-package com.usv.rqapp.data.captcha;
+package com.usv.rqapp.models.captcha;
 
 import com.google.gson.annotations.SerializedName;
 

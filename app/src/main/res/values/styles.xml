@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorGreyDark</item>
         <item name="colorPrimaryDark">@color/colorPurpleOpacity_50</item>
-        <item name="colorAccent">@color/colorGreyDarkOpacity_90</item>
+        <item name="colorAccent">@color/colorGrey</item>
         <item name="android:actionBarWidgetTheme">@style/searchStyle_Light</item>
     </style>
 
@@ -70,13 +70,12 @@
 
     <!-- SearchView Styles -->
     <style name="searchStyle_Light">
-        <item name="android:fontFamily">@font/font_opensans_regular</item>
+        <item name="android:fontFamily">@font/montserrat_extra_light</item>
         <item name="android:textSize">@dimen/dimen_font_14</item>
-        <item name="android:paddingStart">@dimen/dimen_padding_10</item>
-        <item name="android:paddingEnd">@dimen/dimen_padding_10</item>
         <item name="android:textColor">@color/colorGreyDark</item>
-        <item name="android:textColorHint">@color/colorGreyDarkOpacity_90</item>
-
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="android:layout_marginStart">@dimen/dimen_margin_10</item>
+        <item name="android:layout_marginEnd">@dimen/dimen_margin_10</item>
         <item name="android:background">@drawable/round_edt_light</item>
         <item name="android:drawablePadding">@dimen/dimen_padding_10</item>
         <!--This line changes the color of text in Toolbar-->

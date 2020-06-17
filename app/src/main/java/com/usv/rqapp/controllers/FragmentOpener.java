@@ -1,11 +1,10 @@
-package com.usv.rqapp.controller;
+package com.usv.rqapp.controllers;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
-import com.usv.rqapp.fragments.MapsFragment;
 
 public class FragmentOpener {
 
