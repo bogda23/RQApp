@@ -1,6 +1,7 @@
 package com.usv.rqapp.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -26,11 +27,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
-import com.usv.rqapp.controller.DateHandler;
-import com.usv.rqapp.controller.DbController;
-import com.usv.rqapp.controller.FragmentOpener;
-import com.usv.rqapp.data.captcha.CaptchaResponse;
-import com.usv.rqapp.data.db.User;
+import com.usv.rqapp.controllers.DateHandler;
+import com.usv.rqapp.controllers.DbController;
+import com.usv.rqapp.controllers.FragmentOpener;
+import com.usv.rqapp.models.captcha.CaptchaResponse;
+import com.usv.rqapp.models.db.User;
 import com.usv.rqapp.databinding.FragmentRegisterBinding;
 import com.usv.rqapp.reCaptcha.IreCaptcha;
 import com.usv.rqapp.reCaptcha.ReCaptcha;
@@ -46,6 +47,8 @@ import retrofit2.Response;
 public class RegisterFragment extends Fragment {
 
     private static final String TAG = "RegisterFragment";
+    private FragmentManager manager;
+
     private String userResponseToken;
     private View registerView;
     private FragmentRegisterBinding binding;
@@ -59,6 +62,11 @@ public class RegisterFragment extends Fragment {
         binding = null;
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        manager = getFragmentManager();
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,7 +76,7 @@ public class RegisterFragment extends Fragment {
         initCaptcha();
         initFirebase();
         initFirestoreDatabase();
-        buttonHandler();
+        iHaveAccountHandler();
         configurateNormalRegister();
         onTogglePasswordPressed();
 
@@ -86,13 +94,14 @@ public class RegisterFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(getActivity(),
-                                "Verification email sent to " + user.getEmail(),
-                                Toast.LENGTH_SHORT).show();
+                                "Email de verificare trimis la adresa  " + user.getEmail(),
+                                Toast.LENGTH_LONG).show();
+                        FragmentOpener.loadNextFragment(LoginFragment.newInstance(),manager);
                     } else {
                         Log.e(TAG, "sendEmailVerification", task.getException());
                         Toast.makeText(getActivity(),
-                                "Failed to send verification email.",
-                                Toast.LENGTH_SHORT).show();
+                                "Nu am reusit sa trimitem email de verificare. Reincercati înregistrarea",
+                                Toast.LENGTH_LONG).show();
                     }
 
                 });
@@ -273,7 +282,7 @@ public class RegisterFragment extends Fragment {
                 CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, MapsFragment.newInstance()).commit();
     }
 
-    private void buttonHandler() {
+    private void iHaveAccountHandler() {
         binding.tvIHaveAccount.setOnClickListener(v -> {
             getFragmentManager().popBackStackImmediate();
         });
@@ -284,6 +293,8 @@ public class RegisterFragment extends Fragment {
             if (task.isSuccessful()) {
                 FragmentOpener.loadNextFragment(MapsFragment.newInstance(), getFragmentManager());
             }
+        }).addOnFailureListener(e->{
+            FragmentOpener.loadNextFragment(LoginFragment.newInstance(), getFragmentManager());
         });
     }
 
