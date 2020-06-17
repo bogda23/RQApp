@@ -13,20 +13,18 @@ public final class CONSTANTS {
     public static final int MINIMUM_LENGTH_FOR_NAME = 3;
 
     //Login email
-    public static final CharSequence EMPTY_EMAIL = "Introduce-ți un email";
+    public static final CharSequence UNVERIFIED_EMAIL = "Confirmați adresa de email mai întâi";
     public static final String INVALIDE_EMAIL = "Email invalid";
     public static final String INCORECT_EMAIL = "Email incorect";
     public static final String EMAIL_ALREADY_EXISTS = "Aveti deja cont cu acest email";
     public static final String YOU_DONT_HAVE_ACCOUNT = "Nu aveți cont! Creați unul mai întai";
-    public static final String SURE_YOU_HAVE_ACCOUNT = "Esti sigur că ai cont?";
+
     //Login pass
-    public static final CharSequence EMPTY_PASSWORD = "Introduce-ți o parolă";
-    public static final String VERIFY_PASSWORD = "Parola este incorectă";
     public static final String MIN_SIX_CHARS_PASSWORD = "minim 6 caractere";
     public static final String INVALIDE_PASSWORD = "Parolă invalidă";
+    public static final CharSequence TO_MANY_REQUESTS = "Prea multe încercări eșuate";
     public final static String SHOW = "SHOW";
     public final static String HIDE = "HIDE";
-
 
     //Ads
     public static final String BANNER_ID = "ca-app-pub-3550303973503881/1149433866";
@@ -49,4 +47,12 @@ public final class CONSTANTS {
     public static final String EMAIL_SENT_ERROR = "Email-ul nu a fost trimis";
 
 
+    //Permissions
+    public static final String PERMISSION_DENIED = "Permisiune respinsă";
+    public static final String PERMISSION_DENIED_MESSAGE = "Permisiunea pentru accesul la locația este respinsă permanent. Trebuie să mergi în setări pentru a schimba permisiunea";
+
+    //Account
+    public static final String DELETE_ACCOUNT = "Ești sigur?";
+    public static final String DELETE_ACCOUNT_MESSAGE = "Ștergerea contului va avea ca rezultat eliminarea datelor contului tău definitiv și ireversibil. ";
+    public static final String ACCOUNT_DELETED = "Contul a fost șters";
 }
