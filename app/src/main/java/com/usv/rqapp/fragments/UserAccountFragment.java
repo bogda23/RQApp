@@ -36,7 +36,6 @@ public class UserAccountFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseUser user;
     private FirebaseFirestore db;
-    private Object FirebaseAuthRecentLoginRequiredException;
 
     @Nullable
     @Override
@@ -75,8 +74,10 @@ public class UserAccountFragment extends Fragment {
                         if (task.isSuccessful()) {
                             deleteAccount();
                         } else {
+                            binding.progressBarHolder.setVisibility(View.GONE);
                             Log.e(TAG, task.getException().getMessage());
-                            Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            // Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Din motive de securitate trebuie sa te autentifici din nou!", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -101,12 +102,9 @@ public class UserAccountFragment extends Fragment {
                 Toast.makeText(getContext(), CONSTANTS.ACCOUNT_DELETED, Toast.LENGTH_LONG).show();
                 goToLoginFragment();
             } else {
+                binding.progressBarHolder.setVisibility(View.GONE);
                 Log.e(TAG, task.getException().getMessage());
-                if (task.getException() == FirebaseAuthRecentLoginRequiredException) {
-                    Toast.makeText(getContext(), "Din motive de securitate trebuie sa te autentifici din nou!", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getContext(), "Ștergere nereușită", Toast.LENGTH_LONG).show();
-                }
+
             }
         });
     }

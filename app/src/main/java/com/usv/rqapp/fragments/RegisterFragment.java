@@ -28,7 +28,7 @@ import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.DateHandler;
-import com.usv.rqapp.controllers.DbController;
+import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.models.captcha.CaptchaResponse;
 import com.usv.rqapp.models.db.User;
@@ -53,7 +53,7 @@ public class RegisterFragment extends Fragment {
     private View registerView;
     private FragmentRegisterBinding binding;
     private FirebaseAuth auth;
-    private DbController db;
+    private FirestoreController db;
     private IreCaptcha captcha;
 
     @Override
@@ -85,7 +85,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private void initFirestoreDatabase() {
-        db = new DbController();
+        db = new FirestoreController();
     }
 
     private void emailVerification() {

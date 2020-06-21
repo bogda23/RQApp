@@ -11,7 +11,7 @@ import com.usv.rqapp.models.db.User;
 
 import java.util.Map;
 
-public class DbController {
+public class FirestoreController {
 
     private static final String TAG = "DbController";
     private FirebaseFirestore db;
@@ -19,7 +19,7 @@ public class DbController {
     /**
      *
      */
-    public DbController() {
+    public FirestoreController() {
         db = FirebaseFirestore.getInstance();
     }
 

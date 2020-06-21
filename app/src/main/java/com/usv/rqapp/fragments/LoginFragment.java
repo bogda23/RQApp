@@ -45,7 +45,7 @@ import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.DateHandler;
-import com.usv.rqapp.controllers.DbController;
+import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.controllers.Verifier;
 import com.usv.rqapp.models.db.User;
@@ -63,7 +63,7 @@ public class LoginFragment extends Fragment {
 
     private CallbackManager callbackManager;
     private GoogleSignInClient googleSignInClient;
-    private DbController dbController;
+    private FirestoreController firestoreController;
     private FirebaseFirestore db;
     private static final int RC_SIGN_IN = 1;
     private static final int FB_SIGN_IN = 2;
@@ -111,7 +111,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void initFirestoreDatabase() {
-        dbController = new DbController();
+        firestoreController = new FirestoreController();
         db = FirebaseFirestore.getInstance();
     }
 
@@ -462,7 +462,7 @@ public class LoginFragment extends Fragment {
                     } else {
                         Log.e(TAG + " User_exists", "Data Empty");
                         user.setFirstTime(true);
-                        if (dbController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
+                        if (firestoreController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
                             binding.progressBarHolder.setVisibility(View.GONE);
                             Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
                         }
@@ -474,7 +474,7 @@ public class LoginFragment extends Fragment {
                     .addOnFailureListener(e -> {
                         Log.e(TAG + "_", e.getMessage());
                         user.setFirstTime(true);
-                        if (dbController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
+                        if (firestoreController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
                             binding.progressBarHolder.setVisibility(View.GONE);
                             Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
                         }
