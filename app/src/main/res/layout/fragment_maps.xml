@@ -128,12 +128,12 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
 
+        android:layoutMode="opticalBounds"
         android:translationZ="@dimen/dimen_margin_78"
         app:fab_addButtonColorNormal="@color/colorWhite"
         app:fab_addButtonColorPressed="@color/colorGreyLight"
         app:fab_addButtonPlusIconColor="@color/colorRed"
         app:fab_labelStyle="@style/btnStyle"
-        android:layoutMode="opticalBounds"
 
 
         app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
@@ -141,23 +141,28 @@
         app:layout_constraintRight_toRightOf="@id/img_custom_location">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_car_crash"
+            style="@style/btnFloatStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorWhite"
-            app:fab_colorPressed="@color/colorGreyLight"
-            android:src="@drawable/user"/>
+
+            android:src="@drawable/car_crash" />
+
         <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_cloud_rain"
+            style="@style/btnFloatStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorWhite"
-            app:fab_colorPressed="@color/colorGreyLight"
-            android:src="@drawable/email"/>
+
+            android:src="@drawable/cloud_rain" />
+
         <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_heavy_snow"
+            style="@style/btnFloatStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorWhite"
-            app:fab_colorPressed="@color/colorGreyLight"
-            android:src="@drawable/lock_ico"/>
+
+            android:src="@drawable/heavy_snow" />
 
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>

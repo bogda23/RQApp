@@ -93,6 +93,7 @@
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:background">@drawable/round_btn_grey_dark</item>
     </style>
+
     <style name="btnStyleShowPassword">
         <item name="android:fontFamily">@font/font_opensans_regular</item>
         <item name="android:padding">@dimen/dimen_padding_10</item>
@@ -100,6 +101,13 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/colorGreyLight</item>
         <item name="android:background">@drawable/round_btn_show_password</item>
+    </style>
+    <!--Button Float Styles-->
+    <style name="btnFloatStyle">
+        <item name="fab_colorNormal">@color/white</item>
+        <item name="fab_colorPressed">@color/colorGreyLightOpacity_90</item>
+        <item name="android:tint">@color/colorPurple</item>
+
     </style>
 
     <!-- Titles Style -->
