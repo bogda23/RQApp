@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -12,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,11 +18,7 @@ import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
@@ -32,7 +26,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -75,16 +68,21 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.usv.rqapp.CONSTANTS;
-import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.RippleController;
+import com.usv.rqapp.controllers.VibrationsServiceController;
 import com.usv.rqapp.databinding.FragmentMapsBinding;
+import com.usv.rqapp.models.rqdb.BaseVibrations;
+import com.usv.rqapp.services.vibrations.RetrofitVibrationClient;
+import com.usv.rqapp.services.vibrations.VibrationService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import devlight.io.library.ntb.NavigationTabBar;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
@@ -110,12 +108,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private LocationCallback locationCallback;
     private GroundOverlay groundOverlay11;
 
+    private VibrationsServiceController vibrationsServiceController;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMapsBinding.inflate(inflater, container, false);
         rootView = binding.getRoot();
         binding.map.setClipToOutline(true);
+
+        initVibrationService();
 
         initFirebaseAuth();
         loadMap(savedInstanceState);
@@ -124,6 +127,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         executeSearchComponents();
 
         return rootView;
+    }
+
+    private void initVibrationService() {
+        vibrationsServiceController = new VibrationsServiceController();
+        vibrationsServiceController.loadVibrations();
+        if(vibrationsServiceController.getBaseVibrations()!= null){
+            Log.e(TAG,vibrationsServiceController.getBaseVibrations().toString());
+        }
+
     }
 
 
@@ -472,6 +484,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     } catch (IntentSender.SendIntentException e1) {
                         e1.printStackTrace();
+                    }catch (Exception e2){
+                        e2.getMessage();
                     }
                 }
             }
