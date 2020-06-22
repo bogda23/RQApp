@@ -82,8 +82,8 @@ public class NavigatorFragment extends Fragment {
                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, MapsFragment.newInstance()).commit();
                     break;
                 case 2:
-                    Toast.makeText(getContext(),"In development", Toast.LENGTH_SHORT).show();
-                   // getFragmentManager().beginTransaction().replace(R.id.fragment_container, NewsFeedFragment.newInstance()).commit();
+
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, NewsFeedFragment.newInstance()).commit();
                     break;
             }
 
