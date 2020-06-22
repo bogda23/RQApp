@@ -26,6 +26,17 @@ public class VibrationObject implements Serializable {
     @SerializedName("county_name")
     private  String countyName;
 
+    public VibrationObject() {
+    }
+
+    public VibrationObject(VibrationIDLocation vibrationID, Double vibrationValue, String countryName, String isoCode, String countyName) {
+        this.vibrationID = vibrationID;
+        this.vibrationValue = vibrationValue;
+        this.countryName = countryName;
+        this.isoCode = isoCode;
+        this.countyName = countyName;
+    }
+
     public VibrationIDLocation getVibrationID() {
         return vibrationID;
     }

@@ -13,6 +13,12 @@ public class VibrationIDLocation implements Serializable {
     @SerializedName("lng")
     private Double longitude;
 
+
+    public VibrationIDLocation(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Double getLatitude() {
         return latitude;
     }
