@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
+import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.controllers.Verifier;
 import com.usv.rqapp.databinding.FragmentRecoveryBinding;
 
@@ -104,8 +105,8 @@ public class RecoveryFragment extends Fragment {
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                manager.popBackStackImmediate();
-
+               // manager.popBackStackImmediate();
+                FragmentOpener.loadNextFragment(LoginFragment.newInstance(),manager);
             }
         });
     }
