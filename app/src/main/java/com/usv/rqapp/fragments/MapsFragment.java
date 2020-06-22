@@ -126,17 +126,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private void initVibrationService() {
 
-        VibrationObject vibrationObject = new VibrationObject( new VibrationIDLocation(2313.23223,2323.23),22.22,"Romania","Ro","Suceava");
+        VibrationObject vibrationObject = new VibrationObject(new VibrationIDLocation(23133.23223, 23323.23), 22.22, "Bulgaria", "BG", "Halhalhal");
 
         vibrationsServiceController = new VibrationsServiceController();
         vibrationsServiceController.putVibrationOnLocation(vibrationObject);
-        if(vibrationsServiceController.getBaseVibrations()!= null){
-            Log.e(TAG,vibrationsServiceController.getBaseVibrations().toString());
+        if (vibrationsServiceController.getBaseVibrations() != null) {
+            Log.e(TAG, vibrationsServiceController.getBaseVibrations().toString());
         }
 
     }
 
 
+
+    /**
+     *
+     * @param mLastKnownLocation
+     * @param showAnimation
+     * @param REPEAT_TIMES
+     */
     private void rippleEfectOnMap(Location mLastKnownLocation, boolean showAnimation, @Nullable Integer REPEAT_TIMES) {
         if (showAnimation) {
             LatLng location = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
@@ -157,12 +164,18 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    /**
+     *
+     */
     private void executeSearchComponents() {
         handleSearchAction();
         handleTextChangedOnSearch();
         getSuggestionsOnSearch();
     }
 
+    /**
+     *
+     */
     private void getSuggestionsOnSearch() {
         binding.materialSearchBar.setSuggestionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
             @Override
@@ -220,6 +233,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    /**
+     *
+     */
     private void handleTextChangedOnSearch() {
         binding.materialSearchBar.addTextChangeListener(new TextWatcher() {
             @Override
@@ -265,6 +281,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    /**
+     *
+     */
     private void handleSearchAction() {
         binding.materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
@@ -289,6 +308,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    /**
+     *
+     */
     private void handleCustomTrackLocationButton() {
         binding.imgCustomLocation.setOnClickListener(click -> {
 
@@ -307,6 +329,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    /**
+     *
+     */
     private void initPlacesAPi() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         Places.initialize(getActivity(), getResources().getString(R.string.google_api_key));
@@ -315,7 +340,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-
+    /**
+     *
+     */
     private void initFirebaseAuth() {
         auth = FirebaseAuth.getInstance();
     }
@@ -329,9 +356,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-
-
-
+    /**
+     *
+     * @param savedInstanceState
+     */
     private void loadMap(Bundle savedInstanceState) {
         binding.map.onCreate(savedInstanceState);
         binding.map.onResume(); // needed to get the map to display immediately
@@ -344,6 +372,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
         /**
@@ -390,10 +422,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         binding.map.onLowMemory();
     }
 
+
+
     /**
      * @param googleMap
      */
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -438,6 +471,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    /**
+     *
+     */
     private void addCustomStyleOnMap() {
         try {
             boolean success = map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity().getApplicationContext(), R.raw.dark_barcelona));
@@ -451,6 +487,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     *
+     */
     private void createDeviceGpsLocationRequest() {
         //check if gps is enabled or not and then request user to enable it
         LocationRequest locationRequest = LocationRequest.create();
@@ -482,7 +521,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     } catch (IntentSender.SendIntentException e1) {
                         e1.printStackTrace();
-                    }catch (Exception e2){
+                    } catch (Exception e2) {
                         e2.getMessage();
                     }
                 }
@@ -491,6 +530,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         setDeviceGpsLocationVisibility();
     }
 
+    /**
+     *
+     */
     @SuppressLint("MissingPermission")
     private void setDeviceGpsLocationVisibility() {
         map.setMyLocationEnabled(true);
@@ -516,6 +558,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     *
+     */
     @SuppressLint("MissingPermission")
     private void getDeviceLocation() {
         mFusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
@@ -552,6 +597,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    /**
+     *
+     * @param mLastKnownLocation
+     * @param ripple
+     */
     private void moveMapCameraToLocation(Location mLastKnownLocation, boolean ripple) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM);
         map.animateCamera(cameraUpdate);
@@ -586,6 +636,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 .getLatitude(), location.getLongitude())));
 
     }
+
 
     /**
      * @param marker
