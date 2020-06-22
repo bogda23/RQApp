@@ -16,7 +16,7 @@ public class User {
     private String prenume;
     private String email;
     private String parola;
-    private Date data_nastere;
+    private String data_nastere;
     private Blob avatar;
     private Date data_inscriere;
     private Timestamp ultima_logare;
@@ -49,7 +49,7 @@ public class User {
             map.put(NUME, user.getNume());
             map.put(PRENUME, user.getPrenume());
             map.put(EMAIL, user.getEmail());
-            if(user.getFirstTime()){
+            if (user.getFirstTime()) {
                 map.put(DATA_INSCRIERE, user.getData_inscriere());
             }
             map.put(ULTIMA_LOGARE, user.getUltima_logare());
@@ -119,6 +119,15 @@ public class User {
     }
 
     /**
+     * @param id_utilizator
+     * @param data_nastere
+     */
+    public User(String id_utilizator, String data_nastere, Boolean isDateOfBirth) {
+        this.id_utilizator = id_utilizator;
+        this.data_nastere = data_nastere;
+    }
+
+    /**
      * @return
      */
     public String getId_utilizator() {
@@ -164,11 +173,11 @@ public class User {
         this.parola = parola;
     }
 
-    public Date getData_nastere() {
+    public String getData_nastere() {
         return data_nastere;
     }
 
-    public void setData_nastere(Date data_nastere) {
+    public void setData_nastere(String data_nastere) {
         this.data_nastere = data_nastere;
     }
 
@@ -233,5 +242,23 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(getUser(), getId_utilizator(), getNume(), getPrenume(), getEmail(), getParola(), getData_nastere(), getAvatar(), getData_inscriere(), getUltima_logare(), getVip());
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "user=" + user +
+                ", id_utilizator='" + id_utilizator + '\'' +
+                ", nume='" + nume + '\'' +
+                ", prenume='" + prenume + '\'' +
+                ", email='" + email + '\'' +
+                ", parola='" + parola + '\'' +
+                ", data_nastere=" + data_nastere +
+                ", avatar=" + avatar +
+                ", data_inscriere=" + data_inscriere +
+                ", ultima_logare=" + ultima_logare +
+                ", vip=" + vip +
+                ", firstTime=" + firstTime +
+                '}';
     }
 }
