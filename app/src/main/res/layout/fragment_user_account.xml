@@ -1,22 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_image"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.7"
+        android:background="@drawable/map" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorGreyDark"
+        android:elevation="@dimen/dimen_margin_20"
+        android:outlineAmbientShadowColor="@color/colorRedOpacity_50"
+        android:outlineSpotShadowColor="@color/colorRedOpacity_50"
+
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_margin="@dimen/dimen_margin_20"
+            android:elevation="@dimen/elevation_5"
+            android:src="@drawable/profile_picture"
+            app:civ_border_color="@color/colorRedOpacity_50"
+            app:civ_border_width="2dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_account_name"
+            style="@style/titleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_margin_10"
+            android:background="@drawable/round_btn_grey_dark"
+            android:padding="@dimen/dimen_padding_10"
+            android:text="@string/app_name"
+            android:textSize="@dimen/dimen_font_title_small"
+
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/profile_image"
+            app:layout_constraintStart_toStartOf="@+id/profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_datele_contului"
+        style="@style/titleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:text="Datele contului"
+        android:textAlignment="center"
+        android:textColor="@color/gradientStartOpacity_50"
+        android:textSize="@dimen/dimen_font_10"
+
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_profile" />
+
+    <TextView
+        android:id="@+id/tv_email_title"
+        style="@style/accountDataStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_margin_20"
-        android:src="@drawable/user"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="2dp"
+        android:text="Email: "
+        android:textColor="@color/colorRedOpacity_50"
+
+        android:textSize="@dimen/dimen_font_12"
+        app:layout_constraintBottom_toBottomOf="@+id/edt_account_email"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edt_account_email" />
+
+    <EditText
+        android:id="@+id/edt_account_email"
+        style="@style/accountDataStyle"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_margin_10"
+        android:layout_marginTop="@dimen/dimen_margin_39"
+        android:editable="false"
+        android:text="@string/app_name"
+
 
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/tv_email_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_datele_contului" />
 
+    <TextView
+        android:id="@+id/tv_date_title"
+        style="@style/accountDataStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Data nașterii"
+
+
+        app:layout_constraintBottom_toBottomOf="@+id/btn_date_picker"
+        app:layout_constraintLeft_toLeftOf="@id/tv_email_title"
+        app:layout_constraintTop_toTopOf="@+id/btn_date_picker" />
+
+
+    <EditText
+        android:id="@+id/btn_date_picker"
+        style="@style/accountDataStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:editable="false"
+        android:paddingStart="@dimen/dimen_padding_20"
+        android:paddingEnd="@dimen/dimen_padding_20"
+        android:text="@string/alege_data_na_terii"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toRightOf="@id/tv_date_title"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edt_account_email" />
+
+    <EditText
+        android:id="@+id/tv_change_password"
+        style="@style/infoItalic_Monsterrat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_39"
+        android:editable="false"
+        android:text="@string/schimba_parola"
+        android:textColor="@color/colorRedOpacity_50"
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_date_picker" />
+    <!--  Bottom buttons -->
     <Button
         android:id="@+id/delete_account"
         style="@style/btnStyle"
@@ -25,6 +155,7 @@
         android:layout_margin="@dimen/dimen_margin_20"
         android:backgroundTint="@color/red"
         android:text="@string/sterge_contul"
+        android:textSize="@dimen/dimen_font_12"
 
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,10 +169,12 @@
         android:layout_margin="@dimen/dimen_margin_20"
         android:backgroundTint="@color/colorRed"
         android:text="@string/delogheazate"
+        android:textSize="@dimen/dimen_font_12"
 
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 
     <FrameLayout
         android:id="@+id/progressBarHolder"
@@ -66,5 +199,6 @@
             android:indeterminate="true"
             android:indeterminateTint="@color/colorGreen" />
     </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
