@@ -23,7 +23,8 @@ public interface VibrationService {
 
     @POST(VibrationConstants.VIBRATIONS)
     @FormUrlEncoded
-    Observable<String> putVibrationOnPoint(@Field("_id") VibrationIDLocation vibrationIDLocation,
+    Call<BaseVibrations>  putVibrationOnPoint(@Field("lat") Double latitude,
+                                            @Field("lng") Double longitude,
                                            @Field("vibration_value") Double vibrationValue,
                                            @Field("country_name") String countryName,
                                            @Field("iso_code") String isoCode,

@@ -72,17 +72,12 @@ import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.RippleController;
 import com.usv.rqapp.controllers.VibrationsServiceController;
 import com.usv.rqapp.databinding.FragmentMapsBinding;
-import com.usv.rqapp.models.rqdb.BaseVibrations;
-import com.usv.rqapp.services.vibrations.RetrofitVibrationClient;
-import com.usv.rqapp.services.vibrations.VibrationService;
+import com.usv.rqapp.models.rqdb.VibrationIDLocation;
+import com.usv.rqapp.models.rqdb.VibrationObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
@@ -130,8 +125,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void initVibrationService() {
+
+        VibrationObject vibrationObject = new VibrationObject( new VibrationIDLocation(2313.23223,2323.23),22.22,"Romania","Ro","Suceava");
+
         vibrationsServiceController = new VibrationsServiceController();
-        vibrationsServiceController.loadVibrations();
+        vibrationsServiceController.putVibrationOnLocation(vibrationObject);
         if(vibrationsServiceController.getBaseVibrations()!= null){
             Log.e(TAG,vibrationsServiceController.getBaseVibrations().toString());
         }
