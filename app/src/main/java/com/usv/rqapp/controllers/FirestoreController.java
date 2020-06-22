@@ -6,15 +6,21 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.usv.rqapp.databinding.FragmentUserAccountBinding;
 import com.usv.rqapp.models.db.User;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FirestoreController {
 
     private static final String TAG = "DbController";
     private FirebaseFirestore db;
+    private String userID;
 
     /**
      *
@@ -47,6 +53,48 @@ public class FirestoreController {
                     }
                 });
         return dataStored[0];
+    }
+
+    public void updateUserDateOdBirthInFirestore(User user) {
+        if (user.getId_utilizator() != null) {
+            DocumentReference documentReference = db.collection(User.UTILIZATORI).document(user.getId_utilizator());
+            documentReference.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        Log.e(TAG + " User_exists", "Date of birgh " + user.getData_nastere());
+                        userID = documentSnapshot.getId();
+                        user.setFirstTime(false);
+                        Map<String, Object> map = new HashMap<>();
+                        map.put(User.DATA_NASTERE, user.getData_nastere());
+                        db.collection(User.UTILIZATORI).document(user.getId_utilizator()).update(map);
+
+                    } else {
+                        Log.e(TAG + " User_exists", "Date of birth Empty");
+
+                    }
+                }
+            })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG + "_", e.getMessage());
+                    });
+        }
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public FirebaseFirestore getDb() {
+        return db;
+    }
+
+    public void setDb(FirebaseFirestore db) {
+        this.db = db;
     }
 
     /**
