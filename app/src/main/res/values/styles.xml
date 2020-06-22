@@ -118,6 +118,14 @@
         <item name="android:textSize">@dimen/dimen_font_title</item>
 
     </style>
+    <!-- Account Data Style -->
+    <style name="accountDataStyle">
+
+        <item name="android:textColor">@color/colorRedOpacity_50</item>
+        <item name="fontFamily">@font/font_mosterat_semibold</item>
+        <item name="android:textSize">@dimen/dimen_font_12</item>
+
+    </style>
 
     <!-- Error messages -->
     <style name="errorStyle">

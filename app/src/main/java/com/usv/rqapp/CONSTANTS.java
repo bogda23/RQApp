@@ -55,4 +55,8 @@ public final class CONSTANTS {
     public static final String DELETE_ACCOUNT = "Ești sigur?";
     public static final String DELETE_ACCOUNT_MESSAGE = "Ștergerea contului va avea ca rezultat eliminarea datelor contului tău definitiv și ireversibil. ";
     public static final String ACCOUNT_DELETED = "Contul a fost șters";
+
+    public static final String CHANGE_PASSWORD = "Schimbarea parolei";
+    public static final String CHANGE_PASSWORD_MESSAGE = "Pentru a-ți schimba parola vei fi scos din cont! Dorești să continui?";
+
 }
