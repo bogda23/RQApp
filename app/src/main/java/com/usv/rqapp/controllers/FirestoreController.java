@@ -6,12 +6,10 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.usv.rqapp.databinding.FragmentUserAccountBinding;
-import com.usv.rqapp.models.db.User;
+import com.usv.rqapp.models.firestoredb.User;
 
 import java.util.HashMap;
 import java.util.Map;
