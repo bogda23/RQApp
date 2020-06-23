@@ -1,4 +1,4 @@
-package com.usv.rqapp.models.db;
+package com.usv.rqapp.models.firestoredb;
 
 import java.sql.Blob;
 import java.sql.Timestamp;
