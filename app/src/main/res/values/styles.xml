@@ -32,12 +32,26 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="infoSemiBold_Monsterrat">
+        <item name="android:textSize">@dimen/dimen_font_14</item>
+        <item name="fontFamily">@font/font_mosterat_semibold</item>
+        <item name="android:textColor">@color/colorGreyDark</item>
+        <item name="android:gravity">left</item>
+    </style>
+
     <style name="infoNormal_OpenSans">
         <item name="android:textSize">@dimen/dimen_font_14</item>
         <item name="fontFamily">@font/font_opensans_regular</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/colorGreyDark</item>
         <item name="android:gravity">center</item>
+    </style>
+    <style name="infoRegular_Monsterrat">
+        <item name="android:textSize">@dimen/dimen_font_10</item>
+        <item name="fontFamily">@font/montserrat_regular</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorGreyDark</item>
+        <item name="android:gravity">left</item>
     </style>
 
     <!-- EditText Styles -->
@@ -120,12 +134,12 @@
     </style>
     <!-- Account Data Style -->
     <style name="accountDataStyle">
-
         <item name="android:textColor">@color/colorRedOpacity_50</item>
         <item name="fontFamily">@font/font_mosterat_semibold</item>
         <item name="android:textSize">@dimen/dimen_font_12</item>
 
     </style>
+
 
     <!-- Error messages -->
     <style name="errorStyle">

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Font dimens -->
+    <dimen name="dimen_font_8">10sp</dimen>
     <dimen name="dimen_font_10">12sp</dimen>
     <dimen name="dimen_font_12">16sp</dimen>
     <dimen name="dimen_font_14">18sp</dimen>
@@ -9,12 +10,14 @@
     <dimen name="dimen_font_logo">65sp</dimen>
     <!-- Padding -->
     <dimen name="dimen_padding_0">0dp</dimen>
+    <dimen name="dimen_padding_5">5dp</dimen>
     <dimen name="dimen_padding_10">10dp</dimen>
     <dimen name="dimen_padding_12">12dp</dimen>
     <dimen name="dimen_padding_15">15dp</dimen>
     <dimen name="dimen_padding_20">20dp</dimen>
     <!-- Margin -->
     <dimen name="dimen_margin_0">0dp</dimen>
+    <dimen name="dimen_margin_5">5dp</dimen>
     <dimen name="dimen_margin_10">10dp</dimen>
     <dimen name="dimen_margin_20">20dp</dimen>
     <dimen name="dimen_margin_39">39dp</dimen>
