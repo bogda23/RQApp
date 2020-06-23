@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,15 +27,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
-import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.databinding.FragmentUserAccountBinding;
-import com.usv.rqapp.models.db.User;
+import com.usv.rqapp.models.firestoredb.User;
 
-import java.util.Date;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 public class UserAccountFragment extends Fragment {
 

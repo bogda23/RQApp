@@ -48,7 +48,7 @@ import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.controllers.Verifier;
-import com.usv.rqapp.models.db.User;
+import com.usv.rqapp.models.firestoredb.User;
 import com.usv.rqapp.databinding.FragmentLoginBinding;
 
 import java.util.Arrays;

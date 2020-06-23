@@ -31,7 +31,7 @@ import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.models.captcha.CaptchaResponse;
-import com.usv.rqapp.models.db.User;
+import com.usv.rqapp.models.firestoredb.User;
 import com.usv.rqapp.databinding.FragmentRegisterBinding;
 import com.usv.rqapp.reCaptcha.IreCaptcha;
 import com.usv.rqapp.reCaptcha.ReCaptcha;
