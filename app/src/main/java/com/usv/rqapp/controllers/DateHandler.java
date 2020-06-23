@@ -68,10 +68,12 @@ public class DateHandler {
 
             hoursBetween = (Hours.hoursBetween(currentDateTime, postDateTime).getHours() % 24);
             minutesBetween = (Minutes.minutesBetween(currentDateTime, postDateTime).getMinutes() % 60);
-            if (hoursBetween != 0) {
-                return "acum " + hoursBetween + " de ore";
-            } else {
+            if (hoursBetween == 0) {
                 return "acum " + minutesBetween + " minute";
+            } else if (hoursBetween == 1) {
+                return "acum o oră";
+            } else {
+                return "acum " + hoursBetween + " de ore";
             }
 
 
