@@ -66,6 +66,12 @@
     <string name="strada_x_numarul_y">Strada x, numarul y</string>
     <string name="news_feed_title">Intersecția Alexandru Lăpușneanu și strada Soveja din Constanța închisă pentru lucrări</string>
     <string name="postat_de">Postat de:</string>
+    <string name="adaug_eveniment">Adaugă eveniment</string>
+    <string name="utilizator">Utilizator</string>
+    <string name="descrierea_evenimentului">Descrierea Evenimentului</string>
+    <string name="titlul_evenimentului">Titlul Evenimentului</string>
+    <string name="adaug_un_eveniment">Adaugă un eveniment</string>
+    <string name="alege_loca_ia_curent">Alege locația curentă</string>
 
 
 </resources>
