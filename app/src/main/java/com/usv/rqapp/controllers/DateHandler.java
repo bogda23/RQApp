@@ -2,6 +2,7 @@ package com.usv.rqapp.controllers;
 
 
 import com.google.firebase.Timestamp;
+import com.usv.rqapp.models.firestoredb.NewsFeed;
 
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
@@ -16,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateHandler {
+
+    private FirestoreController db = new FirestoreController();
 
     public static Date getCurrentDate() {
         long millis = System.currentTimeMillis();
@@ -66,14 +69,18 @@ public class DateHandler {
             DateTime currentDateTime = new DateTime(postDate);
             DateTime postDateTime = new DateTime(currentDate);
 
-            hoursBetween = (Hours.hoursBetween(currentDateTime, postDateTime).getHours() % 24);
+            hoursBetween = (Hours.hoursBetween(currentDateTime, postDateTime).getHours() /*% 24*/);
             minutesBetween = (Minutes.minutesBetween(currentDateTime, postDateTime).getMinutes() % 60);
             if (hoursBetween == 0) {
                 return "acum " + minutesBetween + " minute";
             } else if (hoursBetween == 1) {
                 return "acum o oră";
-            } else {
-                return "acum " + hoursBetween + " de ore";
+            } else if (hoursBetween >= 24) {
+                return "acum o zi";
+            } else if (hoursBetween >= 48) {
+                return "acum 2 zile";
+            } else{
+                return "acum " + hoursBetween + " ore";
             }
 
 
