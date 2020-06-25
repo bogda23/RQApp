@@ -164,6 +164,15 @@
 
             android:src="@drawable/heavy_snow" />
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add_news_feed_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_margin_10"
+            android:src="@drawable/add_news_feed"
+
+            />
+
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

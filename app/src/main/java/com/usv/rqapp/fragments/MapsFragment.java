@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -68,7 +69,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.usv.rqapp.CONSTANTS;
+import com.usv.rqapp.NavigatorFragment;
 import com.usv.rqapp.R;
+import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.controllers.RippleController;
 import com.usv.rqapp.controllers.VibrationsServiceController;
 import com.usv.rqapp.databinding.FragmentMapsBinding;
@@ -104,6 +107,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private GroundOverlay groundOverlay11;
 
     private VibrationsServiceController vibrationsServiceController;
+    private FragmentManager manager;
 
 
     @Nullable
@@ -121,7 +125,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         initPlacesAPi();
         executeSearchComponents();
 
+        addNewsFeedEventsToFirestore();
+
         return rootView;
+    }
+
+    private void addNewsFeedEventsToFirestore() {
+   
+        binding.btnAddNewsFeedPost.setOnClickListener(click -> {
+            FragmentOpener.loadNextFragmentWithStack(NewsFeedEventFragment.newInstance(), manager);
+        });
+
     }
 
     private void initVibrationService() {
@@ -137,9 +151,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-
     /**
-     *
      * @param mLastKnownLocation
      * @param showAnimation
      * @param REPEAT_TIMES
@@ -351,13 +363,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = auth.getCurrentUser();
+        manager = getFragmentManager();
         if (currentUser == null) {
             // todo:  setTextToUI();
         }
     }
 
     /**
-     *
      * @param savedInstanceState
      */
     private void loadMap(Bundle savedInstanceState) {
@@ -373,7 +385,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     *
      * @return
      */
     public static MapsFragment newInstance() {
@@ -421,7 +432,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         super.onLowMemory();
         binding.map.onLowMemory();
     }
-
 
 
     /**
@@ -598,7 +608,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     *
      * @param mLastKnownLocation
      * @param ripple
      */
