@@ -8,7 +8,7 @@
         android:id="@+id/img_backgroud"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.2"
+        android:alpha="0.5"
         android:background="@drawable/map" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -18,14 +18,6 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <ImageView
-        android:id="@+id/img_add_news_feed_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_margin_10"
-        android:src="@drawable/add_news_feed"
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
