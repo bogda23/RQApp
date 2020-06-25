@@ -59,4 +59,11 @@ public final class CONSTANTS {
     public static final String CHANGE_PASSWORD = "Schimbarea parolei";
     public static final String CHANGE_PASSWORD_MESSAGE = "Pentru a-ți schimba parola vei fi scos din cont! Dorești să continui?";
 
+    //MapBox
+    public final static String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoiYm9nZGEyMyIsImEiOiJja2JzZm4xZWgwMTRyMnRwZzJmYmdrMnE0In0.SSVBus-BkkMCRURbw6Stvg";
+
+
+    //News Feed event
+    public static final CharSequence INVALID_EVENT_TITLE = "Introduceți un titlu";
+    public static final CharSequence INVALID_EVENT_DESCRIPTION ="Introduceți o descriere" ;
 }
