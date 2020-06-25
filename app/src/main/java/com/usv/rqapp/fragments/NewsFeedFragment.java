@@ -90,7 +90,7 @@ public class NewsFeedFragment extends Fragment {
      *
      */
     private void loadNewsFromFirestore() {
-        Query query = db.getDb().collection(NewsFeed.POSTARI).orderBy(NewsFeed.MOMENT_POSTARE, Query.Direction.DESCENDING).limit(NewsFeed.QUERY_LIMIT);
+        Query query = db.getDb().collection(NewsFeed.POSTARI).orderBy(NewsFeed.APRECIERI,Query.Direction.DESCENDING).limit(NewsFeed.QUERY_LIMIT);
 
         FirestoreRecyclerOptions<NewsFeed> options = new FirestoreRecyclerOptions.Builder<NewsFeed>()
                 .setQuery(query, NewsFeed.class)
@@ -151,8 +151,6 @@ public class NewsFeedFragment extends Fragment {
     }
 
     private void handleDownVoteOnNewsFeed(NewsFeedViewHoldeer holder, NewsFeed model) {
-        //   newsFeedDownVote.setImageResource(R.color.transparent);
-
         holder.newsFeedDownVote.setOnClickListener(click -> {
             db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -174,13 +172,13 @@ public class NewsFeedFragment extends Fragment {
                                 mapTotalLikes.put(NewsFeed.APRECIERI, currentNrLikes.intValue() - 1);
 
 
-                                db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).set(map).addOnCompleteListener(task2 -> {
+                                db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).update(map).addOnCompleteListener(task2 -> {
                                     if (task2.isSuccessful()) {
                                         db.getDb().collection(NewsFeed.POSTARI).document(model.getId_postare()).update(mapTotalLikes).addOnCompleteListener(task3 -> {
                                             if (task3.isSuccessful()) {
                                                 Log.e(TAG, "Actualizare totala like");
-                                                holder.newsFeedUpVote.setImageResource(R.drawable.arrow_up);
-                                                holder.newsFeedDownVote.setImageResource(R.color.transparent);
+                                                holder.newsFeedDownVote.setImageResource(R.drawable.arrow_up);
+                                                holder.newsFeedUpVote.setImageResource(R.color.transparent);
                                                 holder.newsVoteCount.setText(mapTotalLikes.get(NewsFeed.APRECIERI).toString());
                                             } else {
                                                 Log.e(TAG, task3.getException().getMessage());
@@ -222,7 +220,7 @@ public class NewsFeedFragment extends Fragment {
                             currentNrLikes = Math.toIntExact(task1.getResult().getLong(NewsFeed.APRECIERI));
 
 
-                            if (doc.get(NewsFeed.APRECIATION_VAL) == null || doc.getLong(NewsFeed.APRECIATION_VAL) == -1 || doc.getLong(NewsFeed.APRECIATION_VAL) == 0) {
+                            if (doc.get(NewsFeed.APRECIATION_VAL) == null  || doc.getLong(NewsFeed.APRECIATION_VAL) == 0 || doc.getLong(NewsFeed.APRECIATION_VAL) == -1) {
                                 Map<String, Object> mapForUser = new HashMap<>();
                                 mapForUser.put(NewsFeed.APRECIATION_VAL, 1);
 
@@ -231,13 +229,13 @@ public class NewsFeedFragment extends Fragment {
                                 mapTotalLikes.put(NewsFeed.APRECIERI, currentNrLikes.intValue() + 1);
 
 
-                                db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).set(mapForUser).addOnCompleteListener(task2 -> {
+                                db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).update(mapForUser).addOnCompleteListener(task2 -> {
                                     if (task2.isSuccessful()) {
                                         db.getDb().collection(NewsFeed.POSTARI).document(model.getId_postare()).update(mapTotalLikes).addOnCompleteListener(task3 -> {
                                             if (task3.isSuccessful()) {
                                                 Log.e(TAG, "Actualizare totala like");
-                                                holdeer.newsFeedDownVote.setImageResource(R.drawable.arrow_up);
-                                                holdeer.newsFeedUpVote.setImageResource(R.color.transparent);
+                                                holdeer.newsFeedUpVote.setImageResource(R.drawable.arrow_up);
+                                                holdeer.newsFeedDownVote.setImageResource(R.color.transparent);
                                                 holdeer.newsVoteCount.setText(mapTotalLikes.get(NewsFeed.APRECIERI).toString());
                                             } else {
                                                 Log.e(TAG, task3.getException().getMessage());
