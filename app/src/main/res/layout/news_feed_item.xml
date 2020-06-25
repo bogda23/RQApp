@@ -178,8 +178,9 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:background="@drawable/arrow_up"
-            android:backgroundTintMode="src_in"
+            android:backgroundTintMode="src_atop"
             android:outlineSpotShadowColor="@color/red"
+            android:backgroundTint="@color/colorGrey"
 
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

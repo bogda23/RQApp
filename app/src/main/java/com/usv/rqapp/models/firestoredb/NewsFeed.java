@@ -12,6 +12,7 @@ public class NewsFeed {
 
     //Fields
     private Map<String, Object> newsFeed = new HashMap<>();
+    public String id_postare;
     private String titlu_eveniment;
     private String descriere;
     private String utilizator;
@@ -19,14 +20,18 @@ public class NewsFeed {
 
     private Timestamp ultima_editare;
     private Integer aprecieri;
-    private GeoPoint loc_eveniment;
+    private String loc_eveniment;
     private Boolean isNewPost;
 
     //Query limit
     public static final long QUERY_LIMIT = 16;
 
-    //Keys
+    //Fields Keys
     public final static String POSTARI = "postari";
+    public static final String APRECIERI_UTILIZATOR = "aprecieri_utilizator";
+    //Keys
+    public final static String APRECIATION_VAL = "val";
+    public final static String ID_POSTARE = "id_postare";
     public final static String TITLUL_EVENIMENTULUI = "titlu_eveniment";
     public final static String DESCRIERE = "descriere";
     public final static String UTILIZATOR = "utilizator";
@@ -52,7 +57,7 @@ public class NewsFeed {
      * @param loc_eveniment
      * @param isNewPost
      */
-    public NewsFeed(String titlu_eveniment, String descriere, String utilizator, Timestamp moment_postare, Timestamp ultima_editare, Integer aprecieri, GeoPoint loc_eveniment, Boolean isNewPost) {
+    public NewsFeed(String titlu_eveniment, String descriere, String utilizator, Timestamp moment_postare, Timestamp ultima_editare, Integer aprecieri, String loc_eveniment, Boolean isNewPost) {
         this.titlu_eveniment = titlu_eveniment;
         this.descriere = descriere;
         this.utilizator = utilizator;
@@ -61,6 +66,7 @@ public class NewsFeed {
         this.aprecieri = aprecieri;
         this.loc_eveniment = loc_eveniment;
         this.isNewPost = isNewPost;
+        this.id_postare = String.valueOf(getUtilizator() + getMoment_postare().toDate());
     }
 
     /**
@@ -71,6 +77,7 @@ public class NewsFeed {
         Map<String, Object> map = new HashMap<>();
 
         if (newsFeed != null) {
+            map.put(ID_POSTARE, newsFeed.getId_postare());
             map.put(TITLUL_EVENIMENTULUI, newsFeed.getTitlu_eveniment());
             map.put(DESCRIERE, newsFeed.getDescriere());
             map.put(UTILIZATOR, newsFeed.getUtilizator());
@@ -91,6 +98,14 @@ public class NewsFeed {
 
     public void setNewsFeed(Map<String, Object> newsFeed) {
         this.newsFeed = newsFeed;
+    }
+
+    public String getId_postare() {
+        return id_postare;
+    }
+
+    public void setId_postare(String id_postare) {
+        this.id_postare = id_postare;
     }
 
     public String getTitlu_eveniment() {
@@ -141,11 +156,11 @@ public class NewsFeed {
         this.aprecieri = aprecieri;
     }
 
-    public GeoPoint getLoc_eveniment() {
+    public String getLoc_eveniment() {
         return loc_eveniment;
     }
 
-    public void setLoc_eveniment(GeoPoint loc_eveniment) {
+    public void setLoc_eveniment(String loc_eveniment) {
         this.loc_eveniment = loc_eveniment;
     }
 
