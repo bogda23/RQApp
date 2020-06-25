@@ -3,12 +3,17 @@ package com.usv.rqapp.controllers;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.usv.rqapp.NavigatorFragment;
+import com.usv.rqapp.models.firestoredb.NewsFeed;
 import com.usv.rqapp.models.firestoredb.User;
 
 import java.util.HashMap;
@@ -19,6 +24,7 @@ public class FirestoreController {
     private static final String TAG = "DbController";
     private FirebaseFirestore db;
     private String userID;
+    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     /**
      *
@@ -52,6 +58,35 @@ public class FirestoreController {
                 });
         return dataStored[0];
     }
+
+    /**
+     * @param manager
+     * @param map
+     * @return
+     */
+    public Boolean addNewsFeedToFireStore(Map<String, Object> map, FragmentManager manager) {
+        final Boolean[] dataStored = {false};
+        db.collection(NewsFeed.POSTARI).document(map.get(NewsFeed.ID_POSTARE).toString())
+                .set(map)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void v) {
+                        Log.e(TAG, "DocumentSnapshot added with ID: " + map.get(NewsFeed.APRECIERI));
+                        FragmentOpener.loadNextFragment(NavigatorFragment.newInstance(), manager);
+                        dataStored[0] = true;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Error adding document to firestore", e);
+                        dataStored[0] = false;
+                    }
+                });
+        return dataStored[0];
+    }
+
+    // TODO: 6/24/2020    db.collection(colectie).document(firebaseUser.getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(map.get(NewsFeed.ID_POSTARE).toString())
 
     public void updateUserDateOdBirthInFirestore(User user) {
         if (user.getId_utilizator() != null) {
@@ -91,8 +126,20 @@ public class FirestoreController {
         return db;
     }
 
+    public FirebaseUser getFirebaseUser() {
+        return firebaseUser;
+    }
+
+    public void setFirebaseUser(FirebaseUser firebaseUser) {
+        this.firebaseUser = firebaseUser;
+    }
+
     public void setDb(FirebaseFirestore db) {
         this.db = db;
+    }
+
+    public void addUpvoteToFirestore() {
+        DocumentReference documentReference = db.collection(NewsFeed.POSTARI).document();
     }
 
     /**
