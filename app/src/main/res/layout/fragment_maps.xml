@@ -127,7 +127,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-
+        android:layout_marginRight="@dimen/dimen_margin_5"
         android:layoutMode="opticalBounds"
         android:translationZ="@dimen/dimen_margin_78"
         app:fab_addButtonColorNormal="@color/colorWhite"
@@ -137,8 +137,8 @@
 
 
         app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
-        app:layout_constraintLeft_toLeftOf="@id/img_custom_location"
-        app:layout_constraintRight_toRightOf="@id/img_custom_location">
+        app:layout_constraintRight_toRightOf="parent"
+       >
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_car_crash"
@@ -170,6 +170,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_margin_10"
             android:src="@drawable/add_news_feed"
+            app:fab_title="Adaugă eveniment"
 
             />
 
@@ -201,7 +202,6 @@
         android:outlineProvider="background"
         android:outlineSpotShadowColor="@color/colorGreyDark"
         android:padding="@dimen/dimen_margin_20"
-        android:paddingBottom="@dimen/dimen_padding_20"
         app:layout_constraintBottom_toBottomOf="@id/img_custom_location"
         app:layout_constraintLeft_toLeftOf="@id/img_custom_location"
         app:layout_constraintRight_toRightOf="@id/img_custom_location"
@@ -212,7 +212,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_margin_10"
-        android:layout_marginRight="@dimen/dimen_margin_10"
         android:background="@drawable/btn_custom_location"
         android:elevation="@dimen/dimen_margin_78"
         android:outlineAmbientShadowColor="@color/colorGreyDark"

@@ -13,7 +13,7 @@
         android:id="@+id/cl_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_edt_light"
+        android:background="@drawable/round_event_back"
         android:elevation="@dimen/elevation_5"
         android:outlineAmbientShadowColor="@color/colorGreyDark"
         android:outlineSpotShadowColor="@color/colorGreyDarkOpacity_90"
@@ -29,23 +29,27 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:elevation="@dimen/elevation_5"
+
             android:outlineAmbientShadowColor="@color/colorGreyDarkOpacity_90"
             android:outlineSpotShadowColor="@color/colorGreyDarkOpacity_90"
             android:scaleType="centerCrop"
             android:src="@drawable/profile_picture"
             app:layout_constraintBottom_toTopOf="@+id/gl_horizontal"
+
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-
-            app:riv_corner_radius="@dimen/dimen_margin_10" />
+            app:riv_corner_radius_bottom_left="@dimen/dimen_margin_0"
+            app:riv_corner_radius_bottom_right="@dimen/dimen_margin_0"
+            app:riv_corner_radius_top_left="@dimen/round_radius_small"
+            app:riv_corner_radius_top_right="@dimen/round_radius_small" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.7" />
+            app:layout_constraintGuide_percent=".7" />
 
 
         <TextView
@@ -53,11 +57,13 @@
             style="@style/infoItalic_Monsterrat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_margin_10"
+            android:layout_marginLeft="@dimen/dimen_margin_10"
+            android:layout_marginRight="@dimen/dimen_margin_10"
+            android:layout_marginBottom="@dimen/dimen_margin_10"
             android:background="@drawable/round_edt_light"
             android:drawableStart="@drawable/marker_small"
             android:drawablePadding="@dimen/dimen_padding_10"
-            android:elevation="@dimen/elevation_5"
+            android:elevation="@dimen/elevation_25"
             android:outlineAmbientShadowColor="@color/colorGreyDark"
             android:outlineSpotShadowColor="@color/colorGreyDark"
             android:padding="@dimen/dimen_padding_5"
@@ -68,9 +74,9 @@
             android:textColor="@color/colorPurple"
             android:textSize="@dimen/dimen_font_8"
 
-
             app:layout_constraintBottom_toBottomOf="@id/img_feed_image"
-            app:layout_constraintRight_toRightOf="@id/img_feed_image" />
+            app:layout_constraintRight_toRightOf="@id/img_feed_image"
+          />
 
         <TextView
             android:id="@+id/tv_news_feed_title"
@@ -160,13 +166,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/round_edt_light"
-        android:elevation="@dimen/elevation_5"
+        android:elevation="@dimen/elevation_25"
         android:outlineAmbientShadowColor="@color/colorGreyDarkOpacity_50"
         android:outlineSpotShadowColor="@color/colorGreyDarkOpacity_50"
         android:padding="@dimen/dimen_padding_10"
         android:paddingStart="@dimen/dimen_padding_15"
         android:paddingEnd="@dimen/dimen_padding_15"
-        android:translationZ="@dimen/dimen_margin_5"
+
 
         app:layout_constraintBottom_toBottomOf="@id/cl_content"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -178,9 +184,9 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:background="@drawable/arrow_up"
+            android:backgroundTint="@color/colorGrey"
             android:backgroundTintMode="src_atop"
             android:outlineSpotShadowColor="@color/red"
-            android:backgroundTint="@color/colorGrey"
 
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

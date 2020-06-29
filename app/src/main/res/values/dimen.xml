@@ -28,8 +28,10 @@
     <dimen name="dimen_edt_scroll_150">150dp</dimen>
     <!--Round radius-->
     <dimen name="round_radius_medium">32dp</dimen>
+    <dimen name="round_radius_small">12dp</dimen>
     <!-- Elevation -->
     <dimen name="elevation_5">5dp</dimen>
+    <dimen name="elevation_25">25dp</dimen>
 
     <!-- Navigator height -->
     <dimen name="dimen_navigator_height">44dp</dimen>
