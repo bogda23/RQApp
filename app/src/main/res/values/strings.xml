@@ -59,19 +59,36 @@
     <!-- Permissions related -->
     <string name="allow_location_message" formatted="true">Pentru a vă oferi serviciile dorite este necesar accesul  la locația dispozitivului.\n Vă mulțumim pentru înțelegere.</string>
     <string name="grant_permission">Acordă permisiuni</string>
+
+    <!-- Account -->
     <string name="sterge_contul">Șterge contul</string>
     <string name="delogheazate">Delogheză-te</string>
     <string name="anuleaza">Anulează</string>
     <string name="alege_data_na_terii">Alege data nașterii</string>
+
+    <!-- News Feed -->
     <string name="strada_x_numarul_y">Strada x, numarul y</string>
     <string name="news_feed_title">Intersecția Alexandru Lăpușneanu și strada Soveja din Constanța închisă pentru lucrări</string>
     <string name="postat_de">Postat de:</string>
+
+    <!-- Add news feed -->
     <string name="adaug_eveniment">Adaugă eveniment</string>
     <string name="utilizator">Utilizator</string>
     <string name="descrierea_evenimentului">Descrierea Evenimentului</string>
     <string name="titlul_evenimentului">Titlul Evenimentului</string>
     <string name="adaug_un_eveniment">Adaugă un eveniment</string>
     <string name="alege_loca_ia_curent">Alege locația curentă</string>
+    <string name="alege_o_imagine">Alege o imagine</string>
+
+    <!-- MapBox-->
+    <string name="access_token">pk.eyJ1IjoiYm9nZGEyMyIsImEiOiJja2JzZGNwYzAwMGlsMzZucmJjczNiYjM2In0.xiuE0G_GPxL2kpG8_4L3aA</string>
+    <string name="none">none</string>
+    <string name="none_compass">None Compass</string>
+    <string name="none_gps">None Gps</string>
+    <string name="tracking">Tracking</string>
+    <string name="tracking_compass">Tracking Compass</string>
+    <string name="tracking_gps">Tracking Gps</string>
+    <string name="tracking_gps_north">Tracking Gps North</string>
 
 
 </resources>
