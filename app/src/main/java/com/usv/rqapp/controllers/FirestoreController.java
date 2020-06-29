@@ -1,6 +1,7 @@
 package com.usv.rqapp.controllers;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -12,6 +13,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.NavigatorFragment;
 import com.usv.rqapp.models.firestoredb.NewsFeed;
 import com.usv.rqapp.models.firestoredb.User;
@@ -114,6 +116,30 @@ public class FirestoreController {
         }
     }
 
+    /**
+     * @param id_postare
+     * @Description Sterge evenimentul si like-urile acestuia
+     */
+    public void deleteEventOnNewsFeed(String id_postare) {
+
+        //Delete post
+        db.collection(NewsFeed.POSTARI).document(id_postare).delete().addOnCompleteListener(delete -> {
+            if (delete.isSuccessful()) {
+                //Delete likes
+                db.collection(NewsFeed.APRECIERI).document(id_postare).delete().addOnCompleteListener(likeDelete -> {
+                    if (likeDelete.isSuccessful()) {
+                        Log.e(TAG, "deleteEventOnNewsFeed: Stergerea postare si like-uri cu succes");
+                    } else {
+                        Log.e(TAG, "deleteEventOnNewsFeed: Stergerea like-urilor fără succes");
+                    }
+                });
+            } else {
+                Log.e(TAG, "deleteEventOnNewsFeed: Stergerea postarii fără succes!");
+            }
+        });
+
+    }
+
     public String getUserID() {
         return userID;
     }
@@ -141,30 +167,5 @@ public class FirestoreController {
     public void addUpvoteToFirestore() {
         DocumentReference documentReference = db.collection(NewsFeed.POSTARI).document();
     }
-
-    /**
-     * @param user
-     * @return
-     */
-/*    public Boolean checkIfUserExists(User user) {
-        final Boolean[] userExists = {false};
-        db.collection(User.UTILIZATORI)
-                .whereEqualTo(User.ID_UTILIZATOR, user.getId_utilizator())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (Objects.requireNonNull(task.getResult()).getDocuments().size() > 0) {
-                            userExists[0] = true;
-                            Log.e(TAG, String.format("Userul exista---->>>>>>> %s", task.getResult().getDocuments().toString()));
-                        }
-                    }
-                }).addOnFailureListener(e -> {
-            Log.e(TAG, "Userul NU exista ia eroare---->>>>>>> ");
-            e.printStackTrace();
-            userExists[0] = false;
-
-        });
-        return userExists[0];
-    }*/
 
 }
