@@ -18,6 +18,7 @@ import java.util.Date;
 
 public class DateHandler {
 
+    public static int EXPIRATION_TIME = 32;
     private FirestoreController db = new FirestoreController();
 
     public static Date getCurrentDate() {
@@ -75,12 +76,10 @@ public class DateHandler {
                 return "acum " + minutesBetween + " minute";
             } else if (hoursBetween == 1) {
                 return "acum o oră";
-            } else if (hoursBetween >= 24) {
-                return "acum o zi";
-            } else if (hoursBetween >= 48) {
-                return "acum 2 zile";
-            } else{
+            } else if (hoursBetween < 24) {
                 return "acum " + hoursBetween + " ore";
+            } else if (hoursBetween >= 24 && hoursBetween < EXPIRATION_TIME) {
+                return "acum o zi";
             }
 
 
@@ -90,6 +89,31 @@ public class DateHandler {
 
 
         return "eroare";
+    }
+
+    public static int getTimeBetween(Timestamp timestamp) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSX");
+
+        Date postDate = null;
+        Date currentDate = null;
+        int hoursBetween = 0;
+
+        try {
+
+            postDate = formatter.parse(formatter.format(timestamp.toDate()));
+            currentDate = formatter.parse(formatter.format(getCurrentDate()));
+
+            DateTime currentDateTime = new DateTime(postDate);
+            DateTime postDateTime = new DateTime(currentDate);
+
+            hoursBetween = (Hours.hoursBetween(currentDateTime, postDateTime).getHours() /*% 24*/);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return hoursBetween;
     }
 
 
