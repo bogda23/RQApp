@@ -1,6 +1,9 @@
 package com.usv.rqapp.controllers;
 
 import android.content.Context;
+import android.location.Location;
+import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
@@ -15,12 +18,22 @@ import java.util.regex.Pattern;
 
 public class Verifier {
 
+    /**
+     * @param email
+     * @return
+     */
     public static boolean validEmail(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
     }
 
-    public static void showErrorsAtSignInFail(FragmentLoginBinding binding, Context context, Task<AuthResult> task)     {
+
+    /**
+     * @param binding
+     * @param context
+     * @param task
+     */
+    public static void showErrorsAtSignInFail(FragmentLoginBinding binding, Context context, Task<AuthResult> task) {
         final String TAG = "FragmentLoginBinding";
         try {
             String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
@@ -105,4 +118,5 @@ public class Verifier {
             e.printStackTrace();
         }
     }
+
 }

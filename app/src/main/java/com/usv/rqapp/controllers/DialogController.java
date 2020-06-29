@@ -4,6 +4,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.google.firebase.firestore.GeoPoint;
+
+import java.text.MessageFormat;
+
 public class DialogController {
     public static void alertView(Context context, String message, int icon) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
@@ -19,4 +23,10 @@ public class DialogController {
                     }
                 }).show();
     }
+
+    private String formatLocation(GeoPoint location, String format) {
+        return MessageFormat.format(format,
+                location.getLatitude(), location.getLongitude());
+    }
+
 }
