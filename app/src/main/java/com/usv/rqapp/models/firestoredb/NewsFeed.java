@@ -1,5 +1,7 @@
 package com.usv.rqapp.models.firestoredb;
 
+import android.net.Uri;
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.annotations.SerializedName;
@@ -21,7 +23,12 @@ public class NewsFeed {
     private Timestamp ultima_editare;
     private Integer aprecieri;
     private String loc_eveniment;
+    private GeoPoint coords;
     private Boolean isNewPost;
+    private String img_url;
+
+
+    //Image keys
 
     //Query limit
     public static final long QUERY_LIMIT = 16;
@@ -39,6 +46,8 @@ public class NewsFeed {
     public final static String ULTIMA_EDITARE = "ultima_editare";
     public final static String APRECIERI = "aprecieri";
     public final static String LOC_EVENIMENT = "loc_eveniment";
+    public final static String COORDS = "coords";
+    public final static String IMG_URL = "img_url";
 
 
     /**
@@ -46,6 +55,7 @@ public class NewsFeed {
      */
     public NewsFeed() {
     }
+
 
     /**
      * @param titlu_eveniment
@@ -57,7 +67,7 @@ public class NewsFeed {
      * @param loc_eveniment
      * @param isNewPost
      */
-    public NewsFeed(String titlu_eveniment, String descriere, String utilizator, Timestamp moment_postare, Timestamp ultima_editare, Integer aprecieri, String loc_eveniment, Boolean isNewPost) {
+    public NewsFeed(String titlu_eveniment, String descriere, String utilizator, Timestamp moment_postare, Timestamp ultima_editare, Integer aprecieri, String loc_eveniment, GeoPoint coords, Boolean isNewPost) {
         this.titlu_eveniment = titlu_eveniment;
         this.descriere = descriere;
         this.utilizator = utilizator;
@@ -66,6 +76,7 @@ public class NewsFeed {
         this.aprecieri = aprecieri;
         this.loc_eveniment = loc_eveniment;
         this.isNewPost = isNewPost;
+        this.coords = coords;
         this.id_postare = String.valueOf(getUtilizator() + getMoment_postare().toDate());
     }
 
@@ -87,6 +98,10 @@ public class NewsFeed {
             map.put(ULTIMA_EDITARE, newsFeed.getUltima_editare());
             map.put(APRECIERI, newsFeed.getAprecieri());
             map.put(LOC_EVENIMENT, newsFeed.getLoc_eveniment());
+            map.put(COORDS, newsFeed.getCoords());
+            if (newsFeed.getImg_url() != null) {
+                map.put(IMG_URL, newsFeed.getImg_url());
+            }
         }
         return map;
     }
@@ -98,6 +113,22 @@ public class NewsFeed {
 
     public void setNewsFeed(Map<String, Object> newsFeed) {
         this.newsFeed = newsFeed;
+    }
+
+    public String getImg_url() {
+        return img_url;
+    }
+
+    public void setImg_url(String img_url) {
+        this.img_url = img_url;
+    }
+
+    public GeoPoint getCoords() {
+        return coords;
+    }
+
+    public void setCoords(GeoPoint coords) {
+        this.coords = coords;
     }
 
     public String getId_postare() {
