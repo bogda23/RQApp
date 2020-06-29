@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cl_mapbox_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/map_box"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/map_holder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/round_transparent"
+        android:elevation="@dimen/dimen_margin_39"
+        android:orientation="horizontal"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="@id/map_box"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/down_opacity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/round_transparent"
+        android:orientation="horizontal"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map_holder" />
+
+    <!-- Old search bar -->
+    <EditText
+        android:id="@+id/search_destination"
+        style="@style/edtStyle_Light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:drawableStart="@drawable/search_location"
+        android:elevation="@dimen/dimen_margin_39"
+        android:hint="@string/destinatie"
+        android:inputType="textEmailAddress"
+        android:textIsSelectable="true"
+        android:visibility="gone"
+
+        app:commitIcon="@drawable/search_location"
+        app:goIcon="@drawable/search_location"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/down_opacity"
+        app:layout_constraintRight_toRightOf="@+id/down_opacity"
+
+        app:layout_constraintTop_toBottomOf="@id/map_box"
+        app:queryHint="@string/destinatie"
+        app:searchHintIcon="@drawable/search_location"
+        app:searchIcon="@drawable/search_location" />
+
+    <!-- New material search bar -->
+    <com.mancj.materialsearchbar.MaterialSearchBar
+        android:id="@+id/material_search_bar"
+        style="@style/searchStyle_Light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_margin_20"
+        android:layout_marginTop="@dimen/dimen_margin_39"
+        android:layout_marginEnd="@dimen/dimen_margin_20"
+        android:outlineAmbientShadowColor="@color/colorPurple"
+        android:translationZ="@dimen/dimen_margin_78"
+        app:layout_constraintLeft_toLeftOf="@+id/map_box"
+        app:layout_constraintRight_toRightOf="@id/map_box"
+        app:layout_constraintTop_toTopOf="@+id/map_box"
+        app:mt_backIconDrawable="@drawable/btn_back"
+        app:mt_backIconUseTint="false"
+        app:mt_clearIconTint="@color/colorRed"
+        app:mt_clearIconUseTint="true"
+        app:mt_hint="@string/introduceti_locatie"
+        app:mt_hintColor="@color/colorGreyDarkOpacity_50"
+        app:mt_maxSuggestionsCount="10"
+        app:mt_menuIconDrawable="@drawable/search_location"
+        app:mt_navIconEnabled="true"
+        app:mt_navIconTint="@color/colorRed"
+        app:mt_placeholder="@string/destinatie"
+        app:mt_placeholderColor="@color/colorGreyDarkOpacity_50"
+
+        app:mt_roundedSearchBarEnabled="true"
+        app:mt_searchIconDrawable="@drawable/search_location"
+        app:mt_searchIconTint="@color/colorRed"
+        app:mt_speechMode="false"
+        app:mt_textColor="@color/colorGreyDark" />
+
+    <ImageView
+
+        android:id="@+id/img_report_shadow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shadow_down"
+        android:elevation="@dimen/dimen_margin_39"
+        android:hint="@string/destinatie"
+        android:outlineAmbientShadowColor="@color/colorRed"
+        android:outlineProvider="bounds"
+        android:padding="@dimen/dimen_margin_20"
+        android:paddingBottom="@dimen/dimen_padding_20"
+
+        app:layout_constraintBottom_toBottomOf="@id/img_report"
+        app:layout_constraintLeft_toLeftOf="@id/img_report"
+        app:layout_constraintRight_toRightOf="@id/img_report"
+        app:layout_constraintTop_toTopOf="@id/img_report" />
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/dimen_margin_5"
+        android:layoutMode="opticalBounds"
+        android:translationZ="@dimen/dimen_margin_78"
+        app:fab_addButtonColorNormal="@color/colorWhite"
+        app:fab_addButtonColorPressed="@color/colorGreyLight"
+        app:fab_addButtonPlusIconColor="@color/colorRed"
+        app:fab_labelStyle="@style/btnStyle"
+
+
+        app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
+        app:layout_constraintRight_toRightOf="parent"
+        >
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_car_crash"
+            style="@style/btnFloatStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/car_crash" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_cloud_rain"
+            style="@style/btnFloatStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/cloud_rain" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_heavy_snow"
+            style="@style/btnFloatStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/heavy_snow" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add_news_feed_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_margin_10"
+            android:src="@drawable/add_news_feed"
+            app:fab_title="Adaugă eveniment"
+
+            />
+
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+    <ImageView
+        android:id="@+id/img_report"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dimen_margin_10"
+        android:background="@drawable/report_light"
+        android:elevation="@dimen/dimen_margin_78"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toTopOf="@+id/img_location_shadow"
+        app:layout_constraintRight_toRightOf="@id/map_box"
+        app:layout_constraintStart_toStartOf="@+id/img_location_shadow" />
+
+    <ImageView
+
+        android:id="@+id/img_location_shadow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/shadow_down"
+        android:elevation="@dimen/dimen_margin_39"
+        android:hint="@string/destinatie"
+        android:outlineAmbientShadowColor="@color/colorGreyDark"
+        android:outlineProvider="background"
+        android:outlineSpotShadowColor="@color/colorGreyDark"
+        android:padding="@dimen/dimen_margin_20"
+        app:layout_constraintBottom_toBottomOf="@id/img_custom_location"
+        app:layout_constraintLeft_toLeftOf="@id/img_custom_location"
+        app:layout_constraintRight_toRightOf="@id/img_custom_location"
+        app:layout_constraintTop_toTopOf="@id/img_custom_location" />
+
+    <ImageView
+        android:id="@+id/img_custom_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:background="@drawable/btn_custom_location"
+        android:elevation="@dimen/dimen_margin_78"
+        android:outlineAmbientShadowColor="@color/colorGreyDark"
+        android:outlineProvider="background"
+        android:outlineSpotShadowColor="@color/colorGreyDark"
+        android:visibility="visible"
+
+        app:layout_constraintBottom_toBottomOf="@id/map_box"
+        app:layout_constraintEnd_toEndOf="@id/map_box" />
+</androidx.constraintlayout.widget.ConstraintLayout>
