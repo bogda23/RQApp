@@ -44,6 +44,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -66,6 +67,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.GeoPoint;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.usv.rqapp.CONSTANTS;
@@ -87,6 +89,9 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "MapsFragment";
+    private static final String ARG_LOCATION_TITLE = "argLocationTitle";
+    private static final String ARG_GEOPOINT = "argGeoPoint";
+
     private final int REQUEST_CODE_START_ACTIVITY = 51;
     private final float DEFAULT_ZOOM = 15;
 
@@ -110,6 +115,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private FragmentManager manager;
 
 
+    private String eventTitleReceivedFromFeed;
+    private LatLng eventGeoPointReceivedFromFeed;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -117,6 +126,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         rootView = binding.getRoot();
         binding.map.setClipToOutline(true);
 
+        getLocationGeoPointFromNewsFeed();
         initVibrationService();
 
         initFirebaseAuth();
@@ -127,11 +137,29 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         addNewsFeedEventsToFirestore();
 
+
         return rootView;
     }
 
+    private void getLocationGeoPointFromNewsFeed() {
+        if (getArguments() != null) {
+            eventTitleReceivedFromFeed = getArguments().getString(ARG_LOCATION_TITLE);
+            double[] arr = getArguments().getDoubleArray(ARG_GEOPOINT);
+            eventGeoPointReceivedFromFeed = new LatLng(arr[0], arr[1]);
+        }
+    }
+
+
+    private void putMarkerOnEvent() {
+        if (map != null && eventGeoPointReceivedFromFeed != null && eventTitleReceivedFromFeed != null) {
+            map.addMarker(new MarkerOptions().position(eventGeoPointReceivedFromFeed).title(eventTitleReceivedFromFeed).snippet(eventTitleReceivedFromFeed));
+
+            moveMapCameraToLatLng(eventGeoPointReceivedFromFeed, false);
+        }
+    }
+
     private void addNewsFeedEventsToFirestore() {
-   
+
         binding.btnAddNewsFeedPost.setOnClickListener(click -> {
             FragmentOpener.loadNextFragmentWithStack(NewsFeedEventFragment.newInstance(), manager);
         });
@@ -313,7 +341,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
                     //opening or closing a navigation drawer
                 } else if (buttonCode == MaterialSearchBar.BUTTON_BACK) {
-                    binding.materialSearchBar.disableSearch();
+                    // binding.materialSearchBar.disableSearch();
                     binding.materialSearchBar.clearSuggestions();
                 }
             }
@@ -396,6 +424,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
+     * @param titleEvent
+     * @param geoPoint
+     */
+    public static MapsFragment newInstanceWithGeoPoint(String titleEvent, GeoPoint geoPoint) {
+        MapsFragment fragment = new MapsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_LOCATION_TITLE, titleEvent);
+        args.putDoubleArray(ARG_GEOPOINT, new double[]{geoPoint.getLatitude(), geoPoint.getLongitude()});
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    /**
      *
      */
     @Override
@@ -464,6 +506,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        putMarkerOnEvent();
 
      /*   LatLng sydney = new LatLng(-34, 151);
         map.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
@@ -578,7 +621,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             public void onComplete(@NonNull Task<Location> task) {
                 if (task.isSuccessful()) {
                     mLastKnownLocation = task.getResult();
-                    if (mLastKnownLocation != null) {
+                    if (mLastKnownLocation != null && eventGeoPointReceivedFromFeed == null) {
                         moveMapCameraToLocation(mLastKnownLocation, true);
                     } else {
                         LocationRequest locationRequest = LocationRequest.create();
@@ -593,7 +636,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                                     return;
                                 }
                                 mLastKnownLocation = locationResult.getLastLocation();
-                                moveMapCameraToLocation(mLastKnownLocation, true);
+                                if (eventGeoPointReceivedFromFeed == null) {
+                                    moveMapCameraToLocation(mLastKnownLocation, true);
+                                }
                                 mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
                             }
                         };
@@ -613,6 +658,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
      */
     private void moveMapCameraToLocation(Location mLastKnownLocation, boolean ripple) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM);
+        map.animateCamera(cameraUpdate);
+        rippleEfectOnMap(mLastKnownLocation, ripple, 1);
+
+    }
+
+    private void moveMapCameraToLatLng(LatLng latLng, boolean ripple) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((latLng), DEFAULT_ZOOM);
         map.animateCamera(cameraUpdate);
         rippleEfectOnMap(mLastKnownLocation, ripple, 1);
 

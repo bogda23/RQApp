@@ -1,12 +1,17 @@
 package com.usv.rqapp.fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,25 +22,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.mapbox.geocoder.GeocoderCriteria;
 import com.mapbox.geocoder.MapboxGeocoder;
+import com.squareup.picasso.Picasso;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.databinding.FragmentNewsFeedBinding;
+import com.usv.rqapp.interfaces.NewsFeedFragmentListener;
+
 import com.usv.rqapp.models.firestoredb.NewsFeed;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.usv.rqapp.CONSTANTS.MAPBOX_ACCESS_TOKEN;
 
 public class NewsFeedFragment extends Fragment {
 
     private String TAG = "NewsFeedFragment";
+    private NewsFeedFragmentListener listener;
 
     private View feedView;
     private FragmentNewsFeedBinding binding;
@@ -45,6 +56,22 @@ public class NewsFeedFragment extends Fragment {
     private FragmentManager manager;
     private MapboxGeocoder client;
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof NewsFeedFragmentListener) {
+            listener = (NewsFeedFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement " + NewsFeedFragmentListener.TAG);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
 
     @Nullable
     @Override
@@ -90,7 +117,7 @@ public class NewsFeedFragment extends Fragment {
      *
      */
     private void loadNewsFromFirestore() {
-        Query query = db.getDb().collection(NewsFeed.POSTARI).orderBy(NewsFeed.APRECIERI,Query.Direction.DESCENDING).limit(NewsFeed.QUERY_LIMIT);
+        Query query = db.getDb().collection(NewsFeed.POSTARI).orderBy(NewsFeed.MOMENT_POSTARE, Query.Direction.DESCENDING)/*.limit(NewsFeed.QUERY_LIMIT)*/;
 
         FirestoreRecyclerOptions<NewsFeed> options = new FirestoreRecyclerOptions.Builder<NewsFeed>()
                 .setQuery(query, NewsFeed.class)
@@ -106,16 +133,23 @@ public class NewsFeedFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull NewsFeedViewHoldeer holder, int position, @NonNull NewsFeed model) {
 
+                deleteElementIfToOld(model.getMoment_postare(), model.getId_postare());
+
+                holder.newsTime.setText(DateHandler.getTimeBetweenNowAndThen(model.getMoment_postare()));
                 holder.newsTitle.setText(String.valueOf(model.getTitlu_eveniment()));
                 holder.newsDescription.setText(model.getDescriere());
                 holder.newsUser.setText(model.getUtilizator());
-                holder.newsTime.setText(DateHandler.getTimeBetweenNowAndThen(model.getMoment_postare()));
                 holder.newsVoteCount.setText(String.valueOf(model.getAprecieri()));
                 holder.newsEventLocation.setText(model.getLoc_eveniment());
+                if (model.getImg_url() != null) {
+                    Picasso.get().load(Uri.parse(model.getImg_url())).into(holder.newsFeedEventImage);
+                }
 
                 initialValueOfPressed(holder, model);
                 handleUpVoteOnNewsFeed(holder, model);
                 handleDownVoteOnNewsFeed(holder, model);
+                handleShareContentButton(holder.newsFeedShare, model);
+                handleGetEventLocation(holder.newsEventLocation, model.getTitlu_eveniment(), model.getCoords());
 
             }
         };
@@ -125,23 +159,66 @@ public class NewsFeedFragment extends Fragment {
         binding.rvNewsFeedList.setAdapter(adapter);
     }
 
+    private void handleGetEventLocation(TextView newsEventLocation, String titlu_eveniment, GeoPoint coords) {
+        newsEventLocation.setOnClickListener(click -> {
+            listener.onLocationPressed(titlu_eveniment, coords);
+        });
+    }
+
+    private void handleShareContentButton(ImageView newsFeedShare, NewsFeed model) {
+        newsFeedShare.setOnClickListener(click -> {
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setType("text/plain");
+
+            String shareSubject = model.getTitlu_eveniment();
+            String shareBody = "Titlul: " + shareSubject + "\t\nDescriere: " + model.getDescriere() + "\t\nLoc eveniment: " + model.getLoc_eveniment() + "\t\nLocație: lat[" + model.getCoords().getLatitude() + "], lng[" + model.getCoords().getLongitude() + "]";
+
+
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, shareSubject);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+
+            startActivity(Intent.createChooser(sendIntent, "Share using"));
+
+        });
+    }
+
+    private void deleteElementIfToOld(Timestamp expirationTime, String id_postare) {
+        if (DateHandler.getTimeBetween(expirationTime) >= DateHandler.EXPIRATION_TIME) {
+            db.deleteEventOnNewsFeed(id_postare);
+        }
+    }
+
+    /**
+     * @param holder
+     * @param model
+     * @Description Checks for initial value on for upVote or downVote
+     */
     private void initialValueOfPressed(NewsFeedViewHoldeer holder, NewsFeed model) {
-        db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).get().addOnCompleteListener(task -> {
+        db.getDb().collection(NewsFeed.APRECIERI).document(model.getId_postare()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(db.getFirebaseUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 // Am gasit documetul
                 DocumentSnapshot doc = task.getResult();
-                if (doc.get(NewsFeed.APRECIATION_VAL) != null) {
-                    if (doc.getLong(NewsFeed.APRECIATION_VAL) == 1) {
-                        holder.newsFeedUpVote.setImageResource(R.drawable.arrow_up);
-                        holder.newsFeedDownVote.setImageResource(R.color.transparent);
-                    } else if (doc.getLong(NewsFeed.APRECIATION_VAL) == -1) {
-                        holder.newsFeedDownVote.setImageResource(R.drawable.arrow_up);
-                        holder.newsFeedUpVote.setImageResource(R.color.transparent);
+                if (doc.getLong(NewsFeed.APRECIATION_VAL) != null) {
+                    switch (doc.getLong(NewsFeed.APRECIATION_VAL).intValue()) {
+                        case 1:
+                            holder.newsFeedUpVote.setImageResource(R.drawable.arrow_up);
+                            holder.newsFeedDownVote.setImageResource(R.color.transparent);
+                            break;
+                        case -1:
+                            holder.newsFeedDownVote.setImageResource(R.drawable.arrow_up);
+                            holder.newsFeedUpVote.setImageResource(R.color.transparent);
+                            break;
+                        default:
+                            holder.newsFeedUpVote.setImageResource(R.color.transparent);
+                            holder.newsFeedDownVote.setImageResource(R.color.transparent);
+                            break;
                     }
+
                 }
 
-            } else if (task.getResult() == null) {
+            } else if (task == null) {
                 //Nu am gasit documentul
+                Toast.makeText(getContext(), "Offline", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Nu am gasit documentul");
             } else {
                 // Avem o oxceptie
@@ -152,7 +229,7 @@ public class NewsFeedFragment extends Fragment {
 
     private void handleDownVoteOnNewsFeed(NewsFeedViewHoldeer holder, NewsFeed model) {
         holder.newsFeedDownVote.setOnClickListener(click -> {
-            db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).get().addOnCompleteListener(task -> {
+            db.getDb().collection(NewsFeed.APRECIERI).document(model.getId_postare()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(db.getFirebaseUser().getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Am gasit documetul
                     DocumentSnapshot doc = task.getResult();
@@ -172,7 +249,7 @@ public class NewsFeedFragment extends Fragment {
                                 mapTotalLikes.put(NewsFeed.APRECIERI, currentNrLikes.intValue() - 1);
 
 
-                                db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).update(map).addOnCompleteListener(task2 -> {
+                                db.getDb().collection(NewsFeed.APRECIERI).document(model.getId_postare()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(db.getFirebaseUser().getUid()).set(map).addOnCompleteListener(task2 -> {
                                     if (task2.isSuccessful()) {
                                         db.getDb().collection(NewsFeed.POSTARI).document(model.getId_postare()).update(mapTotalLikes).addOnCompleteListener(task3 -> {
                                             if (task3.isSuccessful()) {
@@ -193,8 +270,9 @@ public class NewsFeedFragment extends Fragment {
                     });
 
 
-                } else if (task.getResult() == null) {
+                } else if (task == null) {
                     //Nu am gasit documentul
+                    Toast.makeText(getContext(), "Conectează-te la internet", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Nu am gasit documentul");
                 } else {
                     // Avem o oxceptie
@@ -208,7 +286,7 @@ public class NewsFeedFragment extends Fragment {
 
     private void handleUpVoteOnNewsFeed(NewsFeedViewHoldeer holdeer, NewsFeed model) {
         holdeer.newsFeedUpVote.setOnClickListener(click -> {
-            db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).get().addOnCompleteListener(task -> {
+            db.getDb().collection(NewsFeed.APRECIERI).document(model.getId_postare()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(db.getFirebaseUser().getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Am gasit documetul
                     DocumentSnapshot doc = task.getResult();
@@ -220,7 +298,7 @@ public class NewsFeedFragment extends Fragment {
                             currentNrLikes = Math.toIntExact(task1.getResult().getLong(NewsFeed.APRECIERI));
 
 
-                            if (doc.get(NewsFeed.APRECIATION_VAL) == null  || doc.getLong(NewsFeed.APRECIATION_VAL) == 0 || doc.getLong(NewsFeed.APRECIATION_VAL) == -1) {
+                            if (doc.get(NewsFeed.APRECIATION_VAL) == null || doc.getLong(NewsFeed.APRECIATION_VAL) == 0 || doc.getLong(NewsFeed.APRECIATION_VAL) == -1) {
                                 Map<String, Object> mapForUser = new HashMap<>();
                                 mapForUser.put(NewsFeed.APRECIATION_VAL, 1);
 
@@ -229,7 +307,7 @@ public class NewsFeedFragment extends Fragment {
                                 mapTotalLikes.put(NewsFeed.APRECIERI, currentNrLikes.intValue() + 1);
 
 
-                                db.getDb().collection(NewsFeed.APRECIERI).document(db.getFirebaseUser().getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(model.getId_postare()).update(mapForUser).addOnCompleteListener(task2 -> {
+                                db.getDb().collection(NewsFeed.APRECIERI).document(model.getId_postare()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(db.getFirebaseUser().getUid()).set(mapForUser).addOnCompleteListener(task2 -> {
                                     if (task2.isSuccessful()) {
                                         db.getDb().collection(NewsFeed.POSTARI).document(model.getId_postare()).update(mapTotalLikes).addOnCompleteListener(task3 -> {
                                             if (task3.isSuccessful()) {
@@ -242,7 +320,7 @@ public class NewsFeedFragment extends Fragment {
                                             }
                                         });
                                     } else {
-                                        Log.e(TAG, task1.getException().getMessage());
+                                        Log.e(TAG, task2.getException().getMessage());
                                     }
                                 });
 
@@ -253,8 +331,9 @@ public class NewsFeedFragment extends Fragment {
                     });
 
 
-                } else if (task.getResult() == null) {
+                } else if (task == null) {
                     //Nu am gasit documentul
+                    Toast.makeText(getContext(), "Conectează-te la internet", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Nu am gasit documentul");
                 } else {
                     // Avem o oxceptie
@@ -289,6 +368,8 @@ public class NewsFeedFragment extends Fragment {
         private TextView newsEventLocation;
         private ImageView newsFeedUpVote;
         private ImageView newsFeedDownVote;
+        private ImageView newsFeedShare;
+        private RoundedImageView newsFeedEventImage;
 
 
         public NewsFeedViewHoldeer(@NonNull View itemView) {
@@ -301,7 +382,9 @@ public class NewsFeedFragment extends Fragment {
             newsEventLocation = itemView.findViewById(R.id.tv_event_location);
             newsFeedUpVote = itemView.findViewById(R.id.img_up_vote);
             newsFeedDownVote = itemView.findViewById(R.id.img_down_vote);
-
+            newsFeedEventImage = itemView.findViewById(R.id.img_feed_image);
+            newsFeedShare = itemView.findViewById(R.id.img_share);
         }
     }
+
 }

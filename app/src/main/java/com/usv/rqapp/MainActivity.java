@@ -13,13 +13,18 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.GeoPoint;
 import com.usv.rqapp.databinding.ActivityMainBinding;
 import com.usv.rqapp.fragments.LoginFragment;
+import com.usv.rqapp.fragments.MapsFragment;
 import com.usv.rqapp.fragments.WelcomeFragment;
 import com.usv.rqapp.interfaces.DataInterface;
+import com.usv.rqapp.interfaces.NewsFeedFragmentListener;
 import com.usv.rqapp.network.MyReceiver;
 
-public class MainActivity extends AppCompatActivity implements DataInterface {
+public class MainActivity extends AppCompatActivity implements DataInterface, NewsFeedFragmentListener {
+
+
     private BroadcastReceiver MyReceiver = null;
     private String networkStatus;
     private ActivityMainBinding binding;
@@ -58,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements DataInterface {
 
     private void manageFragments() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WelcomeFragment()).commit();
-       //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new LoginFragment()).commit();
+        //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new LoginFragment()).commit();
 
     }
 
@@ -79,5 +84,11 @@ public class MainActivity extends AppCompatActivity implements DataInterface {
     }
 
 
+    @Override
+    public void onLocationPressed(String titleEvent, GeoPoint geoPoint) {
+        if (titleEvent != null && geoPoint != null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, NavigatorFragment.newInstanceWithGeoPoint(titleEvent, geoPoint)).commit();
+        }
+    }
 }
 
