@@ -64,6 +64,9 @@ public final class CONSTANTS {
 
 
     //News Feed event
-    public static final CharSequence INVALID_EVENT_TITLE = "Introduceți un titlu";
-    public static final CharSequence INVALID_EVENT_DESCRIPTION ="Introduceți o descriere" ;
+    public static final String INVALID_EVENT_TITLE = "Introduceți un titlu";
+    public static final String INVALID_EVENT_DESCRIPTION ="Introduceți o descriere" ;
+    public static final String INEXISTENT_LOCATION = "Locație inexistentă/invalidă";
+    public static final String ADDING_FEED_EVENT = "Se adaugă evenimentul..";
+    public static final String CAN_T_SAVE_DATA = "Datele nu au putut fi salvate";
 }
