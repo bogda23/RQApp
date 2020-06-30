@@ -26,6 +26,8 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.mapbox.geocoder.GeocoderCriteria;
 import com.mapbox.geocoder.MapboxGeocoder;
@@ -50,6 +52,7 @@ public class NewsFeedFragment extends Fragment {
 
     private View feedView;
     private FragmentNewsFeedBinding binding;
+
 
     private FirestoreController db;
     private FirestoreRecyclerAdapter adapter;
@@ -133,23 +136,27 @@ public class NewsFeedFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull NewsFeedViewHoldeer holder, int position, @NonNull NewsFeed model) {
 
-                deleteElementIfToOld(model.getMoment_postare(), model.getId_postare());
 
-                holder.newsTime.setText(DateHandler.getTimeBetweenNowAndThen(model.getMoment_postare()));
-                holder.newsTitle.setText(String.valueOf(model.getTitlu_eveniment()));
-                holder.newsDescription.setText(model.getDescriere());
-                holder.newsUser.setText(model.getUtilizator());
-                holder.newsVoteCount.setText(String.valueOf(model.getAprecieri()));
-                holder.newsEventLocation.setText(model.getLoc_eveniment());
-                if (model.getImg_url() != null) {
-                    Picasso.get().load(Uri.parse(model.getImg_url())).into(holder.newsFeedEventImage);
+                if (DateHandler.getTimeBetween(model.getMoment_postare()) >= DateHandler.EXPIRATION_TIME) {
+                    db.deleteEventOnNewsFeed(model.getId_postare(), model.getImg_url());
+                } else {
+                    holder.newsTime.setText(DateHandler.getTimeBetweenNowAndThen(model.getMoment_postare()));
+                    holder.newsTitle.setText(String.valueOf(model.getTitlu_eveniment()));
+                    holder.newsDescription.setText(model.getDescriere());
+                    holder.newsUser.setText(model.getUtilizator());
+                    holder.newsVoteCount.setText(String.valueOf(model.getAprecieri()));
+                    holder.newsEventLocation.setText(model.getLoc_eveniment());
+                    if (model.getImg_url() != null) {
+                        Picasso.get().load(Uri.parse(model.getImg_url())).into(holder.newsFeedEventImage);
+                    }
+
+                    initialValueOfPressed(holder, model);
+                    handleUpVoteOnNewsFeed(holder, model);
+                    handleDownVoteOnNewsFeed(holder, model);
+                    handleShareContentButton(holder.newsFeedShare, model);
+                    handleGetEventLocation(holder.newsEventLocation, model.getTitlu_eveniment(), model.getCoords());
                 }
 
-                initialValueOfPressed(holder, model);
-                handleUpVoteOnNewsFeed(holder, model);
-                handleDownVoteOnNewsFeed(holder, model);
-                handleShareContentButton(holder.newsFeedShare, model);
-                handleGetEventLocation(holder.newsEventLocation, model.getTitlu_eveniment(), model.getCoords());
 
             }
         };
@@ -182,11 +189,6 @@ public class NewsFeedFragment extends Fragment {
         });
     }
 
-    private void deleteElementIfToOld(Timestamp expirationTime, String id_postare) {
-        if (DateHandler.getTimeBetween(expirationTime) >= DateHandler.EXPIRATION_TIME) {
-            db.deleteEventOnNewsFeed(id_postare);
-        }
-    }
 
     /**
      * @param holder

@@ -422,6 +422,7 @@ public class NewsFeedEventFragment extends Fragment {
                 binding.materialSearchBar.setPlaceHolder(CONSTANTS.INEXISTENT_LOCATION);
                 binding.materialSearchBar.setPlaceHolderColor(getResources().getColor(R.color.colorRedOpacity_50));
             } else {
+                binding.btnAddEvent.setClickable(false);
                 progressDialog.setMessage(CONSTANTS.ADDING_FEED_EVENT);
                 progressDialog.show();
                 Log.e(TAG, currentUser);
