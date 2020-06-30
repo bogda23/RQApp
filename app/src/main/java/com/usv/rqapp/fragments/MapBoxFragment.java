@@ -8,10 +8,14 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +23,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -33,14 +39,27 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.zxing.client.result.GeoParsedResult;
+import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -54,10 +73,13 @@ import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.OnCameraTrackingChangedListener;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
-import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
@@ -68,11 +90,15 @@ import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.databinding.FragmentMapboxBinding;
+import com.usv.rqapp.models.rqdb.VibrationIDLocation;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -80,7 +106,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MapBoxFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, OnCameraTrackingChangedListener, MapboxMap.OnMapClickListener {
+public class MapBoxFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, OnCameraTrackingChangedListener {
     private static final String TAG = "MapBoxFragment";
     private static final String ARG_LOCATION_TITLE = "argLocationTitle";
     private static final String ARG_GEOPOINT = "argGeoPoint";
@@ -88,6 +114,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     private static final String SAVED_STATE_CAMERA = "saved_state_camera";
     private static final String SAVED_STATE_RENDER = "saved_state_render";
     private static final String SAVED_STATE_LOCATION = "saved_state_location";
+    private static final int REQUEST_CODE_AUTOCOMPLETE = 10;
 
     @CameraMode.Mode
     private int cameraMode = CameraMode.TRACKING;
@@ -108,7 +135,9 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
     private PermissionsManager permissionsManager;
-    private MapView mapView;
+    private LocationEngine locationEngine;
+    private LocationLayerPlugin locationLayerPlugin;
+
 
     private Location lastLocation;
     private LocationCallback locationCallback;
@@ -120,6 +149,8 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     private String eventTitleReceivedFromFeed;
     private LatLng eventGeoPointReceivedFromFeed;
+
+    private PlaceAutocompleteFragment autocompleteFragment;
 
 
     @Nullable
@@ -135,13 +166,238 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         initMapBox(savedInstanceState);
         restoreLastKnownDataForMapBox(savedInstanceState);
 
+        initPlacesAPi();
+        loadPlaces(savedInstanceState);
+        executeSearchComponents();
+
         addNewsFeedEventsToFirestore();
 
         return mapBoxView;
     }
 
 
+    @Override
+    public void onMapReady(@NonNull MapboxMap mapboxMap) {
+        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getActivity().getApplicationContext(), CONSTANTS.PERMISSION_DENIED, Toast.LENGTH_LONG).show();
+            return;
+        }
+        map = mapboxMap;
+        map.setStyle(new Style.Builder().fromUri("mapbox://styles/bogda23/ckc0k7qup0j1j1js7ach9jiem"));
+
+        createDeviceGpsLocationRequest();
+        handleCustomTrackLocationButton();
+        putMarkerOnEvent();
+        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                enableLocationComponent(style);
+
+                addDestinationIconSymbolLayer(style);
+
+
+                binding.btnCarCrash.setOnClickListener(click -> {
+                    createRouteBetweenMeAndDestionatio(new LatLng(48.186560, 26.592840));
+                    if (currentRoute != null) {
+                        boolean simulateRoute = true;
+                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                .directionsRoute(currentRoute)
+                                .shouldSimulateRoute(simulateRoute)
+                                .build();
+                        // Call this method with Context from within an Activity
+                        NavigationLauncher.startNavigation(getActivity(), options);
+                    }
+
+
+                });
+            }
+        });
+    }
+
     /***-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    private void initPlacesAPi() {
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        Places.initialize(getActivity(), getResources().getString(R.string.google_api_key));
+        placesClient = Places.createClient(getActivity().getApplicationContext());
+        token = AutocompleteSessionToken.newInstance();
+
+    }
+
+    private void executeSearchComponents() {
+        handleSearchAction();
+        handleTextChangedOnSearch();
+        getSuggestionsOnSearch();
+    }
+
+    private void handleSearchAction() {
+        binding.materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+            @Override
+            public void onSearchStateChanged(boolean enabled) {
+
+            }
+
+            @Override
+            public void onSearchConfirmed(CharSequence text) {
+                getActivity().startSearch(text.toString(), true, null, true);
+            }
+
+            @Override
+            public void onButtonClicked(int buttonCode) {
+                if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
+                    //opening or closing a navigation drawer
+                } else if (buttonCode == MaterialSearchBar.BUTTON_BACK) {
+                    // binding.materialSearchBar.disableSearch();
+                    binding.materialSearchBar.clearSuggestions();
+                }
+            }
+        });
+    }
+
+    private void handleTextChangedOnSearch() {
+        binding.materialSearchBar.addTextChangeListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                FindAutocompletePredictionsRequest predictionsRequest = FindAutocompletePredictionsRequest.builder()
+                        .setTypeFilter(TypeFilter.ADDRESS)
+                        .setSessionToken(token)
+                        .setQuery(s.toString())
+                        .build();
+
+                placesClient.findAutocompletePredictions(predictionsRequest).addOnCompleteListener(new OnCompleteListener<FindAutocompletePredictionsResponse>() {
+                    @Override
+                    public void onComplete(@NonNull Task<FindAutocompletePredictionsResponse> task) {
+                        if (task.isSuccessful()) {
+                            FindAutocompletePredictionsResponse predictionsResponse = task.getResult();
+                            if (predictionsResponse != null) {
+                                predictionList = predictionsResponse.getAutocompletePredictions();
+                                List<String> suggestionsList = new ArrayList<>();
+                                for (int i = 0; i < predictionList.size(); i++) {
+                                    AutocompletePrediction prediction = predictionList.get(i);
+                                    suggestionsList.add(prediction.getFullText(null).toString());
+                                }
+                                binding.materialSearchBar.updateLastSuggestions(suggestionsList);
+                                if (!binding.materialSearchBar.isSuggestionsVisible()) {
+                                    binding.materialSearchBar.showSuggestionsList();
+                                }
+                            }
+                        } else {
+                            Log.e("mytag", "prediction fetching task unsuccessful" + task.getException().getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void getSuggestionsOnSearch() {
+        binding.materialSearchBar.setSuggestionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
+            @Override
+            public void OnItemClickListener(int position, View v) {
+                if (position >= predictionList.size()) {
+                    return;
+                }
+                AutocompletePrediction selectedPrediction = predictionList.get(position);
+                String suggestion = binding.materialSearchBar.getLastSuggestions().get(position).toString();
+                binding.materialSearchBar.setText(suggestion);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.materialSearchBar.clearSuggestions();
+                        binding.materialSearchBar.disableSearch();
+                    }
+                }, 1000);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+                if (imm != null)
+                    imm.hideSoftInputFromWindow(binding.materialSearchBar.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                final String placeId = selectedPrediction.getPlaceId();
+                List<Place.Field> placeFields = Arrays.asList(Place.Field.LAT_LNG);
+
+                FetchPlaceRequest fetchPlaceRequest = FetchPlaceRequest.builder(placeId, placeFields).build();
+                placesClient.fetchPlace(fetchPlaceRequest).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
+                    @Override
+                    public void onSuccess(FetchPlaceResponse fetchPlaceResponse) {
+                        Place place = fetchPlaceResponse.getPlace();
+                        Log.e("mytag", "Place found: " + place.getName());
+                        LatLng latLngOfPlace = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
+                        if (latLngOfPlace != null) {
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLngOfPlace, DEFAULT_ZOOM);
+                            map.animateCamera(cameraUpdate);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (e instanceof ApiException) {
+                            ApiException apiException = (ApiException) e;
+                            apiException.printStackTrace();
+                            int statusCode = apiException.getStatusCode();
+                            Log.e("mytag", "place not found: " + e.getMessage());
+                            Log.e("mytag", "status code: " + statusCode);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void OnItemDeleteListener(int position, View v) {
+
+            }
+        });
+    }
+
+    private void createRouteBetweenMeAndDestionatio(LatLng destination) {
+
+        Point destinationPoint = Point.fromLngLat(destination.getLongitude(), destination.getLatitude());
+        Point originPoint = Point.fromLngLat(lastLocation.getLongitude(),
+                lastLocation.getLatitude());
+
+        GeoJsonSource source = map.getStyle().getSourceAs("destination-source-id");
+        if (source != null) {
+            source.setGeoJson(Feature.fromGeometry(destinationPoint));
+        }
+
+        getRoute(originPoint, destinationPoint);
+        // binding.btnCloudRain.setEnabled(true);
+        //  binding.btnCloudRain.setBackgroundResource(R.color.colorGreen);
+    }
+
+
+    private void loadPlaces(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            autocompleteFragment = PlaceAutocompleteFragment.newInstance(getString(R.string.access_token));
+
+            if (autocompleteFragment != null && manager != null) {
+                manager.beginTransaction().add(R.id.fragment_frame, autocompleteFragment, "PlaceAutocompleteFragment").commit();
+            }
+        } else {
+            autocompleteFragment = (PlaceAutocompleteFragment)
+                    manager.findFragmentByTag("PlaceAutocompleteFragment");
+        }
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(CarmenFeature carmenFeature) {
+                Toast.makeText(getContext(),
+                        carmenFeature.text(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancel() {
+                manager.popBackStackImmediate();
+            }
+        });
+    }
+
 
     private void initMapBox(Bundle savedInstanceState) {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -366,14 +622,16 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                             Log.e(TAG, "No routes found");
                             return;
                         }
+                        if (response.isSuccessful()) {
+                            currentRoute = response.body().routes().get(0);
+                        }
 
-                        currentRoute = response.body().routes().get(0);
 
                         // Draw the route on the map
                         if (navigationMapRoute != null) {
                             navigationMapRoute.removeRoute();
                         } else {
-                            navigationMapRoute = new NavigationMapRoute(null, mapView, map, R.style.NavigationMapRoute);
+                            navigationMapRoute = new NavigationMapRoute(null, binding.mapBox, map, R.style.NavigationMapRoute);
                         }
                         navigationMapRoute.addRoute(currentRoute);
                     }
@@ -438,65 +696,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         }
     }
 
-    @Override
-    public boolean onMapClick(@NonNull LatLng point) {
-
-        Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-        Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-                locationComponent.getLastKnownLocation().getLatitude());
-
-        GeoJsonSource source = map.getStyle().getSourceAs("destination-source-id");
-        if (source != null) {
-            source.setGeoJson(Feature.fromGeometry(destinationPoint));
-        }
-
-        getRoute(originPoint, destinationPoint);
-        binding.btnCloudRain.setEnabled(true);
-        binding.btnCloudRain.setBackgroundResource(R.color.colorGreen);
-        return true;
-    }
-
-    @Override
-    public void onMapReady(@NonNull MapboxMap mapboxMap) {
-        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getActivity().getApplicationContext(), CONSTANTS.PERMISSION_DENIED, Toast.LENGTH_LONG).show();
-            return;
-        }
-        map = mapboxMap;
-        map.setStyle(new Style.Builder().fromUri("mapbox://styles/bogda23/ckc0k7qup0j1j1js7ach9jiem"));
-        createDeviceGpsLocationRequest();
-        handleCustomTrackLocationButton();
-        putMarkerOnEvent();
-        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                enableLocationComponent(style);
-
-                addDestinationIconSymbolLayer(style);
-
-                try {
-                    map.addOnMapClickListener((MapboxMap.OnMapClickListener) getContext());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-                binding.btnCarCrash.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        boolean simulateRoute = true;
-                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                .directionsRoute(currentRoute)
-                                .shouldSimulateRoute(simulateRoute)
-                                .build();
-                        // Call this method with Context from within an Activity
-                        NavigationLauncher.startNavigation(getActivity(), options);
-                    }
-                });
-            }
-        });
-    }
-
 
     @Override
     public void onResume() {
@@ -514,6 +713,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     @Override
     public void onStop() {
         super.onStop();
+
         binding.mapBox.onStop();
     }
 
