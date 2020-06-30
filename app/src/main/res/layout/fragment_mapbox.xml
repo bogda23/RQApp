@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_mapbox_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,6 +10,75 @@
         android:id="@+id/map_box"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/dimen_margin_5"
+        android:layoutMode="opticalBounds"
+        android:translationZ="@dimen/dimen_margin_78"
+        app:fab_addButtonColorNormal="@color/colorWhite"
+        app:fab_addButtonColorPressed="@color/colorGreyLight"
+        app:fab_addButtonPlusIconColor="@color/colorRedOpacity_50"
+        app:fab_labelStyle="@style/btnStyle"
+
+        app:layout_constraintBottom_toTopOf="@id/fab_location_search"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_car_crash"
+            style="@style/btnFloatStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/car_crash" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_cloud_rain"
+            style="@style/btnFloatStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/cloud_rain" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_heavy_snow"
+            style="@style/btnFloatStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/heavy_snow" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add_news_feed_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/add_news_feed"
+            app:fab_title="Adaugă eveniment"
+
+            />
+
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_location_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="@dimen/dimen_margin_10"
+        android:tint="@color/colorRedOpacity_50"
+        app:backgroundTint="@color/colorWhite"
+        android:elevation="@dimen/elevation_25"
+
+        app:layout_constraintBottom_toTopOf="@+id/img_location_shadow"
+        app:layout_constraintEnd_toEndOf="@+id/img_location_shadow"
+        app:layout_constraintStart_toStartOf="@+id/img_location_shadow"
+        app:srcCompat="@android:drawable/ic_search_category_default" />
 
     <LinearLayout
         android:id="@+id/map_holder"
@@ -95,80 +165,6 @@
         app:mt_speechMode="false"
         app:mt_textColor="@color/colorGreyDark" />
 
-    <ImageView
-
-        android:id="@+id/img_report_shadow"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shadow_down"
-        android:elevation="@dimen/dimen_margin_39"
-        android:hint="@string/destinatie"
-        android:outlineAmbientShadowColor="@color/colorRed"
-        android:outlineProvider="bounds"
-        android:padding="@dimen/dimen_margin_20"
-        android:paddingBottom="@dimen/dimen_padding_20"
-
-        app:layout_constraintBottom_toBottomOf="@id/img_report"
-        app:layout_constraintLeft_toLeftOf="@id/img_report"
-        app:layout_constraintRight_toRightOf="@id/img_report"
-        app:layout_constraintTop_toTopOf="@id/img_report" />
-
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/multiple_actions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/dimen_margin_5"
-        android:layoutMode="opticalBounds"
-        android:translationZ="@dimen/dimen_margin_78"
-        app:fab_addButtonColorNormal="@color/colorWhite"
-        app:fab_addButtonColorPressed="@color/colorGreyLight"
-        app:fab_addButtonPlusIconColor="@color/colorRed"
-        app:fab_labelStyle="@style/btnStyle"
-
-
-        app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
-        app:layout_constraintRight_toRightOf="parent"
-        >
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_car_crash"
-            style="@style/btnFloatStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:src="@drawable/car_crash" />
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_cloud_rain"
-            style="@style/btnFloatStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:src="@drawable/cloud_rain" />
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_heavy_snow"
-            style="@style/btnFloatStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:src="@drawable/heavy_snow" />
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_add_news_feed_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_margin_10"
-            android:src="@drawable/add_news_feed"
-            app:fab_title="Adaugă eveniment"
-
-            />
-
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     <ImageView
         android:id="@+id/img_report"
@@ -189,10 +185,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/shadow_down"
-        android:elevation="@dimen/dimen_margin_39"
+        android:elevation="@dimen/elevation_25"
         android:hint="@string/destinatie"
         android:outlineAmbientShadowColor="@color/colorGreyDark"
-        android:outlineProvider="background"
+        android:outlineProvider="paddedBounds"
         android:outlineSpotShadowColor="@color/colorGreyDark"
         android:padding="@dimen/dimen_margin_20"
         app:layout_constraintBottom_toBottomOf="@id/img_custom_location"
