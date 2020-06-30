@@ -126,9 +126,15 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'id.zelory:compressor:2.1.0'
 
-    // MapBox
+    // MapBox SDK
     implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1') {
         exclude group: 'group_name', module: 'module_name'
     }
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.42.6'
+
+    //MapBox Places
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v9:0.12.0'
+
+    //MapBox Location
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.11.0'
 }
