@@ -1,7 +1,6 @@
 package com.usv.rqapp.controllers;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -13,13 +12,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.usv.rqapp.CONSTANTS;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.usv.rqapp.NavigatorFragment;
 import com.usv.rqapp.models.firestoredb.NewsFeed;
 import com.usv.rqapp.models.firestoredb.User;
 
+import org.intellij.lang.annotations.RegExp;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.RegEx;
+
+import kotlin.text.Regex;
 
 public class FirestoreController {
 
@@ -27,11 +33,13 @@ public class FirestoreController {
     private FirebaseFirestore db;
     private String userID;
     private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseStorage storage;
 
     /**
      *
      */
     public FirestoreController() {
+        storage = FirebaseStorage.getInstance();
         db = FirebaseFirestore.getInstance();
     }
 
@@ -117,28 +125,44 @@ public class FirestoreController {
     }
 
     /**
+     * @param imageUrl
      * @param id_postare
      * @Description Sterge evenimentul si like-urile acestuia
      */
-    public void deleteEventOnNewsFeed(String id_postare) {
+    public void deleteEventOnNewsFeed(String id_postare, String imageUrl) {
 
+        //Delete likes
+        db.collection(NewsFeed.APRECIERI).document(id_postare).delete().addOnCompleteListener(likeDelete -> {
+            if (likeDelete.isSuccessful()) {
+                Log.e(TAG, "deleteEventOnNewsFeed: Stergere like-uri cu succes");
+
+            } else {
+                Log.e(TAG, "deleteEventOnNewsFeed: Stergerea like-urilor fără succes");
+                Log.e(TAG, "deleteEventOnNewsFeed: " + likeDelete.getException().getMessage());
+            }
+        });
+
+        // Delete Image
+        storage.getReferenceFromUrl(imageUrl).delete().addOnCompleteListener(deleteImage -> {
+
+            if (deleteImage.isSuccessful()) {
+                Log.e(TAG, "deleteEventOnNewsFeed: Stergere imagine cu succes");
+            } else {
+                Log.e(TAG, "deleteEventOnNewsFeed: Stergere imagine fără succes");
+            }
+        });
         //Delete post
         db.collection(NewsFeed.POSTARI).document(id_postare).delete().addOnCompleteListener(delete -> {
             if (delete.isSuccessful()) {
-                //Delete likes
-                db.collection(NewsFeed.APRECIERI).document(id_postare).delete().addOnCompleteListener(likeDelete -> {
-                    if (likeDelete.isSuccessful()) {
-                        Log.e(TAG, "deleteEventOnNewsFeed: Stergerea postare si like-uri cu succes");
-                    } else {
-                        Log.e(TAG, "deleteEventOnNewsFeed: Stergerea like-urilor fără succes");
-                    }
-                });
+                Log.e(TAG, "deleteEventOnNewsFeed: Stergerea postare cu succes");
+
             } else {
                 Log.e(TAG, "deleteEventOnNewsFeed: Stergerea postarii fără succes!");
             }
         });
 
     }
+
 
     public String getUserID() {
         return userID;
