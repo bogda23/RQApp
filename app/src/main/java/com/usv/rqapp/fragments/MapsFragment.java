@@ -111,7 +111,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private LocationCallback locationCallback;
     private GroundOverlay groundOverlay11;
 
-    private VibrationsServiceController vibrationsServiceController;
+
     private FragmentManager manager;
 
 
@@ -127,7 +127,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         binding.map.setClipToOutline(true);
 
         getLocationGeoPointFromNewsFeed();
-        initVibrationService();
+
 
         initFirebaseAuth();
         loadMap(savedInstanceState);
@@ -166,17 +166,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private void initVibrationService() {
 
-        VibrationObject vibrationObject = new VibrationObject(new VibrationIDLocation(23133.23223, 23323.23), 22.22, "Bulgaria", "BG", "Halhalhal");
-
-        vibrationsServiceController = new VibrationsServiceController();
-        vibrationsServiceController.putVibrationOnLocation(vibrationObject);
-        if (vibrationsServiceController.getBaseVibrations() != null) {
-            Log.e(TAG, vibrationsServiceController.getBaseVibrations().toString());
-        }
-
-    }
 
 
     /**

@@ -71,9 +71,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginBottom="@dimen/dimen_margin_10"
+        android:elevation="@dimen/elevation_25"
         android:tint="@color/colorRedOpacity_50"
         app:backgroundTint="@color/colorWhite"
-        android:elevation="@dimen/elevation_25"
 
         app:layout_constraintBottom_toTopOf="@+id/img_location_shadow"
         app:layout_constraintEnd_toEndOf="@+id/img_location_shadow"
@@ -210,4 +210,29 @@
 
         app:layout_constraintBottom_toBottomOf="@id/map_box"
         app:layout_constraintEnd_toEndOf="@id/map_box" />
+
+    <Button
+        android:id="@+id/start_road_trip"
+        style="@style/btnStyleSearch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Începe călătoria"
+        android:textColor="@color/colorWhite"
+        android:layout_marginEnd="@dimen/dimen_margin_10"
+        android:layout_marginStart="@dimen/dimen_margin_10"
+        android:shadowColor="@color/colorRedOpacity_50"
+        android:outlineAmbientShadowColor="@color/colorGreyDark"
+        android:outlineSpotShadowColor="@color/colorGreyDark"
+        android:elevation="@dimen/elevation_25"
+        android:tint="@color/colorRedOpacity_50"
+        app:backgroundTint="@color/colorPurple"
+        android:visibility="gone"
+
+
+
+        app:layout_constraintBottom_toBottomOf="@+id/img_location_shadow"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/img_custom_location"
+        app:layout_constraintTop_toTopOf="@+id/fab_location_search" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
