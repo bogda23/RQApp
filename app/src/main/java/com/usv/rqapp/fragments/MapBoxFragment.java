@@ -89,8 +89,10 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.FragmentOpener;
+import com.usv.rqapp.controllers.VibrationsServiceController;
 import com.usv.rqapp.databinding.FragmentMapboxBinding;
 import com.usv.rqapp.models.rqdb.VibrationIDLocation;
+import com.usv.rqapp.models.rqdb.VibrationObject;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
@@ -140,6 +142,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
 
     private Location lastLocation;
+    private LatLng destinationLatLng;
     private LocationCallback locationCallback;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -151,6 +154,9 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     private LatLng eventGeoPointReceivedFromFeed;
 
     private PlaceAutocompleteFragment autocompleteFragment;
+
+    //Vibrations service
+    private VibrationsServiceController vibrationsServiceController;
 
 
     @Nullable
@@ -166,6 +172,8 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         initMapBox(savedInstanceState);
         restoreLastKnownDataForMapBox(savedInstanceState);
 
+        initVibrationService();
+
         initPlacesAPi();
         loadPlaces(savedInstanceState);
         executeSearchComponents();
@@ -173,6 +181,35 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         addNewsFeedEventsToFirestore();
 
         return mapBoxView;
+    }
+
+    private void initVibrationService() {
+
+        VibrationObject vibrationObject = new VibrationObject(new VibrationIDLocation(23133.23223, 23323.23), 22.22, "Bulgaria", "BG", "Halhalhal");
+
+        vibrationsServiceController = new VibrationsServiceController();
+        vibrationsServiceController.putVibrationOnLocation(vibrationObject);
+        if (vibrationsServiceController.getBaseVibrations() != null) {
+            Log.e(TAG, vibrationsServiceController.getBaseVibrations().toString());
+        }
+
+    }
+
+    private void handleStartRoadTripButton() {
+        binding.startRoadTrip.setOnClickListener(click -> {
+            if (destinationLatLng != null) {
+                createRouteBetweenMeAndDestionatio(destinationLatLng);
+                if (currentRoute != null) {
+                    boolean simulateRoute = true;
+                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                            .directionsRoute(currentRoute)
+                            .shouldSimulateRoute(simulateRoute)
+                            .build();
+                    // Call this method with Context from within an Activity
+                    NavigationLauncher.startNavigation(getActivity(), options);
+                }
+            }
+        });
     }
 
 
@@ -192,24 +229,9 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
-
                 addDestinationIconSymbolLayer(style);
 
-
-                binding.btnCarCrash.setOnClickListener(click -> {
-                    createRouteBetweenMeAndDestionatio(new LatLng(48.186560, 26.592840));
-                    if (currentRoute != null) {
-                        boolean simulateRoute = true;
-                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                .directionsRoute(currentRoute)
-                                .shouldSimulateRoute(simulateRoute)
-                                .build();
-                        // Call this method with Context from within an Activity
-                        NavigationLauncher.startNavigation(getActivity(), options);
-                    }
-
-
-                });
+                handleStartRoadTripButton();
             }
         });
     }
@@ -330,8 +352,11 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                         Log.e("mytag", "Place found: " + place.getName());
                         LatLng latLngOfPlace = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
                         if (latLngOfPlace != null) {
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLngOfPlace, DEFAULT_ZOOM);
-                            map.animateCamera(cameraUpdate);
+
+                            moveMapCameraToLatLng(latLngOfPlace);
+                            addMarkerToPlace(latLngOfPlace, place.getName(), place.getAddress());
+                            destinationLatLng = latLngOfPlace;
+                            binding.startRoadTrip.setVisibility(View.VISIBLE);
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -353,6 +378,10 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
             }
         });
+    }
+
+    private void addMarkerToPlace(LatLng latLngOfPlace, String title, String address) {
+        map.addMarker(new MarkerOptions().position(latLngOfPlace).title(title).snippet(address));
     }
 
     private void createRouteBetweenMeAndDestionatio(LatLng destination) {
@@ -427,7 +456,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     }
 
-    private void moveMapCameraToLatLng(LatLng latLng, boolean ripple) {
+    private void moveMapCameraToLatLng(LatLng latLng) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((latLng), DEFAULT_ZOOM);
         map.animateCamera(cameraUpdate);
 
@@ -437,7 +466,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         if (map != null && eventGeoPointReceivedFromFeed != null && eventTitleReceivedFromFeed != null) {
             map.addMarker(new MarkerOptions().position(eventGeoPointReceivedFromFeed).title(eventTitleReceivedFromFeed).snippet(eventTitleReceivedFromFeed));
 
-            moveMapCameraToLatLng(eventGeoPointReceivedFromFeed, false);
+            moveMapCameraToLatLng(eventGeoPointReceivedFromFeed);
         }
     }
 
