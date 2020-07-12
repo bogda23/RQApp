@@ -90,5 +90,14 @@
     <string name="tracking_gps">Tracking Gps</string>
     <string name="tracking_gps_north">Tracking Gps North</string>
 
+    <!-- Favorite locations -->
+    <string name="locatiile_preferate">Locațiile preferate</string>
+    <string name="incepe_calatoria">Începe călătoria</string>
+
+    <!-- Vibration permissions -->
+    <string name="permisiuni_esentiale">Permisiuni esențiale</string>
+    <string name="vibration_permission_message">Pentru a îmbunătăți sistemul de detecție al calității drumului este necesară permisiunea dumnevoastră.\n
+        Acest sistem v-a colecta vibrațiile de pe parcursul călătoriei dumneavoastră în mod anonim.</string>
+
 
 </resources>
