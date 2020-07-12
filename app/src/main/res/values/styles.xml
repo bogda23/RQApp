@@ -110,7 +110,7 @@
 
     <!--Button Styles Search -->
     <style name="btnStyleSearch">
-        <item name="android:padding">@dimen/dimen_padding_15</item>
+        <item name="android:padding">@dimen/dimen_padding_12</item>
         <item name="android:textSize">@dimen/dimen_font_14</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/colorWhite</item>
@@ -139,6 +139,15 @@
         <item name="android:textColor">@color/colorWhite</item>
         <item name="fontFamily">@font/font_mosterat_semibold</item>
         <item name="android:textSize">@dimen/dimen_font_title</item>
+
+    </style>
+
+    <!-- Titles Style -->
+    <style name="smallTitleStyle">
+        <item name="android:layout_gravity">start</item>
+        <item name="android:textColor">@color/colorGreyDarkOpacity_90</item>
+        <item name="fontFamily">@font/font_mosterat_semibold</item>
+        <item name="android:textSize">@dimen/dimen_font_title_small</item>
 
     </style>
     <!-- Account Data Style -->
