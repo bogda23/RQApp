@@ -1,9 +1,7 @@
-package com.usv.rqapp.services.vibrations;
+package com.usv.rqapp.services.vibrationsCall;
 
-import com.usv.rqapp.models.rqdb.BaseVibrations;
-import com.usv.rqapp.models.rqdb.VibrationIDLocation;
+import com.usv.rqapp.models.rq_mongodb.BaseVibrations;
 
-import io.reactivex.rxjava3.core.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;

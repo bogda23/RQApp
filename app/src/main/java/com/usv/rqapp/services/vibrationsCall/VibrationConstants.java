@@ -1,4 +1,4 @@
-package com.usv.rqapp.services.vibrations;
+package com.usv.rqapp.services.vibrationsCall;
 
 public class VibrationConstants {
 
