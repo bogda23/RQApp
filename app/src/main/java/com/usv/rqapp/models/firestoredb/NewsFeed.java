@@ -84,7 +84,7 @@ public class NewsFeed {
      * @param newsFeed
      * @return
      */
-    public Map<String, Object> convertUsereToMap(NewsFeed newsFeed) {
+    public Map<String, Object> convertNewsFeedToMap(NewsFeed newsFeed) {
         Map<String, Object> map = new HashMap<>();
 
         if (newsFeed != null) {
