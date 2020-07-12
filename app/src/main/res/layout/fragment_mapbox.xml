@@ -26,7 +26,7 @@
         app:fab_addButtonPlusIconColor="@color/colorRedOpacity_50"
         app:fab_labelStyle="@style/btnStyle"
 
-        app:layout_constraintBottom_toTopOf="@id/fab_location_search"
+        app:layout_constraintBottom_toTopOf="@id/fab_location_favorite"
         app:layout_constraintRight_toRightOf="parent">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -66,7 +66,7 @@
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_location_search"
+        android:id="@+id/fab_location_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
@@ -75,10 +75,10 @@
         android:tint="@color/colorRedOpacity_50"
         app:backgroundTint="@color/colorWhite"
 
-        app:layout_constraintBottom_toTopOf="@+id/img_location_shadow"
-        app:layout_constraintEnd_toEndOf="@+id/img_location_shadow"
-        app:layout_constraintStart_toStartOf="@+id/img_location_shadow"
-        app:srcCompat="@android:drawable/ic_search_category_default" />
+        app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
+        app:layout_constraintEnd_toEndOf="@+id/img_custom_location"
+        app:layout_constraintStart_toStartOf="@+id/img_custom_location"
+        app:srcCompat="@drawable/icon_favorite" />
 
     <LinearLayout
         android:id="@+id/map_holder"
@@ -175,22 +175,20 @@
         android:elevation="@dimen/dimen_margin_78"
         android:visibility="gone"
 
-        app:layout_constraintBottom_toTopOf="@+id/img_location_shadow"
+        app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
         app:layout_constraintRight_toRightOf="@id/map_box"
-        app:layout_constraintStart_toStartOf="@+id/img_location_shadow" />
+        app:layout_constraintStart_toStartOf="@+id/img_custom_location" />
 
     <ImageView
 
         android:id="@+id/img_location_shadow"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/shadow_down"
         android:elevation="@dimen/elevation_25"
         android:hint="@string/destinatie"
         android:outlineAmbientShadowColor="@color/colorGreyDark"
-        android:outlineProvider="paddedBounds"
         android:outlineSpotShadowColor="@color/colorGreyDark"
-        android:padding="@dimen/dimen_margin_20"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/img_custom_location"
         app:layout_constraintLeft_toLeftOf="@id/img_custom_location"
         app:layout_constraintRight_toRightOf="@id/img_custom_location"
@@ -201,38 +199,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_margin_10"
-        android:background="@drawable/btn_custom_location"
-        android:elevation="@dimen/dimen_margin_78"
+        android:background="@drawable/btn_custom_location_light"
+        android:elevation="@dimen/elevation_25"
         android:outlineAmbientShadowColor="@color/colorGreyDark"
-        android:outlineProvider="background"
+
         android:outlineSpotShadowColor="@color/colorGreyDark"
-        android:visibility="visible"
+
 
         app:layout_constraintBottom_toBottomOf="@id/map_box"
         app:layout_constraintEnd_toEndOf="@id/map_box" />
 
     <Button
-        android:id="@+id/start_road_trip"
+        android:id="@+id/btn_start_road_trip"
         style="@style/btnStyleSearch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Începe călătoria"
-        android:textColor="@color/colorWhite"
-        android:layout_marginEnd="@dimen/dimen_margin_10"
         android:layout_marginStart="@dimen/dimen_margin_10"
-        android:shadowColor="@color/colorRedOpacity_50"
+        android:layout_marginEnd="@dimen/dimen_margin_10"
+        android:elevation="@dimen/elevation_25"
         android:outlineAmbientShadowColor="@color/colorGreyDark"
         android:outlineSpotShadowColor="@color/colorGreyDark"
-        android:elevation="@dimen/elevation_25"
+        android:shadowColor="@color/colorRedOpacity_50"
+        android:text="@string/incepe_calatoria"
+        android:textColor="@color/colorWhite"
         android:tint="@color/colorRedOpacity_50"
-        app:backgroundTint="@color/colorPurple"
         android:visibility="gone"
+        app:backgroundTint="@color/colorPurple"
 
 
-
-        app:layout_constraintBottom_toBottomOf="@+id/img_location_shadow"
+        app:layout_constraintBottom_toBottomOf="@+id/img_custom_location"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/img_custom_location"
-        app:layout_constraintTop_toTopOf="@+id/fab_location_search" />
+        app:layout_constraintTop_toTopOf="@+id/fab_location_favorite" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
