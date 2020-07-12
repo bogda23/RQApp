@@ -1,4 +1,4 @@
-package com.usv.rqapp.models.rqdb;
+package com.usv.rqapp.models.rq_mongodb;
 
 import com.google.gson.annotations.SerializedName;
 
