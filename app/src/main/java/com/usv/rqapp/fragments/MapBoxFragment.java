@@ -2,6 +2,9 @@ package com.usv.rqapp.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -23,7 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -50,11 +52,9 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.zxing.client.result.GeoParsedResult;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
@@ -64,6 +64,7 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -77,7 +78,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
@@ -85,19 +85,13 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.FragmentOpener;
-import com.usv.rqapp.controllers.VibrationsServiceController;
 import com.usv.rqapp.databinding.FragmentMapboxBinding;
-import com.usv.rqapp.models.rqdb.VibrationIDLocation;
-import com.usv.rqapp.models.rqdb.VibrationObject;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import com.usv.rqapp.interfaces.IVibrationSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,6 +100,11 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
 
 public class MapBoxFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, OnCameraTrackingChangedListener {
@@ -123,7 +122,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     @RenderMode.Mode
     private int renderMode = RenderMode.NORMAL;
 
-
     private final int REQUEST_CODE_START_ACTIVITY = 61;
     private final float DEFAULT_ZOOM = 15;
 
@@ -133,13 +131,13 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     private MapboxMap map;
     private LocationComponent locationComponent;
+
     // variables for calculating and drawing a route
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
     private PermissionsManager permissionsManager;
     private LocationEngine locationEngine;
     private LocationLayerPlugin locationLayerPlugin;
-
 
     private Location lastLocation;
     private LatLng destinationLatLng;
@@ -156,66 +154,15 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     private PlaceAutocompleteFragment autocompleteFragment;
 
     //Vibrations service
-    private VibrationsServiceController vibrationsServiceController;
-
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Mapbox.getInstance(getContext(), getString(R.string.access_token));
-        binding = FragmentMapboxBinding.inflate(inflater, container, false);
-        mapBoxView = binding.getRoot();
-
-        /** Put your functions here*/
-        getLocationGeoPointFromNewsFeed();
-
-        initMapBox(savedInstanceState);
-        restoreLastKnownDataForMapBox(savedInstanceState);
-
-        initVibrationService();
-
-        initPlacesAPi();
-        loadPlaces(savedInstanceState);
-        executeSearchComponents();
-
-        addNewsFeedEventsToFirestore();
-
-        return mapBoxView;
-    }
-
-    private void initVibrationService() {
-
-        VibrationObject vibrationObject = new VibrationObject(new VibrationIDLocation(23133.23223, 23323.23), 22.22, "Bulgaria", "BG", "Halhalhal");
-
-        vibrationsServiceController = new VibrationsServiceController();
-        vibrationsServiceController.putVibrationOnLocation(vibrationObject);
-        if (vibrationsServiceController.getBaseVibrations() != null) {
-            Log.e(TAG, vibrationsServiceController.getBaseVibrations().toString());
-        }
-
-    }
-
-    private void handleStartRoadTripButton() {
-        binding.startRoadTrip.setOnClickListener(click -> {
-            if (destinationLatLng != null) {
-                createRouteBetweenMeAndDestionatio(destinationLatLng);
-                if (currentRoute != null) {
-                    boolean simulateRoute = true;
-                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                            .directionsRoute(currentRoute)
-                            .shouldSimulateRoute(simulateRoute)
-                            .build();
-                    // Call this method with Context from within an Activity
-                    NavigationLauncher.startNavigation(getActivity(), options);
-                }
-            }
-        });
-    }
+    private IVibrationSender vibrationSender;
+    private Boolean isVibrationSystemActive = false;
+    private MapboxNavigation navigation;
 
 
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
-        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getActivity().getApplicationContext(), CONSTANTS.PERMISSION_DENIED, Toast.LENGTH_LONG).show();
             return;
         }
@@ -234,15 +181,111 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                 handleStartRoadTripButton();
             }
         });
+
     }
 
-    /***-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Mapbox.getInstance(getContext(), getString(R.string.access_token));
+        binding = FragmentMapboxBinding.inflate(inflater, container, false);
+        mapBoxView = binding.getRoot();
+
+        /** Put your functions here*/
+        getLocationGeoPoint();
+
+        initMapBox(savedInstanceState);
+        restoreLastKnownDataForMapBox(savedInstanceState);
+
+        initPlacesAPi();
+        loadPlaces(savedInstanceState);
+        executeSearchComponents();
+
+        addNewsFeedEventsToFirestore();
+        addFavoriteLocation();
+
+
+        return mapBoxView;
+    }
+
+
+    private void initMapBox(Bundle savedInstanceState) {
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        binding.mapBox.onCreate(savedInstanceState);
+        binding.mapBox.getMapAsync(this);
+    }
+
     private void initPlacesAPi() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         Places.initialize(getActivity(), getResources().getString(R.string.google_api_key));
         placesClient = Places.createClient(getActivity().getApplicationContext());
         token = AutocompleteSessionToken.newInstance();
 
+    }
+
+    private void addFavoriteLocation() {
+        binding.fabLocationFavorite.setOnClickListener(click -> {
+            if (lastLocation != null) {
+                FragmentOpener.loadNextFragmentWithStack(FavoriteEventFragment.newInstance(new GeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude())), manager);
+            }
+        });
+    }
+
+    private void handleStartRoadTripButton() {
+        binding.btnStartRoadTrip.setOnClickListener(click -> {
+            if (destinationLatLng != null) {
+                createRouteBetweenMeAndDestionatio(destinationLatLng);
+                if (currentRoute != null) {
+                    boolean simulateRoute = false;
+                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                            .directionsRoute(currentRoute)
+                            .shouldSimulateRoute(simulateRoute)
+                            .build();
+
+
+                    // Call this method with Context from within an Activity
+                    handleVibrationPermissions(options);
+
+                }
+            } else {
+                binding.btnStartRoadTrip.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void handleVibrationPermissions(NavigationLauncherOptions options) {
+
+        //Initializarea listener-ului
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        dialog.setTitle(CONSTANTS.VIBRATIONS_ACCESS);
+        dialog.setMessage(getString(R.string.vibration_permission_message));
+        dialog.setPositiveButton(CONSTANTS.ACCEPTA, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                isVibrationSystemActive = true;
+                vibrationSender.onVibrationSignalListener(isVibrationSystemActive);
+                startNavigationWithOptions(options);
+            }
+        });
+        dialog.setNegativeButton(CONSTANTS.NU_ACCEPT, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                startNavigationWithOptions(options);
+            }
+        });
+
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
+
+    }
+
+    private void startNavigationWithOptions(NavigationLauncherOptions options) {
+        if (currentRoute.distance() > 1) {
+            NavigationLauncher.startNavigation(getActivity(), options);
+        } else {
+            binding.btnStartRoadTrip.setVisibility(View.GONE);
+        }
     }
 
     private void executeSearchComponents() {
@@ -353,10 +396,10 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                         LatLng latLngOfPlace = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
                         if (latLngOfPlace != null) {
 
-                            moveMapCameraToLatLng(latLngOfPlace);
+                            clearAllMarkersFromMap();
+
+                            setDestination(latLngOfPlace);
                             addMarkerToPlace(latLngOfPlace, place.getName(), place.getAddress());
-                            destinationLatLng = latLngOfPlace;
-                            binding.startRoadTrip.setVisibility(View.VISIBLE);
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -380,6 +423,21 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         });
     }
 
+    private void setDestination(LatLng latLngOfPlace) {
+        moveMapCameraToLatLng(latLngOfPlace);
+        destinationLatLng = latLngOfPlace;
+        binding.btnStartRoadTrip.setVisibility(View.VISIBLE);
+    }
+
+    private void clearAllMarkersFromMap() {
+        if (navigationMapRoute != null) {
+            navigationMapRoute.removeRoute();
+            destinationLatLng = null;
+        }
+        map.clear();
+        binding.btnStartRoadTrip.setVisibility(View.GONE);
+    }
+
     private void addMarkerToPlace(LatLng latLngOfPlace, String title, String address) {
         map.addMarker(new MarkerOptions().position(latLngOfPlace).title(title).snippet(address));
     }
@@ -400,7 +458,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         //  binding.btnCloudRain.setBackgroundResource(R.color.colorGreen);
     }
 
-
     private void loadPlaces(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             autocompleteFragment = PlaceAutocompleteFragment.newInstance(getString(R.string.access_token));
@@ -409,8 +466,10 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                 manager.beginTransaction().add(R.id.fragment_frame, autocompleteFragment, "PlaceAutocompleteFragment").commit();
             }
         } else {
-            autocompleteFragment = (PlaceAutocompleteFragment)
-                    manager.findFragmentByTag("PlaceAutocompleteFragment");
+            if (manager.findFragmentByTag("PlaceAutocompleteFragment") != null) {
+                autocompleteFragment = (PlaceAutocompleteFragment)
+                        manager.findFragmentByTag("PlaceAutocompleteFragment");
+            }
         }
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -425,13 +484,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                 manager.popBackStackImmediate();
             }
         });
-    }
-
-
-    private void initMapBox(Bundle savedInstanceState) {
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        binding.mapBox.onCreate(savedInstanceState);
-        binding.mapBox.getMapAsync(this);
     }
 
     private void restoreLastKnownDataForMapBox(Bundle savedInstanceState) {
@@ -452,29 +504,37 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     private void moveMapCameraToLocation(Location mLastKnownLocation) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM);
-        map.animateCamera(cameraUpdate, 900);
+      //  map.animateCamera(cameraUpdate, 900);
+        map.animateCamera(CameraUpdateFactory
+                .newCameraPosition(new CameraPosition.Builder()
+                        .target(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
+                        .zoom(DEFAULT_ZOOM)
+                        .build()), 1500);
 
     }
 
     private void moveMapCameraToLatLng(LatLng latLng) {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((latLng), DEFAULT_ZOOM);
-        map.animateCamera(cameraUpdate);
+        if (map != null) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((latLng), DEFAULT_ZOOM);
+            map.animateCamera(cameraUpdate);
 
+        }
     }
 
     private void putMarkerOnEvent() {
         if (map != null && eventGeoPointReceivedFromFeed != null && eventTitleReceivedFromFeed != null) {
+            map.clear();
             map.addMarker(new MarkerOptions().position(eventGeoPointReceivedFromFeed).title(eventTitleReceivedFromFeed).snippet(eventTitleReceivedFromFeed));
-
             moveMapCameraToLatLng(eventGeoPointReceivedFromFeed);
         }
     }
 
-    private void getLocationGeoPointFromNewsFeed() {
+    private void getLocationGeoPoint() {
         if (getArguments() != null) {
             eventTitleReceivedFromFeed = getArguments().getString(ARG_LOCATION_TITLE);
             double[] arr = getArguments().getDoubleArray(ARG_GEOPOINT);
             eventGeoPointReceivedFromFeed = new LatLng(arr[0], arr[1]);
+            setDestination(eventGeoPointReceivedFromFeed);
         }
     }
 
@@ -512,6 +572,43 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private void getDeviceLocation() {
+        mFusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful()) {
+                    lastLocation = task.getResult();
+                    if (lastLocation != null) {
+                        moveCameraDynamically();
+                    } else {
+                        LocationRequest locationRequest = LocationRequest.create();
+                        locationRequest.setInterval(10000);
+                        locationRequest.setFastestInterval(5000);
+                        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                        locationCallback = new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                super.onLocationResult(locationResult);
+                                if (locationResult == null) {
+                                    return;
+                                }
+                                lastLocation = locationResult.getLastLocation();
+
+                                moveCameraDynamically();
+
+                                mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                            }
+                        };
+
+                        mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "unable to get last location", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
     private void createDeviceGpsLocationRequest() {
         //check if gps is enabled or not and then request user to enable it
@@ -578,45 +675,12 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     }
 
-    /**
-     *
-     */
-    @SuppressLint("MissingPermission")
-    private void getDeviceLocation() {
-        mFusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    lastLocation = task.getResult();
-                    if (lastLocation != null && eventGeoPointReceivedFromFeed == null) {
-                        moveMapCameraToLocation(lastLocation);
-                    } else {
-                        LocationRequest locationRequest = LocationRequest.create();
-                        locationRequest.setInterval(10000);
-                        locationRequest.setFastestInterval(5000);
-                        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                        locationCallback = new LocationCallback() {
-                            @Override
-                            public void onLocationResult(LocationResult locationResult) {
-                                super.onLocationResult(locationResult);
-                                if (locationResult == null) {
-                                    return;
-                                }
-                                lastLocation = locationResult.getLastLocation();
-                                if (eventGeoPointReceivedFromFeed == null) {
-                                    moveMapCameraToLocation(lastLocation);
-                                }
-                                mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                            }
-                        };
-
-                        mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "unable to get last location", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    private void moveCameraDynamically() {
+        if (eventGeoPointReceivedFromFeed == null) {
+            moveMapCameraToLocation(lastLocation);
+        } else {
+            moveMapCameraToLatLng(eventGeoPointReceivedFromFeed);
+        }
     }
 
     private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
@@ -655,14 +719,17 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                             currentRoute = response.body().routes().get(0);
                         }
 
-
                         // Draw the route on the map
                         if (navigationMapRoute != null) {
                             navigationMapRoute.removeRoute();
                         } else {
                             navigationMapRoute = new NavigationMapRoute(null, binding.mapBox, map, R.style.NavigationMapRoute);
                         }
-                        navigationMapRoute.addRoute(currentRoute);
+
+                        if (currentRoute != null) {
+                            navigationMapRoute.addRoute(currentRoute);
+                        }
+
                     }
 
                     @Override
@@ -727,15 +794,33 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof IVibrationSender) {
+            vibrationSender = (IVibrationSender) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement " + IVibrationSender.TAG);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        vibrationSender = null;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         binding.mapBox.onResume();
+        isVibrationSystemActive = false;
+        vibrationSender.onVibrationSignalListener(isVibrationSystemActive);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        manager = getFragmentManager();
+        manager = getActivity().getSupportFragmentManager();
         binding.mapBox.onStart();
     }
 
@@ -750,6 +835,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     public void onPause() {
         super.onPause();
         binding.mapBox.onPause();
+
     }
 
     @Override
@@ -777,9 +863,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     }
 
 
-    /**
-     * @return
-     */
     public static MapBoxFragment newInstance() {
         MapBoxFragment fragment = new MapBoxFragment();
         /**
@@ -797,6 +880,4 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
         return fragment;
     }
-
-
 }
