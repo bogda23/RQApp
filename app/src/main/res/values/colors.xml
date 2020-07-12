@@ -5,7 +5,7 @@
     <!--Main colors-->
     <color name="colorRoads">#c5c8ce</color>
     <color name="colorGreyDark">#393939</color>
-    <color name="colorPurple">#907CA6</color>       <!--Opacity 80%-->
+    <color name="colorPurple">#907CA6</color>
     <color name="colorGrey">#9B99A9</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreyLight">#FBFBFB</color>
