@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +12,8 @@ import android.view.ViewGroup;
 
 import com.google.firebase.firestore.GeoPoint;
 import com.usv.rqapp.databinding.FragmentNavigatorBinding;
+import com.usv.rqapp.fragments.FavoriteLocationsFragment;
 import com.usv.rqapp.fragments.MapBoxFragment;
-import com.usv.rqapp.fragments.MapsFragment;
 import com.usv.rqapp.fragments.NewsFeedFragment;
 import com.usv.rqapp.fragments.UserAccountFragment;
 
@@ -44,7 +43,7 @@ public class NavigatorFragment extends Fragment {
         binding = FragmentNavigatorBinding.inflate(inflater, container, false);
         navigatorView = binding.getRoot();
 
-        getLocationGeoPointFromNewsFeed();
+        getLocationGeoPoint();
 
         bottomBar();
 
@@ -61,12 +60,12 @@ public class NavigatorFragment extends Fragment {
 
     private void bottomBar() {
         models = new ArrayList<>();
-        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.user), Color.rgb(127, 96, 241)).build());
-        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.marker), Color.rgb(127, 96, 241)).build());
-        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.map_marker_dark), Color.rgb(127, 96, 241)).build());
-        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.feed_icon), Color.rgb(127, 96, 241)).build());
+        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.user), getResources().getColor(R.color.colorPurple)).build());
+        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.marker),getResources().getColor(R.color.colorPurple)).build());
+        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.icon_favorite), getResources().getColor(R.color.colorPurple)).build());
+        models.add(new NavigationTabBar.Model.Builder(ContextCompat.getDrawable(getContext(), R.drawable.feed_icon), getResources().getColor(R.color.colorPurple)).build());
         binding.ntbBottomNavigation.setModels(models);
-        binding.ntbBottomNavigation.setModelIndex(2, true);
+        binding.ntbBottomNavigation.setModelIndex(1, true);
         binding.ntbBottomNavigation.setBadgeSize(10);
         binding.ntbBottomNavigation.setIsTinted(true);
         binding.ntbBottomNavigation.setIsSwiped(true);
@@ -84,13 +83,14 @@ public class NavigatorFragment extends Fragment {
 
                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, UserAccountFragment.newInstance()).commit();
                     break;
+
                 case 1:
-                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, MapsFragment.newInstance()).commit();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, MapBoxFragment.newInstance()).commit();
 
 
                     break;
                 case 2:
-                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, MapBoxFragment.newInstance()).commit();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, FavoriteLocationsFragment.newInstance()).commit();
 
 
                     break;
@@ -117,12 +117,12 @@ public class NavigatorFragment extends Fragment {
         return fragment;
     }
 
-    private void getLocationGeoPointFromNewsFeed() {
+    private void getLocationGeoPoint() {
         if (getArguments() != null) {
             eventTitleToSend = getArguments().getString(ARG_LOCATION_TITLE);
             double[] arr = getArguments().getDoubleArray(ARG_GEOPOINT);
             geoPointToSend = new GeoPoint(arr[0], arr[1]);
-            binding.ntbBottomNavigation.setModelIndex(2, true);
+            binding.ntbBottomNavigation.setModelIndex(1, true);
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, MapBoxFragment.newInstanceWithGeoPoint(eventTitleToSend, geoPointToSend)).commit();
             return;
         } else {
