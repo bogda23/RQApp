@@ -18,18 +18,19 @@
         app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.getbase.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_margin_20"
-        android:background="@drawable/btn_back"
+        android:backgroundTint="@color/colorGreyLightOpacity_90"
         android:elevation="@dimen/elevation_5"
         android:outlineAmbientShadowColor="@color/colorGreyDark"
+        android:outlineProvider="background"
         android:outlineSpotShadowColor="@color/colorGreyDark"
         android:shadowColor="@color/colorGreyDark"
         android:shadowDy="@integer/btm_to"
-
+        android:src="@drawable/btn_back"
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +54,7 @@
 
             <TextView
                 android:id="@+id/tv_title"
-                style="@style/titleStyle"
+                style="@style/smallTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
@@ -62,8 +63,7 @@
                 android:outlineSpotShadowColor="@color/colorRedOpacity_50"
                 android:shadowColor="@color/colorRedOpacity_50"
                 android:text="@string/adaug_un_eveniment"
-                android:textColor="@color/colorGreyDarkOpacity_90"
-                android:textSize="@dimen/dimen_font_title_small"
+
 
                 app:layout_constraintBottom_toTopOf="@id/scroll_event_title"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -234,15 +234,6 @@
                 app:layout_constraintTop_toTopOf="@id/btn_choose_image"
 
                 />
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminateTint="@color/colorGreen"
-                app:layout_constraintBottom_toTopOf="@id/btn_add_event"
-                tools:layout_editor_absoluteX="20dp" />
 
             <Button
                 android:id="@+id/btn_add_event"
