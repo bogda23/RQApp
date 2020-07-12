@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.usv.rqapp.NavigatorFragment;
+import com.usv.rqapp.models.firestoredb.FavoriteLocation;
 import com.usv.rqapp.models.firestoredb.NewsFeed;
 import com.usv.rqapp.models.firestoredb.User;
 
@@ -26,6 +27,7 @@ import java.util.Map;
 import javax.annotation.RegEx;
 
 import kotlin.text.Regex;
+import timber.log.Timber;
 
 public class FirestoreController {
 
@@ -42,6 +44,7 @@ public class FirestoreController {
         storage = FirebaseStorage.getInstance();
         db = FirebaseFirestore.getInstance();
     }
+
 
     /**
      * @param colectie
@@ -68,6 +71,7 @@ public class FirestoreController {
                 });
         return dataStored[0];
     }
+
 
     /**
      * @param manager
@@ -96,8 +100,30 @@ public class FirestoreController {
         return dataStored[0];
     }
 
-    // TODO: 6/24/2020    db.collection(colectie).document(firebaseUser.getUid()).collection(NewsFeed.APRECIERI_UTILIZATOR).document(map.get(NewsFeed.ID_POSTARE).toString())
 
+    /**
+     * @param favLocation
+     * @param manager
+     */
+    public void addFavoriteLocationToFirestore(FavoriteLocation favLocation, FragmentManager manager) {
+
+        Map<String, Object> favLocationMap = favLocation.convertFavotiteLocationToMap(favLocation);
+
+        db.collection(FavoriteLocation.LOC_FAVORITE).document(firebaseUser.getUid()).collection(FavoriteLocation.LOCATII).document(favLocation.getId_locatie())
+                .set(favLocationMap).addOnCompleteListener(complete -> {
+            if (complete.isSuccessful()) {
+                Timber.e("DocumentSnapshot added with ID: " + favLocationMap.get(FavoriteLocation.ID_LOCATIE));
+                FragmentOpener.loadNextFragment(NavigatorFragment.newInstance(), manager);
+            } else {
+                Timber.e(complete.getException().getMessage(), "Error adding document to firestore");
+            }
+        });
+    }
+
+
+    /**
+     * @param user
+     */
     public void updateUserDateOdBirthInFirestore(User user) {
         if (user.getId_utilizator() != null) {
             DocumentReference documentReference = db.collection(User.UTILIZATORI).document(user.getId_utilizator());
@@ -123,6 +149,7 @@ public class FirestoreController {
                     });
         }
     }
+
 
     /**
      * @param imageUrl
@@ -163,6 +190,18 @@ public class FirestoreController {
 
     }
 
+    /**
+     * @param id_locatie
+     */
+    public void deleteFavoriteLocationFromFirestore(String id_locatie) {
+        db.collection(FavoriteLocation.LOC_FAVORITE).document(getFirebaseUser().getUid()).collection(FavoriteLocation.LOCATII).document(id_locatie).delete().addOnCompleteListener(deleteLocation -> {
+            if (deleteLocation.isSuccessful()) {
+                Log.e(TAG, "handleDeleteButton: Locația favorită a fost ștersă cu succes");
+            } else {
+                Log.e(TAG, "handleDeleteButton: " + deleteLocation.getException().getMessage());
+            }
+        });
+    }
 
     public String getUserID() {
         return userID;
@@ -191,5 +230,6 @@ public class FirestoreController {
     public void addUpvoteToFirestore() {
         DocumentReference documentReference = db.collection(NewsFeed.POSTARI).document();
     }
+
 
 }
