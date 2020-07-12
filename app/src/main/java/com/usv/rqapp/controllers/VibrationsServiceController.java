@@ -2,13 +2,10 @@ package com.usv.rqapp.controllers;
 
 import android.util.Log;
 
-import com.usv.rqapp.models.rqdb.BaseVibrations;
-import com.usv.rqapp.models.rqdb.VibrationIDLocation;
-import com.usv.rqapp.models.rqdb.VibrationObject;
-import com.usv.rqapp.services.vibrations.RetrofitVibrationClient;
-import com.usv.rqapp.services.vibrations.VibrationService;
+import com.usv.rqapp.models.rq_mongodb.BaseVibrations;
+import com.usv.rqapp.models.rq_mongodb.VibrationObject;
+import com.usv.rqapp.services.vibrationsCall.RetrofitVibrationClient;
 
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
