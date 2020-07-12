@@ -421,6 +421,8 @@ public class NewsFeedEventFragment extends Fragment {
             } else if (placeName == null) {
                 binding.materialSearchBar.setPlaceHolder(CONSTANTS.INEXISTENT_LOCATION);
                 binding.materialSearchBar.setPlaceHolderColor(getResources().getColor(R.color.colorRedOpacity_50));
+            } else if (eventImage == null) {
+                Toast.makeText(getContext(), CONSTANTS.PUT_AN_IMAGE, Toast.LENGTH_LONG).show();
             } else {
                 binding.btnAddEvent.setClickable(false);
                 progressDialog.setMessage(CONSTANTS.ADDING_FEED_EVENT);
@@ -428,6 +430,7 @@ public class NewsFeedEventFragment extends Fragment {
                 Log.e(TAG, currentUser);
 
                 NewsFeed feed = new NewsFeed(titlul, descriere, currentUser, DateHandler.getCurrentFirestoreTimestamp(), DateHandler.getCurrentFirestoreTimestamp(), 0, placeName, eventLocation, true);
+
                 byte[] imageToStore = imageController.compressImage(eventImage);
                 putImageInToFirebaseStorage(imageToStore, feed);
 
@@ -455,7 +458,7 @@ public class NewsFeedEventFragment extends Fragment {
                 if (complete.isSuccessful()) {
                     Uri download_uri = complete.getResult();
                     feed.setImg_url(String.valueOf(download_uri));
-                    firestoreController.addNewsFeedToFireStore(feed.convertUsereToMap(feed), manager);
+                    firestoreController.addNewsFeedToFireStore(feed.convertNewsFeedToMap(feed), manager);
                 } else {
                     Log.e(TAG, "Download URL not found");
                 }

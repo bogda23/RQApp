@@ -1,7 +1,6 @@
 package com.usv.rqapp.fragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,7 +39,7 @@ public class PermissionsFragment extends Fragment {
     private View permissionsView;
     private FragmentPermissionsBinding binding;
     private FragmentManager manager;
-    private Activity activity;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -54,7 +53,7 @@ public class PermissionsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentPermissionsBinding.inflate(inflater, container, false);
         permissionsView = binding.getRoot();
-        activity = getActivity();
+
 
         showContent(true);
         handlePermissions();
