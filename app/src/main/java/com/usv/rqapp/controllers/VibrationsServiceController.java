@@ -13,12 +13,58 @@ import retrofit2.Response;
 public class VibrationsServiceController {
     private static final String TAG = "VibrationsServiceController";
     private RetrofitVibrationClient retrofitVibrationClient;
-    private BaseVibrations baseVibrations;
+    private volatile BaseVibrations baseVibrations;
 
 
     public VibrationsServiceController() {
         retrofitVibrationClient = RetrofitVibrationClient.getInstance();
     }
+
+
+    //region Gson manipulation
+
+    /**
+     * Convert VibrationObject to FeatureCollection for MapBox
+     *
+     * @return
+     */
+    public String getFeatureCollectionGson() {
+        Integer size = getBaseVibrations().getVibrationObjects().size();
+        String itemToAdd = "";
+        String point = "";
+        String points="";
+        String featureGson ="";
+
+
+        for (int i = 0; i < size; i++) {
+            itemToAdd = getBaseVibrations().getVibrationObjects().get(i).getVibrationID().getLongitude() + "," + getBaseVibrations().getVibrationObjects().get(i).getVibrationID().getLatitude();
+            point = "\n           {\n" +
+                    "                      \"type\": \"Feature\",\n" +
+                    "                      \"properties\": {},\n" +
+                    "                      \"geometry\": {\n" +
+                    "                        \"type\": \"Point\",\n" +
+                    "                        \"coordinates\": [" +itemToAdd +"]\n" +
+                    "                       }\n" +
+                    "            } ,";
+            if (i == size - 1) {
+                points += point.substring(0, point.length() - 1);
+            } else {
+                points += point;
+            }
+        }
+        featureGson= "{\n" +
+                "  \"type\": \"FeatureCollection\",\n" +
+                "  \"features\": [\n" +
+                points +
+                "  ]\n" +
+                "}";
+
+        return featureGson;
+    }
+    //endregion
+
+
+    //region Load data from vibration server
 
     /**
      * @param isoCode
@@ -80,7 +126,10 @@ public class VibrationsServiceController {
             }
         });
     }
+    //endregion
 
+
+    //region Put data to vibration server
 
     /**
      * @param vibrationObject
@@ -103,18 +152,19 @@ public class VibrationsServiceController {
         });
 
     }
+    //endregion
 
-    /**
-     * @return
-     */
+
+    //region Getters & Setters
+
     public BaseVibrations getBaseVibrations() {
         return baseVibrations;
     }
 
-    /**
-     * @param baseVibrations
-     */
+
     public void setBaseVibrations(BaseVibrations baseVibrations) {
         this.baseVibrations = baseVibrations;
     }
+
+    //endregion
 }
