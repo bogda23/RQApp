@@ -84,7 +84,7 @@
         android:id="@+id/map_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/round_transparent"
+        android:background="@drawable/border_white"
         android:elevation="@dimen/dimen_margin_39"
         android:orientation="horizontal"
         android:visibility="gone"
@@ -98,7 +98,7 @@
         android:id="@+id/down_opacity"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/round_transparent"
+        android:background="@drawable/border_white"
         android:orientation="horizontal"
         android:visibility="gone"
 
@@ -106,31 +106,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/map_holder" />
-
-    <!-- Old search bar -->
-    <EditText
-        android:id="@+id/search_destination"
-        style="@style/edtStyle_Light"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_margin_10"
-        android:drawableStart="@drawable/search_location"
-        android:elevation="@dimen/dimen_margin_39"
-        android:hint="@string/destinatie"
-        android:inputType="textEmailAddress"
-        android:textIsSelectable="true"
-        android:visibility="gone"
-
-        app:commitIcon="@drawable/search_location"
-        app:goIcon="@drawable/search_location"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@+id/down_opacity"
-        app:layout_constraintRight_toRightOf="@+id/down_opacity"
-
-        app:layout_constraintTop_toBottomOf="@id/map_box"
-        app:queryHint="@string/destinatie"
-        app:searchHintIcon="@drawable/search_location"
-        app:searchIcon="@drawable/search_location" />
 
     <!-- New material search bar -->
     <com.mancj.materialsearchbar.MaterialSearchBar
@@ -208,6 +183,44 @@
 
         app:layout_constraintBottom_toBottomOf="@id/map_box"
         app:layout_constraintEnd_toEndOf="@id/map_box" />
+
+    <com.skydoves.powerspinner.PowerSpinnerView
+        android:id="@+id/spinner_layer_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:background="@drawable/round_transparent"
+        android:hint="Alege stratificarea"
+        app:spinner_divider_size="0.4dp"
+        android:gravity="center"
+        app:spinner_arrow_tint="@color/colorRedOpacity_50"
+
+
+        android:paddingTop="@dimen/dimen_padding_5"
+        android:paddingStart="@dimen/dimen_padding_5"
+        android:paddingEnd="@dimen/dimen_padding_5"
+        android:textAlignment="center"
+        android:textColor="@color/colorGreyDarkOpacity_50"
+        android:textColorHint="@color/colorGreyDarkOpacity_50"
+        android:textSize="@dimen/dimen_font_12"
+
+        app:layout_constraintLeft_toLeftOf="@id/material_search_bar"
+        app:layout_constraintRight_toRightOf="@id/material_search_bar"
+        app:layout_constraintTop_toBottomOf="@id/material_search_bar"
+
+        android:foregroundGravity="center"
+        app:spinner_arrow_gravity="bottom"
+
+        app:spinner_divider_color="@color/colorWhite"
+        app:spinner_divider_show="true"
+
+
+        app:spinner_item_array="@array/layer_types"
+        app:spinner_popup_animation="dropdown"
+        app:spinner_popup_background="@color/colorWhite"
+        app:spinner_popup_elevation="@dimen/elevation_5"
+
+        />
 
     <Button
         android:id="@+id/btn_start_road_trip"
