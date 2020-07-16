@@ -6,4 +6,10 @@
         <item>@color/colorWhite</item>
         <item>@color/colorGreen</item>
     </integer-array>
+
+    <string-array name="layer_types">
+        <item>Normal</item>
+        <item>Vibratii în țară</item>
+        <item>Vibratii în județ</item>
+    </string-array>
 </resources>
