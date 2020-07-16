@@ -58,17 +58,20 @@ public final class CONSTANTS {
     //MapBox
     public final static String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoiYm9nZGEyMyIsImEiOiJja2JzZm4xZWgwMTRyMnRwZzJmYmdrMnE0In0.SSVBus-BkkMCRURbw6Stvg";
 
-
     //News Feed event
     public static final String INVALID_EVENT_TITLE = "Introduceți un titlu";
     public static final String INVALID_EVENT_DESCRIPTION = "Introduceți o descriere";
     public static final String INEXISTENT_LOCATION = "Locație inexistentă/invalidă";
     public static final String ADDING_FEED_EVENT = "Se adaugă evenimentul..";
     public static final String CAN_T_SAVE_DATA = "Datele nu au putut fi salvate";
-    public static final String LOCATION_NOT_RECEIVED = "Locația curentă nu a putut fi accesată";
     public static final String PUT_AN_IMAGE = "Introduce-ți o imagine";
+    public static final String LOCATION_NOT_RECEIVED = "Locația curentă nu a putut fi accesată";
+
+
+    //Vibration
     public static final String ACCEPTA = "Accept";
     public static final String NU_ACCEPT = "Nu accept";
     public static final String VIBRATIONS_ACCESS = "Acces vibrații";
     public static final float VIBRATION_THRESHOLD = 5f;
+    public static final String DIDN_T_GET_DATA = "Nu s-au putut face modificările";
 }

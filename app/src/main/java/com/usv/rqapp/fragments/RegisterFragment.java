@@ -25,14 +25,12 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.usv.rqapp.CONSTANTS;
-import com.usv.rqapp.CustomAnimation;
-import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.controllers.FragmentOpener;
+import com.usv.rqapp.databinding.FragmentRegisterBinding;
 import com.usv.rqapp.models.captcha.CaptchaResponse;
 import com.usv.rqapp.models.firestoredb.User;
-import com.usv.rqapp.databinding.FragmentRegisterBinding;
 import com.usv.rqapp.reCaptcha.IreCaptcha;
 import com.usv.rqapp.reCaptcha.ReCaptcha;
 
@@ -67,6 +65,7 @@ public class RegisterFragment extends Fragment {
         super.onAttach(context);
         manager = getFragmentManager();
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -96,7 +95,7 @@ public class RegisterFragment extends Fragment {
                         Toast.makeText(getActivity(),
                                 "Email de verificare trimis la adresa  " + user.getEmail(),
                                 Toast.LENGTH_LONG).show();
-                        FragmentOpener.loadNextFragment(LoginFragment.newInstance(),manager);
+                        FragmentOpener.loadNextFragment(LoginFragment.newInstance(), manager);
                     } else {
                         Log.e(TAG, "sendEmailVerification", task.getException());
                         Toast.makeText(getActivity(),
@@ -276,12 +275,6 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    private void updateUI() {
-        FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
-                CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, MapsFragment.newInstance()).commit();
-    }
-
     private void iHaveAccountHandler() {
         binding.tvIHaveAccount.setOnClickListener(v -> {
             getFragmentManager().popBackStackImmediate();
@@ -291,9 +284,9 @@ public class RegisterFragment extends Fragment {
     private void signInWithEmailAndPassword(FirebaseAuth auth, User user) {
         auth.signInWithEmailAndPassword(user.getEmail(), user.getParola()).addOnCompleteListener(getActivity(), task -> {
             if (task.isSuccessful()) {
-                FragmentOpener.loadNextFragment(MapsFragment.newInstance(), getFragmentManager());
+                FragmentOpener.loadNextFragment(PermissionsFragment.newInstance(), getFragmentManager());
             }
-        }).addOnFailureListener(e->{
+        }).addOnFailureListener(e -> {
             FragmentOpener.loadNextFragment(LoginFragment.newInstance(), getFragmentManager());
         });
     }

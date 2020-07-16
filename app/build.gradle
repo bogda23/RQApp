@@ -139,7 +139,9 @@ dependencies {
     //MapBox Location
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.11.0'
 
-
     //Animation library
     implementation 'com.airbnb.android:lottie:3.4.1'
+
+    //Custom Spinner
+    implementation "com.github.skydoves:powerspinner:1.0.8"
 }
