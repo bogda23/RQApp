@@ -8,6 +8,10 @@ import java.util.Objects;
 
 public class VibrationObject implements Serializable {
 
+    public static final String COUNTRY_NAME = "country_name";
+    public static final String COUNTY_NAME = "county_name";
+    public static final String ISO_CODE = "iso_code";
+
     @SerializedName("_id")
     private VibrationIDLocation vibrationID;
 
