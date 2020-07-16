@@ -89,6 +89,8 @@
     <string name="tracking_compass">Tracking Compass</string>
     <string name="tracking_gps">Tracking Gps</string>
     <string name="tracking_gps_north">Tracking Gps North</string>
+    <string name="theme_light">mapbox://styles/bogda23/ckc0k7qup0j1j1js7ach9jiem</string>
+    <string name="theme_dark">mapbox://styles/bogda23/ckcjagc600s5d1io6eqoflmhh</string>
 
     <!-- Favorite locations -->
     <string name="locatiile_preferate">Locațiile preferate</string>
