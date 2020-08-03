@@ -5,13 +5,15 @@ var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
 var express = require('express');
 const bodyParser = require('body-parser');
+const cron = require('node-cron');
+const fs = require('fs');
 
 
 //Create express service
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(bodyParser.urlencoded({extended: true}));
+
 
 //Create MongoDB Client
 var MongoClient = mongodb.MongoClient;
@@ -19,17 +21,37 @@ var MongoClient = mongodb.MongoClient;
 //Connection url
 var url = process.env.DB_CONNECTION; // 27017 default port 
 
+//Token to mapbox
+var MAPBOX_TOKEN = process.env.MAPBOX_TOKEN;
 
-//Middlewares
-/*
-app.use('/vibrations',()=>{
+
+
+//Middlewares (runs in background ones a user post something to the database)
+/*app.use('/vibrations',()=>{
 	console.log('Middleware running...');
-})
-*/
+
+})*/
+
+/* ┌────────────── second (optional)
+ # │ ┌──────────── minute
+ # │ │ ┌────────── hour
+ # │ │ │ ┌──────── day of month
+ # │ │ │ │ ┌────── month
+ # │ │ │ │ │ ┌──── day of week
+ # │ │ │ │ │ │
+ # │ │ │ │ │ │
+ # * * * * * **/
+ //Update JSON file every five hours
+ cron.schedule(' * */5 * * *', () => {
+    console.log('Updating  JSON file');
+	updateJSONFile();
+	
+ }, {
+   timezone: "Europe/Bucharest"
+ });
 
 //MongoDB 
-
-MongoClient.connect(url,{useNewUrlParser:true},{ useUnifiedTopology: true },function(err,client){
+MongoClient.connect(url,{useNewUrlParser:true, useUnifiedTopology: true },function(err,client){
 	if(err){
 		console.log('Unable to connect to mongoDB server',err);
 	}else{
@@ -171,3 +193,88 @@ MongoClient.connect(url,{useNewUrlParser:true},{ useUnifiedTopology: true },func
 	}
 	
 });
+
+
+//Update JSON file
+function updateJSONFile(){
+	MongoClient.connect(url,{useNewUrlParser:true, useUnifiedTopology: true },function(err,client){
+		if(err){
+			console.log('Unable to connect to mongoDB server',err);
+		}else{
+			var db = client.db('rqdb');
+			let cursor = db.collection('vibrations').find({}).toArray(function(err, result){	
+				if(err){
+					console.log('Eroare la accesarea datelor');
+				}else{
+					  
+					 var point;
+					 let coords;
+					 const mapBoxObject = {
+							type: 'FeatureCollection',
+							features:[							
+	
+									]
+							};
+							
+					
+					result.forEach(function (item){
+						coords =[parseFloat(item._id.lng) , parseFloat(item._id.lat)];  // <- aici pun coordonatele (care in db sunt double) și mi le converteste la string ["232.3","-12.233"]
+					
+						
+						point = {
+							type: 'Feature',
+							properties: {},
+							geometry: {
+								type: 'Point',
+								coordinates: coords    // <- aici le pun în obiectul de tip punct pe harta și vreau să arate așa: [232.3,-12.233]
+							}
+						};
+					
+					mapBoxObject.features.push(point); // <- aici pun punct cu punct in obiectul final
+					
+					});
+					
+					var resultObj = JSON.stringify(mapBoxObject);  
+					 // write JSON string to a file
+					fs.writeFile('map.json', resultObj, (err) => { // <- aici scriu in fisier json-ul
+						if (err) {
+							throw err;
+						}
+						console.log("JSON data is saved.");
+						
+						updateMapBoxTile();  // <- aici trimit la mapbox punctele
+					});
+				}
+			});
+		}
+	});
+}
+
+//Send to mapBox new tileset stored 
+function updateMapBoxTile(){
+	var upload = require('mapbox-upload');
+
+	// creates a progress-stream object to track status of
+	// upload while upload continues in background
+	var progress = upload({
+		file: __dirname + '/map.json', // Path to mbtiles file on disk.
+		account: 'bogda23', // Mapbox user account.
+		accesstoken: MAPBOX_TOKEN, // A valid Mapbox API secret token with the uploads:write scope enabled.
+		mapid: 'bogda23.ckclve4vk1cvy2dn35iizbu1j-6wrn6', // The identifier of the map to create or update.
+		name: 'My upload' // Optional name to set, otherwise a default such as original.geojson will be used.
+	});
+
+	progress.on('error', function(err){
+		if (err){
+			throw err;
+		}
+	});
+
+	progress.on('progress', function(p){
+		console.log("Uploading tileset.... "+p.percentage +" %");
+	});
+
+	progress.once('finished', function(){
+		console.log("Done uploading tileset")
+	});
+}
