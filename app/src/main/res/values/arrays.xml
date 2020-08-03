@@ -10,6 +10,6 @@
     <string-array name="layer_types">
         <item>Normal</item>
         <item>Vibratii în țară</item>
-        <item>Vibratii în județ</item>
+        <!-- <item>Vibratii în județ</item>-->
     </string-array>
 </resources>
