@@ -98,7 +98,7 @@ public class LoginFragment extends Fragment {
 
         /***/
         initFirestoreDatabase();
-        initFirebase();
+        initFirebaseAuth();
         testAds();
         handleAlreadyLogedUserToFirebase();
         configurateGoogleLogin();
@@ -213,7 +213,7 @@ public class LoginFragment extends Fragment {
         loginHandler();
     }
 
-    private void initFirebase() {
+    private void initFirebaseAuth() {
         auth = FirebaseAuth.getInstance();
     }
 
@@ -462,7 +462,7 @@ public class LoginFragment extends Fragment {
                     } else {
                         Log.e(TAG + " User_exists", "Data Empty");
                         user.setFirstTime(true);
-                        if (firestoreController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
+                        if (firestoreController.addUserToFireStore( user.convertUsereToMap(user))) {
                             binding.progressBarHolder.setVisibility(View.GONE);
                             Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
                         }
@@ -474,7 +474,7 @@ public class LoginFragment extends Fragment {
                     .addOnFailureListener(e -> {
                         Log.e(TAG + "_", e.getMessage());
                         user.setFirstTime(true);
-                        if (firestoreController.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
+                        if (firestoreController.addUserToFireStore( user.convertUsereToMap(user))) {
                             binding.progressBarHolder.setVisibility(View.GONE);
                             Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
                         }
