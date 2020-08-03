@@ -26,32 +26,32 @@
         app:fab_addButtonPlusIconColor="@color/colorRedOpacity_50"
         app:fab_labelStyle="@style/btnStyle"
 
-        app:layout_constraintBottom_toTopOf="@id/fab_location_favorite"
+        app:layout_constraintBottom_toTopOf="@id/img_custom_location"
         app:layout_constraintRight_toRightOf="parent">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_car_crash"
-            style="@style/btnFloatStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <!--  <com.getbase.floatingactionbutton.FloatingActionButton
+              android:id="@+id/btn_car_crash"
+              style="@style/btnFloatStyle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
 
-            android:src="@drawable/car_crash" />
+              android:src="@drawable/car_crash" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_cloud_rain"
-            style="@style/btnFloatStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+          <com.getbase.floatingactionbutton.FloatingActionButton
+              android:id="@+id/btn_cloud_rain"
+              style="@style/btnFloatStyle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
 
-            android:src="@drawable/cloud_rain" />
+              android:src="@drawable/cloud_rain" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_heavy_snow"
-            style="@style/btnFloatStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+          <com.getbase.floatingactionbutton.FloatingActionButton
+              android:id="@+id/btn_heavy_snow"
+              style="@style/btnFloatStyle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
 
-            android:src="@drawable/heavy_snow" />
+              android:src="@drawable/heavy_snow" />-->
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_add_news_feed_post"
@@ -62,23 +62,20 @@
 
             />
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add_location_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
+            android:translationY="@dimen/dimen_margin_39"
+            android:src="@drawable/icon_round_favorite"
+            app:fab_title="Adaugă locație favorită"
+
+            />
+
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_location_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="@dimen/dimen_margin_10"
-        android:elevation="@dimen/elevation_25"
-        android:tint="@color/colorRedOpacity_50"
-        app:backgroundTint="@color/colorWhite"
-
-        app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
-        app:layout_constraintEnd_toEndOf="@+id/img_custom_location"
-        app:layout_constraintStart_toStartOf="@+id/img_custom_location"
-        app:srcCompat="@drawable/icon_favorite" />
 
     <LinearLayout
         android:id="@+id/map_holder"
@@ -94,18 +91,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/down_opacity"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/border_white"
-        android:orientation="horizontal"
-        android:visibility="gone"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/map_holder" />
 
     <!-- New material search bar -->
     <com.mancj.materialsearchbar.MaterialSearchBar
@@ -140,19 +125,6 @@
         app:mt_speechMode="false"
         app:mt_textColor="@color/colorGreyDark" />
 
-
-    <ImageView
-        android:id="@+id/img_report"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dimen_margin_10"
-        android:background="@drawable/report_light"
-        android:elevation="@dimen/dimen_margin_78"
-        android:visibility="gone"
-
-        app:layout_constraintBottom_toTopOf="@+id/img_custom_location"
-        app:layout_constraintRight_toRightOf="@id/map_box"
-        app:layout_constraintStart_toStartOf="@+id/img_custom_location" />
 
     <ImageView
 
@@ -190,29 +162,29 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_margin_10"
         android:background="@drawable/round_transparent"
-        android:hint="Alege stratificarea"
-        app:spinner_divider_size="0.4dp"
+        android:foregroundGravity="center"
         android:gravity="center"
-        app:spinner_arrow_tint="@color/colorRedOpacity_50"
+        android:hint="Alege stratificarea"
+        android:paddingStart="@dimen/dimen_padding_5"
 
 
         android:paddingTop="@dimen/dimen_padding_5"
-        android:paddingStart="@dimen/dimen_padding_5"
         android:paddingEnd="@dimen/dimen_padding_5"
         android:textAlignment="center"
         android:textColor="@color/colorGreyDarkOpacity_50"
         android:textColorHint="@color/colorGreyDarkOpacity_50"
         android:textSize="@dimen/dimen_font_12"
-
         app:layout_constraintLeft_toLeftOf="@id/material_search_bar"
+
         app:layout_constraintRight_toRightOf="@id/material_search_bar"
         app:layout_constraintTop_toBottomOf="@id/material_search_bar"
-
-        android:foregroundGravity="center"
         app:spinner_arrow_gravity="bottom"
 
+        app:spinner_arrow_tint="@color/colorRedOpacity_50"
         app:spinner_divider_color="@color/colorWhite"
+
         app:spinner_divider_show="true"
+        app:spinner_divider_size="0.4dp"
 
 
         app:spinner_item_array="@array/layer_types"
@@ -240,9 +212,8 @@
         app:backgroundTint="@color/colorPurple"
 
 
-        app:layout_constraintBottom_toBottomOf="@+id/img_custom_location"
+        app:layout_constraintBottom_toTopOf="@id/img_custom_location"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/img_custom_location"
-        app:layout_constraintTop_toTopOf="@+id/fab_location_favorite" />
+        app:layout_constraintRight_toLeftOf="@id/img_custom_location" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
