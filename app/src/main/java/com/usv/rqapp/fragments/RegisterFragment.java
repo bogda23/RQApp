@@ -73,7 +73,7 @@ public class RegisterFragment extends Fragment {
         registerView = binding.getRoot();
 
         initCaptcha();
-        initFirebase();
+        initFirebaseAuth();
         initFirestoreDatabase();
         iHaveAccountHandler();
         configurateNormalRegister();
@@ -181,7 +181,7 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-    private void initFirebase() {
+    private void initFirebaseAuth() {
         auth = FirebaseAuth.getInstance();
     }
 
@@ -230,6 +230,10 @@ public class RegisterFragment extends Fragment {
         return isValid;
     }
 
+    /**
+     * Crează un cont ținând cont de anumite criterii de validare
+     * @param user --> conține un obiect de tip User
+     */
     private void createFirebaseUser(User user) {
         auth.createUserWithEmailAndPassword(user.getEmail(), user.getParola())
                 .addOnCompleteListener(getActivity(), task -> {
@@ -242,34 +246,39 @@ public class RegisterFragment extends Fragment {
 
                     } else {
                         binding.progressBarHolder.setVisibility(View.GONE);
-                        try {
-                            throw task.getException();
-                        }
-                        // if user enters wrong email.
-                        catch (FirebaseAuthWeakPasswordException weakPassword) {
-                            Log.d(TAG, "onComplete: weak_password");
-                            binding.edtPasswordRegister.setError(CONSTANTS.MIN_SIX_CHARS_PASSWORD);
-                            binding.edtPasswordRegister.requestFocus();
-                        }
-                        // if user enters wrong password.
-                        catch (FirebaseAuthInvalidCredentialsException malformedEmail) {
-                            Log.d(TAG, "onComplete: malformed_email");
-                            binding.edtEmailRegister.setError(CONSTANTS.INVALIDE_EMAIL);
-                            binding.edtEmailRegister.requestFocus();
-                        } catch (FirebaseAuthUserCollisionException existEmail) {
-                            Log.d(TAG, "onComplete: exist_email");
-                            binding.edtEmailRegister.setError(CONSTANTS.EMAIL_ALREADY_EXISTS);
-                            binding.edtEmailRegister.requestFocus();
-                        } catch (Exception e) {
-                            Log.d(TAG, "onComplete: " + e.getMessage());
-                        }
+                        handleCreateAccountExceptions(task.getException());
+
                     }
                 });
     }
 
+    /**
+     * În cazul unei anomalii la înregistrare sunt tratate diferite cazuri
+     * @param exception
+     */
+    private void handleCreateAccountExceptions(Exception exception) {
+        try {
+            throw exception;
+        } catch (FirebaseAuthWeakPasswordException weakPassword) {
+            Log.d(TAG, "onComplete: weak_password");
+            binding.edtPasswordRegister.setError(CONSTANTS.MIN_SIX_CHARS_PASSWORD);
+            binding.edtPasswordRegister.requestFocus();
+        } catch (FirebaseAuthInvalidCredentialsException malformedEmail) {
+            Log.d(TAG, "onComplete: malformed_email");
+            binding.edtEmailRegister.setError(CONSTANTS.INVALIDE_EMAIL);
+            binding.edtEmailRegister.requestFocus();
+        } catch (FirebaseAuthUserCollisionException existEmail) {
+            Log.d(TAG, "onComplete: exist_email");
+            binding.edtEmailRegister.setError(CONSTANTS.EMAIL_ALREADY_EXISTS);
+            binding.edtEmailRegister.requestFocus();
+        } catch (Exception e) {
+            Log.d(TAG, "onComplete: " + e.getMessage());
+        }
+    }
+
     private void createNodeInFirebaseDatabase(User user) {
         user.setFirstTime(true);
-        if (db.addUserToFireStore(User.UTILIZATORI, user.convertUsereToMap(user))) {
+        if (db.addUserToFireStore(user.convertUsereToMap(user))) {
             binding.progressBarHolder.setVisibility(View.GONE);
             signInWithEmailAndPassword(auth, user);
         }
