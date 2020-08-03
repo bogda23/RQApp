@@ -13,20 +13,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.usv.rqapp.NavigatorFragment;
 import com.usv.rqapp.models.firestoredb.FavoriteLocation;
 import com.usv.rqapp.models.firestoredb.NewsFeed;
 import com.usv.rqapp.models.firestoredb.User;
 
-import org.intellij.lang.annotations.RegExp;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.RegEx;
-
-import kotlin.text.Regex;
 import timber.log.Timber;
 
 public class FirestoreController {
@@ -38,7 +32,7 @@ public class FirestoreController {
     private FirebaseStorage storage;
 
     /**
-     *
+     *  Inițializarea Cloud Firestore și Firebase Storage
      */
     public FirestoreController() {
         storage = FirebaseStorage.getInstance();
@@ -47,13 +41,13 @@ public class FirestoreController {
 
 
     /**
-     * @param colectie
-     * @param map
+     * Adăugarea unui utilizator în baza de date
+     * @param map --> obiectul de tip cheie valoare asociat unui utilizator; acesta conține toate datele unui utilizator
      * @return
      */
-    public Boolean addUserToFireStore(String colectie, Map<String, Object> map) {
+    public Boolean addUserToFireStore( Map<String, Object> map) {
         final Boolean[] dataStored = {false};
-        db.collection(colectie).document(map.get(User.ID_UTILIZATOR).toString())
+        db.collection(User.UTILIZATORI).document(map.get(User.ID_UTILIZATOR).toString())
                 .set(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
