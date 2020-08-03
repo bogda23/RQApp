@@ -217,8 +217,6 @@ public class MainActivity extends AppCompatActivity implements DataInterface, Ne
 
     private void manageFragments() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WelcomeFragment()).commit();
-        //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new LoginFragment()).commit();
-
     }
 
     /**
@@ -313,7 +311,6 @@ public class MainActivity extends AppCompatActivity implements DataInterface, Ne
                 startVibrationService(coordsToSend, currentX, currentY, currentZ, amplitudeValue);
                 readTimes = 0;
                 amplitudeValue = 0;
-
             }
             readTimes++;
         }
