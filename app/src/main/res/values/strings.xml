@@ -70,6 +70,7 @@
     <string name="strada_x_numarul_y">Strada x, numarul y</string>
     <string name="news_feed_title">Intersecția Alexandru Lăpușneanu și strada Soveja din Constanța închisă pentru lucrări</string>
     <string name="postat_de">Postat de:</string>
+    <string name="nu_am_gasit_eveniment">Ne pare rău!\nNu am găsit nici un eveniment</string>
 
     <!-- Add news feed -->
     <string name="adaug_eveniment">Adaugă eveniment</string>
@@ -100,6 +101,7 @@
     <string name="permisiuni_esentiale">Permisiuni esențiale</string>
     <string name="vibration_permission_message">Pentru a îmbunătăți sistemul de detecție al calității drumului este necesară permisiunea dumnevoastră.\n
         Acest sistem v-a colecta vibrațiile de pe parcursul călătoriei dumneavoastră în mod anonim.</string>
+
 
 
 </resources>
