@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.usv.rqapp.NavigatorFragment;
@@ -81,7 +82,29 @@ public class FavoriteLocationsFragment extends Fragment {
             @Override
             public FavoriteLocationsViewHoldeer onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.location_fav_item, parent, false);
+                binding.clNoItemFound.setVisibility(View.GONE);
                 return new FavoriteLocationsViewHoldeer(view);
+            }
+
+            @Override
+            public void onError(@NonNull FirebaseFirestoreException e) {
+                binding.clNoItemFound.setVisibility(View.VISIBLE);
+                super.onError(e);
+            }
+
+            @Override
+            public boolean onFailedToRecycleView(@NonNull FavoriteLocationsViewHoldeer holder) {
+                Log.e(TAG, "onFailedToRecycleView: ERUUAREEE");
+                binding.clNoItemFound.setVisibility(View.VISIBLE);
+                return super.onFailedToRecycleView(holder);
+            }
+
+            @Override
+            public int getItemCount() {
+                if (super.getItemCount() < 1) {
+                    binding.clNoItemFound.setVisibility(View.VISIBLE);
+                }
+                return super.getItemCount();
             }
 
             @Override
@@ -94,11 +117,7 @@ public class FavoriteLocationsFragment extends Fragment {
                 handleNavigateButton(holder.navigateButton, model.getTitlul_locatiei(), model.getCoords());
             }
 
-            @Override
-            public boolean onFailedToRecycleView(@NonNull FavoriteLocationsViewHoldeer holder) {
-                Log.e(TAG, "onFailedToRecycleView: ERUUAREEE");
-                return super.onFailedToRecycleView(holder);
-            }
+
         };
 
         binding.rvFavoriteLocations.setHasFixedSize(true);

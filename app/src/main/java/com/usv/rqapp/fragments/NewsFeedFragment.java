@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.mapbox.geocoder.GeocoderCriteria;
 import com.mapbox.geocoder.MapboxGeocoder;
@@ -37,7 +34,6 @@ import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.databinding.FragmentNewsFeedBinding;
 import com.usv.rqapp.interfaces.NewsFeedFragmentListener;
-
 import com.usv.rqapp.models.firestoredb.NewsFeed;
 
 import java.util.HashMap;
@@ -125,17 +121,42 @@ public class NewsFeedFragment extends Fragment {
         FirestoreRecyclerOptions<NewsFeed> options = new FirestoreRecyclerOptions.Builder<NewsFeed>()
                 .setQuery(query, NewsFeed.class)
                 .build();
+
+
         adapter = new FirestoreRecyclerAdapter<NewsFeed, NewsFeedViewHoldeer>(options) {
+
+
             @NonNull
             @Override
             public NewsFeedViewHoldeer onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_feed_item, parent, false);
+                binding.clNoItemFound.setVisibility(View.GONE);
                 return new NewsFeedViewHoldeer(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull NewsFeedViewHoldeer holder, int position, @NonNull NewsFeed model) {
+            public boolean onFailedToRecycleView(@NonNull NewsFeedViewHoldeer holder) {
+                Log.e(TAG, "onFailedToRecycleView: empty");
+                binding.clNoItemFound.setVisibility(View.VISIBLE);
+                return super.onFailedToRecycleView(holder);
+            }
 
+            @Override
+            public void onError(@NonNull FirebaseFirestoreException e) {
+                binding.clNoItemFound.setVisibility(View.VISIBLE);
+                super.onError(e);
+            }
+
+            @Override
+            public int getItemCount() {
+                if (super.getItemCount() < 1) {
+                    binding.clNoItemFound.setVisibility(View.VISIBLE);
+                }
+                return super.getItemCount();
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull NewsFeedViewHoldeer holder, int position, @NonNull NewsFeed model) {
 
                 if (DateHandler.getTimeBetween(model.getMoment_postare()) >= DateHandler.EXPIRATION_TIME) {
                     db.deleteEventOnNewsFeed(model.getId_postare(), model.getImg_url());
@@ -164,6 +185,7 @@ public class NewsFeedFragment extends Fragment {
         binding.rvNewsFeedList.setHasFixedSize(true);
         binding.rvNewsFeedList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvNewsFeedList.setAdapter(adapter);
+
     }
 
     private void handleGetEventLocation(TextView newsEventLocation, String titlu_eveniment, GeoPoint coords) {
