@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -68,7 +67,6 @@ import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -87,14 +85,8 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener;
-import com.mapbox.mapboxsdk.style.layers.Layer;
-import com.mapbox.mapboxsdk.style.layers.LineLayer;
-import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.mapboxsdk.style.sources.Source;
-import com.mapbox.mapboxsdk.style.sources.TileSet;
-import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
@@ -124,12 +116,6 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOpacity;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 import static com.usv.rqapp.CONSTANTS.MAPBOX_ACCESS_TOKEN;
 
 
@@ -191,8 +177,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     //Threads
     private VibrationsServiceController vibrationController;
-    private FeatureCollection featureCollection;
-    private GeoJsonSource source;
 
 
     @Override
@@ -203,10 +187,8 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
             return;
         }
         map = mapboxMap;
-
         chooseMapLayerStyle();
-
-        createDeviceGpsLocationRequest();
+        // createDeviceGpsLocationRequest();
         handleCustomTrackLocationButton();
         putMarkerOnEvent();
         map.setStyle(getString(R.string.theme_light), new Style.OnStyleLoaded() {
@@ -349,7 +331,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
             @SuppressLint("MissingPermission")
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                getDeviceLocation();                /** GPS Enabled*/
+                //todo--->if not working use old location:  getDeviceLocation();                /** GPS Enabled*/
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -376,9 +358,9 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     //region Handle buttons: Add Location to favorite + Add newsFeed event on road + handle current location
     private void addFavoriteLocation() {
-        binding.fabLocationFavorite.setOnClickListener(click -> {
-            if (lastLocation != null) {
-                FragmentOpener.loadNextFragmentWithStack(FavoriteEventFragment.newInstance(new GeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude())), manager);
+        binding.btnAddLocationFavorite.setOnClickListener(click -> {
+            if (locationComponent != null && locationComponent.getLastKnownLocation() != null) {
+                FragmentOpener.loadNextFragmentWithStack(FavoriteEventFragment.newInstance(new GeoPoint(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude())), manager);
             }
         });
     }
@@ -400,11 +382,12 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
             if (binding.materialSearchBar.isSearchEnabled()) {
                 binding.materialSearchBar.disableSearch();
             }
-            if (lastLocation != null) {
-                moveMapCameraToLocation(lastLocation);
+            if (locationComponent != null && locationComponent.getLastKnownLocation() != null) {
+                moveMapCameraToLocation(locationComponent.getLastKnownLocation());
             } else {
-                Toast.makeText(getActivity(), "Te rugăm să activezi locația", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Te rugăm să activezi locația", Toast.LENGTH_SHORT).show();
                 createDeviceGpsLocationRequest();
+
             }
         });
     }
@@ -487,7 +470,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     //region Build navigation launcher + check location permission(mapBox side) + add destination layer
     private void handleStartRoadTripButton() {
         binding.btnStartRoadTrip.setOnClickListener(click -> {
-            if (destinationLatLng != null) {
+            if (destinationLatLng != null && locationComponent != null && locationComponent.getLastKnownLocation() != null) {
                 createRouteBetweenMeAndDestination(destinationLatLng);
                 if (currentRoute != null) {
                     boolean simulateRoute = false;
@@ -503,6 +486,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                 }
             } else {
                 binding.btnStartRoadTrip.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Locația curentă este dezactivată", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -510,6 +494,23 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
+
+        LocationComponentOptions locationComponentOptions =
+                LocationComponentOptions.builder(getContext())
+                        .pulseEnabled(true)
+                        .pulseAlpha(.4f)
+                        .build();
+
+        LocationComponentActivationOptions locationComponentActivationOptions = LocationComponentActivationOptions
+                .builder(getContext(), loadedMapStyle)
+                .locationComponentOptions(locationComponentOptions)
+                .build();
+
+        locationComponent = map.getLocationComponent();
+        locationComponent.activateLocationComponent(locationComponentActivationOptions);
+
+        locationComponent.getLastKnownLocation();
+        moveCameraDynamically();
         // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 
@@ -586,8 +587,8 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     private void createRouteBetweenMeAndDestination(LatLng destination) {
 
         Point destinationPoint = Point.fromLngLat(destination.getLongitude(), destination.getLatitude());
-        Point originPoint = Point.fromLngLat(lastLocation.getLongitude(),
-                lastLocation.getLatitude());
+        Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                locationComponent.getLastKnownLocation().getLatitude());
 
         GeoJsonSource source = map.getStyle().getSourceAs("destination-source-id");
         if (source != null) {
@@ -836,14 +837,15 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
     //region MapBox camera movement methods
     private void moveMapCameraToLocation(Location mLastKnownLocation) {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM);
-        //  map.animateCamera(cameraUpdate, 900);
-        map.animateCamera(CameraUpdateFactory
-                .newCameraPosition(new CameraPosition.Builder()
-                        .target(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
-                        .zoom(DEFAULT_ZOOM)
-                        .build()), 1500);
-
+        if (mLastKnownLocation != null) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM);
+            //  map.animateCamera(cameraUpdate, 900);
+            map.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(new CameraPosition.Builder()
+                            .target(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
+                            .zoom(DEFAULT_ZOOM)
+                            .build()), 1500);
+        }
     }
 
     private void moveMapCameraToLatLng(LatLng latLng) {
@@ -855,8 +857,8 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     }
 
     private void moveCameraDynamically() {
-        if (eventGeoPointReceivedFromFeed == null) {
-            moveMapCameraToLocation(lastLocation);
+        if (eventGeoPointReceivedFromFeed == null && locationComponent != null && locationComponent.getLastKnownLocation() != null) {
+            moveMapCameraToLocation(locationComponent.getLastKnownLocation());
         } else {
             moveMapCameraToLatLng(eventGeoPointReceivedFromFeed);
         }
@@ -877,6 +879,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
                 @Override
                 public void onStyleLoaded(@NonNull Style style) {
                     enableLocationComponent(style);
+                    Log.e(TAG, "onStyleLoaded: Rezultatul permisiunii de locație");
                 }
             });
         } else {
@@ -1002,44 +1005,15 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
 
 
     //region Load points on map methods
-    private void setupSource(@NonNull Style loadedMapStyle) {
-        source = new GeoJsonSource(SOURCE_ID, featureCollection);
-        loadedMapStyle.addSource(source);
-    }
-
-    private void refreshSource() {
-        if (source != null && featureCollection != null) {
-            source.setGeoJson(featureCollection);
-        }
-    }
-
-    private void setupMapillaryTiles(@NonNull Style loadedMapStyle) {
-        loadedMapStyle.addSource(MapillaryTiles.createSource());
-        loadedMapStyle.addLayerBelow(MapillaryTiles.createLineLayer(), LOADING_LAYER_ID);
-    }
-
-    private void hideLabelLayers(@NonNull Style style) {
-        String id;
-        for (Layer layer : style.getLayers()) {
-            id = layer.getId();
-            if (id.startsWith("vibrationdataset") || id.startsWith("RQ")) {
-                layer.setProperties(visibility(Property.VISIBLE));  // TODO: 7/16/2020  change back to none
-            }
-        }
-    }
-
-    public void setupData(final FeatureCollection collection) {
+    public void setupData() {
         if (map == null) {
             return;
         }
-        featureCollection = collection;
         map.setStyle(getString(R.string.theme_dark), new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 Log.e(TAG, "onStyleLoaded: setupDAta--> The style is loaded");
-                setupSource(style);
-                hideLabelLayers(style);
-                setupMapillaryTiles(style);
+                enableLocationComponent(style);
             }
         });
     }
@@ -1087,12 +1061,10 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         protected BaseVibrations doInBackground(String... strings) {
             Log.e(TAG, "doInBackground: call--------->");
             String rowType = strings[0];
-            getGeocodingDataForCurrentLocation(rowType);
+            //getGeocodingDataForCurrentLocation(rowType);
             SystemClock.sleep(500);
-            if (vibrationController.getBaseVibrations() != null) {
-                return vibrationController.getBaseVibrations();
-            }
-            return vibrationController.getBaseVibrations();
+
+            return null;
         }
 
 
@@ -1110,12 +1082,13 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
             }
             if (baseVibrations == null) {
                 Toast.makeText(getContext(), CONSTANTS.DIDN_T_GET_DATA, Toast.LENGTH_SHORT).show();
+                mapBoxFragment.setupData();
                 return;
             }
-            convertResultToGson(baseVibrations);
+            //   convertResultToGson(baseVibrations);
 
             Log.e(TAG, "onPostExecute: FeatureCollection layer      ACTIVATE    -->");
-            mapBoxFragment.setupData(convertVibrationJsonToFeatureCollection());
+            mapBoxFragment.setupData();
 
         }
         //endregion
@@ -1139,28 +1112,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
             }
         }
         //endregion
-
-
-        //region Convert to featureCollection
-
-        /**
-         * Conversie între mapxBox FeatureCollection și BaseVibration pentru a pune puncte pe hartă
-         *
-         * @return
-         */
-        private FeatureCollection convertVibrationJsonToFeatureCollection() {
-            try {
-                Log.e(TAG, "convertVibrationJsonToFeatureCollection:  JSON " + vibrationController.getFeatureCollectionGson());
-                FeatureCollection featureCollection = FeatureCollection.fromJson(vibrationController.getFeatureCollectionGson());
-                Log.e(TAG, "convertVibrationJsonToFeatureCollection:  AFTER" + featureCollection.toJson());
-            } catch (Exception e) {
-                Log.e(TAG, "convertVibrationJsonToFeatureCollection: " + e.getMessage());
-                e.printStackTrace();
-            }
-            return featureCollection;
-        }
-        //endregion
-
 
         //region Methods for retrieving geolocation data about the current location
 
@@ -1251,42 +1202,6 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         //endregion
 
 
-    }
-    //endregion
-
-
-    //region MapBox tiles layer static class
-
-    /**
-     * Util class that creates a Source and a Layer based on Mapillary data.
-     * https://www.mapillary.com/developer/tiles-documentation/
-     */
-    private static class MapillaryTiles {
-
-        static final String ID_SOURCE = "mapillary.source";
-        static final String ID_LINE_LAYER = "mapillary.layer.line";
-        static final String URL_TILESET = "mapbox://tileset-source/bogda23/ckclve4vk1cvy2dn35iizbu1j-6wrn6";       // TODO: 7/14/2020 Tileset custom
-
-
-        static Source createSource() {
-            TileSet mapillaryTileset = new TileSet("2.1.0", MapillaryTiles.URL_TILESET);
-            mapillaryTileset.setMinZoom(0);
-            mapillaryTileset.setMaxZoom(14);
-            return new VectorSource(MapillaryTiles.ID_SOURCE, mapillaryTileset);
-        }
-
-        static Layer createLineLayer() {
-            LineLayer lineLayer = new LineLayer(MapillaryTiles.ID_LINE_LAYER, MapillaryTiles.ID_SOURCE);
-            lineLayer.setSourceLayer("mapillary-sequences");
-            lineLayer.setProperties(
-                    lineCap(Property.LINE_CAP_ROUND),
-                    lineJoin(Property.LINE_JOIN_ROUND),
-                    lineOpacity(0.6f),
-                    lineWidth(2.0f),
-                    lineColor(Color.GREEN)
-            );
-            return lineLayer;
-        }
     }
     //endregion
 
