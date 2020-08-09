@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -22,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,8 +40,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,30 +57,26 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
-import com.squareup.picasso.Picasso;
 import com.usv.rqapp.CONSTANTS;
-import com.usv.rqapp.NavigatorFragment;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
-import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.controllers.ImageController;
 import com.usv.rqapp.databinding.FragmentAddItemInNewsFeedBinding;
 import com.usv.rqapp.models.firestoredb.NewsFeed;
+import com.usv.rqapp.models.firestoredb.User;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
@@ -109,7 +101,6 @@ public class NewsFeedEventFragment extends Fragment {
     private View newEventView;
     private FragmentManager manager;
     private FirebaseUser firebaseUser;
-    private FirestoreController firestoreController;
 
     private PlacesClient placesClient;
     private AutocompleteSessionToken token;
@@ -118,6 +109,8 @@ public class NewsFeedEventFragment extends Fragment {
     private String placeName;
 
     private StorageReference storageRef;
+    private FirestoreController db;
+    private String currentUser;
 
     @Override
     public void onStart() {
@@ -134,6 +127,7 @@ public class NewsFeedEventFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getContext());
         iniFirestore();
+        initFirebaseAuth();
         initFirestoreStorage();
         initImageController();
 
@@ -150,6 +144,10 @@ public class NewsFeedEventFragment extends Fragment {
         handleSendEventButton();
 
         return newEventView;
+    }
+
+    private void initFirebaseAuth() {
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     private void initImageController() {
@@ -382,7 +380,7 @@ public class NewsFeedEventFragment extends Fragment {
     }
 
     private void iniFirestore() {
-        firestoreController = new FirestoreController();
+        db = new FirestoreController();
     }
 
     private void handleGetCurrentLocationButton() {
@@ -398,13 +396,23 @@ public class NewsFeedEventFragment extends Fragment {
 
 
     private void getCurrentUser() {
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        db.getDb().collection(User.UTILIZATORI).document(firebaseUser.getUid()).get().addOnCompleteListener(complete -> {
+            if (complete.isSuccessful()) {
+                DocumentSnapshot doc = complete.getResult();
+                binding.edtEventUtilizator.setText(doc.getString(User.PRENUME) + " " + doc.getString(User.NUME));
+                currentUser = binding.edtEventUtilizator.getText().toString();
+                Log.e(TAG, "getAccountName: Numele utilizatorului accesat cu succes");
+            } else {
+                Log.e(TAG, "getAccountName: Numele utilizatorului NU este accesat");
+                currentUser = firebaseUser.getDisplayName();
+                binding.edtEventUtilizator.setText(currentUser);
+            }
+        });
     }
 
     private void handleSendEventButton() {
-        String currentUser = firebaseUser.getDisplayName();
-        binding.edtEventUtilizator.setText(currentUser);
-
+        getCurrentUser();
+        Log.e(TAG, "getAccountName: Numele utilizatorului "+currentUser);
         binding.btnAddEvent.setOnClickListener(click -> {
             String titlul = binding.edtEventTitle.getText().toString();
             String descriere = binding.edtEventDescription.getText().toString();
@@ -458,7 +466,7 @@ public class NewsFeedEventFragment extends Fragment {
                 if (complete.isSuccessful()) {
                     Uri download_uri = complete.getResult();
                     feed.setImg_url(String.valueOf(download_uri));
-                    firestoreController.addNewsFeedToFireStore(feed.convertNewsFeedToMap(feed), manager);
+                    db.addNewsFeedToFireStore(feed.convertNewsFeedToMap(feed), manager);
                 } else {
                     Log.e(TAG, "Download URL not found");
                 }

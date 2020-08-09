@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
@@ -40,9 +39,7 @@ public class UserAccountFragment extends Fragment {
     private FragmentUserAccountBinding binding;
     private FirebaseAuth auth;
     private FirebaseUser firebaseUser;
-    private FirebaseFirestore db;
-    private FirestoreController firestoreController;
-
+    private FirestoreController db;
     private FragmentManager manager;
 
     private DatePickerDialog.OnDateSetListener dateSetListener;
@@ -75,7 +72,7 @@ public class UserAccountFragment extends Fragment {
 
     public void loadDateOfBirthFromFirebase() {
         if (firebaseUser.getUid() != null) {
-            DocumentReference documentReference = db.collection(User.UTILIZATORI).document(firebaseUser.getUid());
+            DocumentReference documentReference = db.getDb().collection(User.UTILIZATORI).document(firebaseUser.getUid());
             documentReference.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
@@ -114,12 +111,11 @@ public class UserAccountFragment extends Fragment {
                 String date = year + "-" + (month + 1) + "-" + dayOfMonth;
                 binding.btnDatePicker.setText(date);
                 User user = new User(firebaseUser.getUid(), date, true);
-                firestoreController.updateUserDateOdBirthInFirestore(user);
+                db.updateUserDateOdBirthInFirestore(user);
 
             }
         };
     }
-
 
     private void handleChangePassword() {
         binding.tvChangePassword.setOnClickListener(v -> {
@@ -161,13 +157,25 @@ public class UserAccountFragment extends Fragment {
     }
 
     private void loadAccountData() {
-        binding.txtAccountName.setText(firebaseUser.getDisplayName());
+        getAccountName();
         binding.edtAccountEmail.setText(firebaseUser.getEmail());
     }
 
+    private void getAccountName() {
+        db.getDb().collection(User.UTILIZATORI).document(firebaseUser.getUid()).get().addOnCompleteListener(complete -> {
+            if (complete.isSuccessful()) {
+                DocumentSnapshot doc = complete.getResult();
+                binding.txtAccountName.setText(doc.getString(User.PRENUME) + " " + doc.getString(User.NUME));
+                Log.e(TAG, "getAccountName: Datele despre utilizator accesate cu succes");
+            } else {
+                Log.e(TAG, "getAccountName: Datele despre utilizator nu au putut fi accesate");
+                binding.txtAccountName.setText(firebaseUser.getDisplayName());
+            }
+        });
+    }
+
     private void initFirestoreDatabase() {
-        db = FirebaseFirestore.getInstance();
-        firestoreController = new FirestoreController();
+        db = new FirestoreController();
     }
 
     private void initFirebase() {
@@ -210,7 +218,7 @@ public class UserAccountFragment extends Fragment {
     }
 
     private void deleteAccount() {
-        db.collection(User.UTILIZATORI).document(firebaseUser.getUid()).delete().addOnCompleteListener(task -> {
+        db.getDb().collection(User.UTILIZATORI).document(firebaseUser.getUid()).delete().addOnCompleteListener(task -> {
             binding.progressBarHolder.setVisibility(View.GONE);
             if (task.isSuccessful()) {
                 Toast.makeText(getContext(), CONSTANTS.ACCOUNT_DELETED, Toast.LENGTH_LONG).show();
@@ -222,7 +230,6 @@ public class UserAccountFragment extends Fragment {
             }
         });
     }
-
 
     private void goToLoginFragment() {
         FragmentManager manager = getFragmentManager();

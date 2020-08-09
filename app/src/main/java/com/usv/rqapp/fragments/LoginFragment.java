@@ -40,7 +40,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.CustomAnimation;
 import com.usv.rqapp.R;
@@ -48,8 +47,8 @@ import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
 import com.usv.rqapp.controllers.FragmentOpener;
 import com.usv.rqapp.controllers.Verifier;
-import com.usv.rqapp.models.firestoredb.User;
 import com.usv.rqapp.databinding.FragmentLoginBinding;
+import com.usv.rqapp.models.firestoredb.User;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,8 +62,7 @@ public class LoginFragment extends Fragment {
 
     private CallbackManager callbackManager;
     private GoogleSignInClient googleSignInClient;
-    private FirestoreController firestoreController;
-    private FirebaseFirestore db;
+    private FirestoreController db;
     private static final int RC_SIGN_IN = 1;
     private static final int FB_SIGN_IN = 2;
     private static FirebaseAuth auth;
@@ -77,7 +75,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        manager = getFragmentManager();
         auth.addAuthStateListener(authStateListener);
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
@@ -110,15 +108,23 @@ public class LoginFragment extends Fragment {
         return loginView;
     }
 
+    /**
+     * Inițializează controlerul baze de date
+     */
     private void initFirestoreDatabase() {
-        firestoreController = new FirestoreController();
-        db = FirebaseFirestore.getInstance();
+        db = new FirestoreController();
     }
 
+    /**
+     * Setează tipul de dată pentru câmpul parolă
+     */
     private void setInputTypePAssword() {
         binding.edtPasswordLogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
     }
 
+    /**
+     * Buton pentru ascundere și afișare a parolei
+     */
     private void onTogglePasswordPressed() {
         setInputTypeEmail();
         setInputTypePAssword();
@@ -138,10 +144,16 @@ public class LoginFragment extends Fragment {
         });
     }
 
+    /**
+     * Setează tipul datei ca fiind email
+     */
     private void setInputTypeEmail() {
         binding.edtEmailLogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     }
 
+    /**
+     *  Verifică dacă există un utilizator deja logat pentru a face logarea automat
+     */
     private void handleAlreadyLogedUserToFirebase() {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -169,7 +181,6 @@ public class LoginFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        manager = getFragmentManager();
     }
 
     @Override
@@ -178,6 +189,12 @@ public class LoginFragment extends Fragment {
        // FirebaseAuth.getInstance().signOut();
     }
 
+    /**
+     *  Primeste raspuns de la serviciile care au făcut cereri
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -191,6 +208,10 @@ public class LoginFragment extends Fragment {
         }
     }
 
+    /**
+     * Autentificarea folosind google
+     * @param task
+     */
     private void handleGoogleResultTask(Task<GoogleSignInAccount> task) {
         try {
             // Google Sign In was successful, authenticate with Firebase
@@ -213,10 +234,16 @@ public class LoginFragment extends Fragment {
         loginHandler();
     }
 
+    /**
+     * Inițializează mecanismul de autentificare folosit de firebase
+     */
     private void initFirebaseAuth() {
         auth = FirebaseAuth.getInstance();
     }
 
+    /**
+     * Configurarea serviciului de autentificare folosit de google
+     */
     private void configurateGoogleLogin() {
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -227,19 +254,19 @@ public class LoginFragment extends Fragment {
         binding.imgGoogleLogin.setOnClickListener(v -> signInGoogle());
     }
 
+    /**
+     * Emite cererea pentru autentificarea cu google
+     */
     private void signInGoogle() {
         binding.imgGoogleLogin.setEnabled(false);
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void singOutGoogle() {
-        FirebaseAuth.getInstance().signOut();
-        googleSignInClient.signOut().addOnCompleteListener(getActivity(), task -> {
-            updateUI(null);
-        });
-    }
-
+    /**
+     *  Realizarea autentificării cu google
+     * @param acct
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         //  Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());                                   //todo: get the id of the user
 
@@ -266,6 +293,9 @@ public class LoginFragment extends Fragment {
                 });
     }
 
+    /**
+     *  Realizarea logării cu facebook
+     */
     private void facebookLoginButtonHandler() {
 
         binding.imgFacebookLogin.setOnClickListener(v -> {
@@ -294,6 +324,9 @@ public class LoginFragment extends Fragment {
         });
     }
 
+    /**
+     * Configurarea configurării cu facebook
+     */
     private void configurateFacebookLogin() {
         //  FacebookSdk.sdkInitialize(getView().getContext().getApplicationContext());  --------------> todo: Commented due to the corona virus
         //  AppEventsLogger.activateApp(getView().getContext().getApplicationContext());
@@ -304,6 +337,10 @@ public class LoginFragment extends Fragment {
         facebookLoginButtonHandler();
     }
 
+    /**
+     * Crearea token-ului pentru autentificarea cu facebook
+     * @param token
+     */
     private void handleFacebookAccessToken(AccessToken token) {
         Log.e(TAG, "HandleFacebookAccessToken:" + token);
 
@@ -336,6 +373,10 @@ public class LoginFragment extends Fragment {
         binding.imgFacebookLogin.setEnabled(true);
     }
 
+    /**
+     * Modifică interfața grafică în cazul unei logări cu succes
+     * @param user
+     */
     private void updateUI(@Nullable FirebaseUser user) {
         if (user != null) { //todo: Aici setam user, parola, email,imagini
             Toast.makeText(getContext(), "You are logged in as : " + user.getEmail(), Toast.LENGTH_LONG).show();
@@ -346,6 +387,9 @@ public class LoginFragment extends Fragment {
         }
     }
 
+    /**
+     * Inițializează și folosește reclame prin mecanismul oferit de google
+     */
     private void testAds() {
         /*List<String> testDeviceIds = Arrays.asList("0EC3F86BF34E8ACF4D2FE0905F86C4B8");
         RequestConfiguration configuration =
@@ -362,6 +406,9 @@ public class LoginFragment extends Fragment {
 
     }
 
+    /**
+     *  Pregătește logarea cu email și parolă
+     */
     private void loginHandler() {
         binding.btnLogin.setOnClickListener(v -> {
             binding.progressBarHolder.setVisibility(View.VISIBLE);
@@ -376,6 +423,11 @@ public class LoginFragment extends Fragment {
         });
     }
 
+    /**
+     * Validează câmpurile pentru logarea cu email și parolă
+     * @param user
+     * @return
+     */
     private boolean fieldsFromUserAreValid(User user) {
         boolean validForSignIn = false;
         if (TextUtils.isEmpty(user.getEmail()) || !Verifier.validEmail(user.getEmail())) {
@@ -398,6 +450,11 @@ public class LoginFragment extends Fragment {
         return validForSignIn;
     }
 
+    /**
+     * Înregistrează-te cu email și parolă
+     * @param auth
+     * @param user
+     */
     private void signInWithEmailAndPassword(FirebaseAuth auth, User user) {
         auth.signInWithEmailAndPassword(user.getEmail(), user.getParola()).addOnCompleteListener(getActivity(), task -> {
             if (task.isSuccessful()) {
@@ -418,7 +475,9 @@ public class LoginFragment extends Fragment {
         });
     }
 
-
+    /**
+     * Tratează momentul în care utilizatorul uită parola
+     */
     private void forgotPasswordHandler() {
         binding.tvForgotPassword.setOnClickListener(v -> {
             FragmentManager manager = getFragmentManager();
@@ -427,6 +486,9 @@ public class LoginFragment extends Fragment {
         });
     }
 
+    /**
+     * Tratează momentul în care utilizatorul nu are cont și dorește să creeze unul
+     */
     private void registerHandler() {
         binding.tvRegister.setOnClickListener(v -> {
             FragmentManager manager = getFragmentManager();
@@ -445,9 +507,13 @@ public class LoginFragment extends Fragment {
     }
 
 
+    /**
+     *  Urcă toate informațiile despre utilizatori în cazul unei logări fără email și parolă
+     * @param user
+     */
     public void updateUserCredetialsInFirestore(User user) {
         if (user.getId_utilizator() != null) {
-            DocumentReference documentReference = db.collection(User.UTILIZATORI).document(user.getId_utilizator());
+            DocumentReference documentReference = db.getDb().collection(User.UTILIZATORI).document(user.getId_utilizator());
             documentReference.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
@@ -457,12 +523,12 @@ public class LoginFragment extends Fragment {
                         user.setFirstTime(false);
                         Map<String, Object> map = new HashMap<>();
                         map.put(User.ULTIMA_LOGARE, DateHandler.getCurrentTimestamp());
-                        db.collection(User.UTILIZATORI).document(user.getId_utilizator()).update(map);
+                        db.getDb().collection(User.UTILIZATORI).document(user.getId_utilizator()).update(map);
 
                     } else {
                         Log.e(TAG + " User_exists", "Data Empty");
                         user.setFirstTime(true);
-                        if (firestoreController.addUserToFireStore( user.convertUsereToMap(user))) {
+                        if (db.addUserToFireStore( user.convertUsereToMap(user))) {
                             binding.progressBarHolder.setVisibility(View.GONE);
                             Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
                         }
@@ -474,7 +540,7 @@ public class LoginFragment extends Fragment {
                     .addOnFailureListener(e -> {
                         Log.e(TAG + "_", e.getMessage());
                         user.setFirstTime(true);
-                        if (firestoreController.addUserToFireStore( user.convertUsereToMap(user))) {
+                        if (db.addUserToFireStore( user.convertUsereToMap(user))) {
                             binding.progressBarHolder.setVisibility(View.GONE);
                             Log.e(TAG, "Logare cu Google ---> Date salvate in DB cu succes");
                         }

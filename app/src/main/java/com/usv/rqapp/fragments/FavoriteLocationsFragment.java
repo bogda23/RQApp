@@ -67,7 +67,7 @@ public class FavoriteLocationsFragment extends Fragment {
     }
 
     /**
-     *
+     *  Preluarea locațiilor favorite pentru fiecare utilizator
      */
     private void loadFavoriteLocationsFromFirestore() {
 
@@ -125,24 +125,40 @@ public class FavoriteLocationsFragment extends Fragment {
         binding.rvFavoriteLocations.setAdapter(adapter);
     }
 
+
+    /**
+     *  Începe navigarea spre o locație din lista locatiilor favorite
+     *
+     * @param navigateButton
+     * @param titlul_locatiei
+     * @param coords
+     */
     private void handleNavigateButton(Button navigateButton, String titlul_locatiei, GeoPoint coords) {
         navigateButton.setOnClickListener(click -> {
             FragmentOpener.loadNextFragment(NavigatorFragment.newInstanceWithGeoPoint(titlul_locatiei, coords), manager);
         });
     }
 
+
+    /**
+     *  Sterge o locație favorită
+     * @param deleteButton
+     * @param id_locatie
+     */
     private void handleDeleteButton(ImageView deleteButton, String id_locatie) {
         deleteButton.setOnClickListener(click -> {
             db.deleteFavoriteLocationFromFirestore(id_locatie);
         });
     }
 
+
     /**
-     *
+     * Inițializează controlerul pentru baza de date
      */
     private void initFirestore() {
         db = new FirestoreController();
     }
+
 
     /**
      * @return
@@ -156,7 +172,7 @@ public class FavoriteLocationsFragment extends Fragment {
     }
 
     /**
-     * Firestore View Holder For App
+     * Posesorul informațiilor despre locațiile favorite
      */
     private class FavoriteLocationsViewHoldeer extends RecyclerView.ViewHolder {
 

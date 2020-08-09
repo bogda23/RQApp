@@ -28,7 +28,7 @@ public class FavoriteEventFragment extends Fragment {
     private View favItemView;
     private FragmentManager manager;
 
-    private FirestoreController firestoreController;
+    private FirestoreController db;
     private GeoPoint geoPointReceivedFromMap;
 
 
@@ -54,10 +54,16 @@ public class FavoriteEventFragment extends Fragment {
         return favItemView;
     }
 
+    /**
+     * Inițializează controlerul bazei de date
+     */
     private void iniFirestore() {
-        firestoreController = new FirestoreController();
+        db = new FirestoreController();
     }
 
+    /**
+     * Primește locația de la fragmentul Mapbox pentru a salva locația favorită
+     */
     private void getLocationGeoPointFromMapBox() {
         if (getArguments() != null) {
             double[] arr = getArguments().getDoubleArray(ARG_GEOPOINT);
@@ -65,12 +71,18 @@ public class FavoriteEventFragment extends Fragment {
         }
     }
 
+    /**
+     *  Înapoi la fragmentul anterior
+     */
     private void handleBackButton() {
         binding.btnBack.setOnClickListener(click -> {
             manager.popBackStackImmediate();
         });
     }
 
+    /**
+     * Adaugă locătia curentă  în baza de date și verifică titlul
+     */
     private void handleSendEventButton() {
 
         binding.btnAddFavLocation.setOnClickListener(click -> {
@@ -92,9 +104,13 @@ public class FavoriteEventFragment extends Fragment {
         });
     }
 
+    /**
+     *  Adaugă în baza de date locația favorită
+     * @param titlul Titlul pus pentru locația adăugată
+     */
     private void addFavoriteLocationToFirestore(String titlul) {
         FavoriteLocation favLocation = new FavoriteLocation(titlul, DateHandler.getCurrentFirestoreTimestamp(), geoPointReceivedFromMap);
-        firestoreController.addFavoriteLocationToFirestore(favLocation, manager);
+        db.addFavoriteLocationToFirestore(favLocation, manager);
 
     }
 

@@ -1,18 +1,14 @@
 package com.usv.rqapp.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.usv.rqapp.R;
 import com.usv.rqapp.databinding.FragmentChangePasswordBinding;
 
 public class ChangePasswordFragment extends Fragment {
@@ -37,7 +33,9 @@ public class ChangePasswordFragment extends Fragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-
+    /**
+     * Metodă care ne duce înapoi la fragmentul anterior
+     */
     private void backPressHandler() {
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
