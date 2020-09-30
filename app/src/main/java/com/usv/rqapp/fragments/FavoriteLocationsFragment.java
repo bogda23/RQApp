@@ -1,5 +1,7 @@
 package com.usv.rqapp.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
+import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.NavigatorFragment;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.FirestoreController;
@@ -67,7 +70,7 @@ public class FavoriteLocationsFragment extends Fragment {
     }
 
     /**
-     *  Preluarea locațiilor favorite pentru fiecare utilizator
+     * Preluarea locațiilor favorite pentru fiecare utilizator
      */
     private void loadFavoriteLocationsFromFirestore() {
 
@@ -110,11 +113,13 @@ public class FavoriteLocationsFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull FavoriteLocationsViewHoldeer holder, int position, @NonNull FavoriteLocation model) {
 
-
+                if (model != null) {
+                    binding.clNoItemFound.setVisibility(View.GONE);
+                }
                 holder.favoriteLocationTitle.setText(model.getTitlul_locatiei());
-
                 handleDeleteButton(holder.deleteFavLocation, model.getId_locatie());
                 handleNavigateButton(holder.navigateButton, model.getTitlul_locatiei(), model.getCoords());
+
             }
 
 
@@ -127,7 +132,7 @@ public class FavoriteLocationsFragment extends Fragment {
 
 
     /**
-     *  Începe navigarea spre o locație din lista locatiilor favorite
+     * Începe navigarea spre o locație din lista locatiilor favorite
      *
      * @param navigateButton
      * @param titlul_locatiei
@@ -141,13 +146,31 @@ public class FavoriteLocationsFragment extends Fragment {
 
 
     /**
-     *  Sterge o locație favorită
+     * Sterge o locație favorită
+     *
      * @param deleteButton
      * @param id_locatie
      */
     private void handleDeleteButton(ImageView deleteButton, String id_locatie) {
         deleteButton.setOnClickListener(click -> {
-            db.deleteFavoriteLocationFromFirestore(id_locatie);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setTitle(CONSTANTS.DELETE_ACCOUNT);
+            dialog.setMessage(CONSTANTS.DELETE_FAVORITE_ELEMENT);
+            dialog.setPositiveButton(getString(R.string.sterge_elementul), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    db.deleteFavoriteLocationFromFirestore(id_locatie);
+                }
+            });
+            dialog.setNegativeButton(getString(R.string.anuleaza), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = dialog.create();
+            alertDialog.show();
         });
     }
 

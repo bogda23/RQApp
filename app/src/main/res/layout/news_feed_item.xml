@@ -52,6 +52,18 @@
             app:layout_constraintGuide_percent=".7" />
 
 
+        <ImageView
+            android:id="@+id/img_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_margin_10"
+            android:src="@drawable/icon_delete"
+            android:elevation="@dimen/elevation_25"
+            android:alpha=".75"
+            app:layout_constraintRight_toRightOf="@id/img_feed_image"
+            app:layout_constraintBottom_toTopOf="@id/tv_event_location"
+            />
+
         <TextView
             android:id="@+id/tv_event_location"
             style="@style/infoItalic_Monsterrat"
@@ -157,6 +169,8 @@
 
             app:layout_constraintBottom_toBottomOf="@+id/tv_news_user"
             app:layout_constraintEnd_toEndOf="@+id/tv_news_feed_message" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

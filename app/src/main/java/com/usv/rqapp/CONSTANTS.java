@@ -74,4 +74,7 @@ public final class CONSTANTS {
     public static final String VIBRATIONS_ACCESS = "Acces vibrații";
     public static final float VIBRATION_THRESHOLD = 5f;
     public static final String DIDN_T_GET_DATA = "Nu s-au putut face modificările";
+
+    //Favorites
+    public static final String DELETE_FAVORITE_ELEMENT = "Elementul va fi șters definitiv!";
 }
