@@ -21,4 +21,5 @@ public class FragmentOpener {
                 CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, newFragment).addToBackStack(null).commit();
     }
 
+
 }

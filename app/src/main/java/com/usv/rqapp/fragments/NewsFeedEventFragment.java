@@ -437,7 +437,7 @@ public class NewsFeedEventFragment extends Fragment {
                 progressDialog.show();
                 Log.e(TAG, currentUser);
 
-                NewsFeed feed = new NewsFeed(titlul, descriere, currentUser, DateHandler.getCurrentFirestoreTimestamp(), DateHandler.getCurrentFirestoreTimestamp(), 0, placeName, eventLocation, true);
+                NewsFeed feed = new NewsFeed(titlul, descriere, currentUser,firebaseUser.getUid(), DateHandler.getCurrentFirestoreTimestamp(), DateHandler.getCurrentFirestoreTimestamp(), 0, placeName, eventLocation, true);
 
                 byte[] imageToStore = imageController.compressImage(eventImage);
                 putImageInToFirebaseStorage(imageToStore, feed);
@@ -448,7 +448,7 @@ public class NewsFeedEventFragment extends Fragment {
     }
 
     private void putImageInToFirebaseStorage(byte[] imageToStore, NewsFeed feed) {
-        UploadTask imagePath = storageRef.child(NewsFeed.POSTARI).child(feed.id_postare + ".jpg").putBytes(imageToStore);
+        UploadTask imagePath = storageRef.child(NewsFeed.POSTARI).child(feed.getId_postare() + ".jpg").putBytes(imageToStore);
         imagePath.addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 sendEventToFirebase(task, feed);
@@ -470,13 +470,9 @@ public class NewsFeedEventFragment extends Fragment {
                 } else {
                     Log.e(TAG, "Download URL not found");
                 }
-
             });
-
             progressDialog.dismiss();
-
         }
-
     }
 
 

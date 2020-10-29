@@ -1,6 +1,8 @@
 package com.usv.rqapp.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.mapbox.geocoder.GeocoderCriteria;
 import com.mapbox.geocoder.MapboxGeocoder;
 import com.squareup.picasso.Picasso;
+import com.usv.rqapp.CONSTANTS;
 import com.usv.rqapp.R;
 import com.usv.rqapp.controllers.DateHandler;
 import com.usv.rqapp.controllers.FirestoreController;
@@ -157,7 +160,9 @@ public class NewsFeedFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(@NonNull NewsFeedViewHoldeer holder, int position, @NonNull NewsFeed model) {
-
+                if (model != null) {
+                    binding.clNoItemFound.setVisibility(View.GONE);
+                }
                 if (DateHandler.getTimeBetween(model.getMoment_postare()) >= DateHandler.EXPIRATION_TIME) {
                     db.deleteEventOnNewsFeed(model.getId_postare(), model.getImg_url());
                 } else {
@@ -167,10 +172,13 @@ public class NewsFeedFragment extends Fragment {
                     holder.newsUser.setText(model.getUtilizator());
                     holder.newsVoteCount.setText(String.valueOf(model.getAprecieri()));
                     holder.newsEventLocation.setText(model.getLoc_eveniment());
+
+                    // Functions
+                    showDeleteAbility(holder.delete, model.getId_utilizator());
                     if (model.getImg_url() != null) {
                         Picasso.get().load(Uri.parse(model.getImg_url())).into(holder.newsFeedEventImage);
                     }
-
+                    handleDeleteElement(holder.delete, model);
                     initialValueOfPressed(holder, model);
                     handleUpVoteOnNewsFeed(holder, model);
                     handleDownVoteOnNewsFeed(holder, model);
@@ -186,6 +194,37 @@ public class NewsFeedFragment extends Fragment {
         binding.rvNewsFeedList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvNewsFeedList.setAdapter(adapter);
 
+    }
+
+    private void handleDeleteElement(ImageView delete, NewsFeed model) {
+        delete.setOnClickListener(click -> {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setTitle(CONSTANTS.DELETE_ACCOUNT);
+            dialog.setMessage(CONSTANTS.DELETE_FAVORITE_ELEMENT);
+            dialog.setPositiveButton(getString(R.string.sterge_elementul), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    db.deleteEventOnNewsFeed(model.getId_postare(), model.getImg_url());
+                }
+            });
+            dialog.setNegativeButton(getString(R.string.anuleaza), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alertDialog = dialog.create();
+            alertDialog.show();
+
+        });
+    }
+
+    private void showDeleteAbility(ImageView delete, String id_utilizator) {
+        if (db.getFirebaseUser().getUid().equals(id_utilizator)) {
+            delete.setVisibility(View.VISIBLE);
+        } else {
+            delete.setVisibility(View.GONE);
+        }
     }
 
     private void handleGetEventLocation(TextView newsEventLocation, String titlu_eveniment, GeoPoint coords) {
@@ -394,6 +433,7 @@ public class NewsFeedFragment extends Fragment {
         private ImageView newsFeedDownVote;
         private ImageView newsFeedShare;
         private RoundedImageView newsFeedEventImage;
+        private ImageView delete;
 
 
         public NewsFeedViewHoldeer(@NonNull View itemView) {
@@ -408,6 +448,7 @@ public class NewsFeedFragment extends Fragment {
             newsFeedDownVote = itemView.findViewById(R.id.img_down_vote);
             newsFeedEventImage = itemView.findViewById(R.id.img_feed_image);
             newsFeedShare = itemView.findViewById(R.id.img_share);
+            delete = itemView.findViewById(R.id.img_delete);
         }
     }
 

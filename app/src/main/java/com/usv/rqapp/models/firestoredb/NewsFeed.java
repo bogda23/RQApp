@@ -1,10 +1,7 @@
 package com.usv.rqapp.models.firestoredb;
 
-import android.net.Uri;
-
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +15,7 @@ public class NewsFeed {
     private String titlu_eveniment;
     private String descriere;
     private String utilizator;
+    private String id_utilizator;
     private Timestamp moment_postare;
 
     private Timestamp ultima_editare;
@@ -42,6 +40,7 @@ public class NewsFeed {
     public final static String TITLUL_EVENIMENTULUI = "titlu_eveniment";
     public final static String DESCRIERE = "descriere";
     public final static String UTILIZATOR = "utilizator";
+    public final static String ID_UTILIZATOR = "id_utilizator";
     public final static String MOMENT_POSTARE = "moment_postare";
     public final static String ULTIMA_EDITARE = "ultima_editare";
     public final static String APRECIERI = "aprecieri";
@@ -67,10 +66,11 @@ public class NewsFeed {
      * @param loc_eveniment
      * @param isNewPost
      */
-    public NewsFeed(String titlu_eveniment, String descriere, String utilizator, Timestamp moment_postare, Timestamp ultima_editare, Integer aprecieri, String loc_eveniment, GeoPoint coords, Boolean isNewPost) {
+    public NewsFeed(String titlu_eveniment, String descriere, String utilizator,String id_utilizator, Timestamp moment_postare, Timestamp ultima_editare, Integer aprecieri, String loc_eveniment, GeoPoint coords, Boolean isNewPost) {
         this.titlu_eveniment = titlu_eveniment;
         this.descriere = descriere;
         this.utilizator = utilizator;
+        this.id_utilizator = id_utilizator;
         this.moment_postare = moment_postare;
         this.ultima_editare = ultima_editare;
         this.aprecieri = aprecieri;
@@ -92,6 +92,7 @@ public class NewsFeed {
             map.put(TITLUL_EVENIMENTULUI, newsFeed.getTitlu_eveniment());
             map.put(DESCRIERE, newsFeed.getDescriere());
             map.put(UTILIZATOR, newsFeed.getUtilizator());
+            map.put(ID_UTILIZATOR, newsFeed.getId_utilizator());
             if (newsFeed.getNewPost()) {
                 map.put(MOMENT_POSTARE, newsFeed.getMoment_postare());
             }
@@ -106,6 +107,13 @@ public class NewsFeed {
         return map;
     }
 
+    public String getId_utilizator() {
+        return id_utilizator;
+    }
+
+    public void setId_utilizator(String id_utilizator) {
+        this.id_utilizator = id_utilizator;
+    }
 
     public Map<String, Object> getNewsFeed() {
         return newsFeed;

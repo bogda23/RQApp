@@ -470,15 +470,16 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
     //region Build navigation launcher + check location permission(mapBox side) + add destination layer
     private void handleStartRoadTripButton() {
         binding.btnStartRoadTrip.setOnClickListener(click -> {
+            binding.btnStartRoadTrip.setClickable(false);
             if (destinationLatLng != null && locationComponent != null && locationComponent.getLastKnownLocation() != null) {
                 createRouteBetweenMeAndDestination(destinationLatLng);
                 if (currentRoute != null) {
                     boolean simulateRoute = false;
+                    binding.btnStartRoadTrip.setClickable(true);
                     NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                             .directionsRoute(currentRoute)
                             .shouldSimulateRoute(simulateRoute)
                             .build();
-
 
                     // Call this method with Context from within an Activity
                     handleVibrationPermissions(options);
@@ -596,8 +597,7 @@ public class MapBoxFragment extends Fragment implements OnMapReadyCallback, Perm
         }
 
         getRoute(originPoint, destinationPoint);
-        // binding.btnCloudRain.setEnabled(true);
-        //  binding.btnCloudRain.setBackgroundResource(R.color.colorGreen);
+        binding.btnStartRoadTrip.setClickable(true);
     }
 
     private void getRoute(Point origin, Point destination) {
