@@ -380,7 +380,6 @@ public class LoginFragment extends Fragment {
     private void updateUI(@Nullable FirebaseUser user) {
         if (user != null) { //todo: Aici setam user, parola, email,imagini
             Toast.makeText(getContext(), "You are logged in as : " + user.getEmail(), Toast.LENGTH_LONG).show();
-            FragmentManager manager = getFragmentManager();
             manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
                     CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, PermissionsFragment.newInstance()).commit();
 
@@ -480,7 +479,6 @@ public class LoginFragment extends Fragment {
      */
     private void forgotPasswordHandler() {
         binding.tvForgotPassword.setOnClickListener(v -> {
-            FragmentManager manager = getFragmentManager();
             manager.beginTransaction().replace(R.id.fragment_frame, RecoveryFragment.newInstance()).addToBackStack(null).commit();
 
         });
@@ -491,7 +489,6 @@ public class LoginFragment extends Fragment {
      */
     private void registerHandler() {
         binding.tvRegister.setOnClickListener(v -> {
-            FragmentManager manager = getFragmentManager();
             manager.beginTransaction().setCustomAnimations(CustomAnimation.animation[0], CustomAnimation.animation[1],
                     CustomAnimation.animation[2], CustomAnimation.animation[3]).replace(R.id.fragment_frame, RegisterFragment.newInstance()).addToBackStack(null).commit();
 
