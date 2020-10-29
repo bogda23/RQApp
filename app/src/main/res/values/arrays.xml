@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="my_color_array">
+        <item>@color/colorRed</item>
+        <item>@color/colorPurpleOpacity_80</item>
+        <item>@color/colorWhite</item>
+        <item>@color/colorGreen</item>
+    </integer-array>
+
+    <string-array name="layer_types">
+        <item>Normal</item>
+        <item>Vibratii în țară</item>
+        <!-- <item>Vibratii în județ</item>-->
+    </string-array>
+</resources>

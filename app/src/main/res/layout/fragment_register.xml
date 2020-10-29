@@ -46,7 +46,8 @@
             android:drawableStart="@drawable/user"
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/nume"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
+            android:textIsSelectable="true"
 
             app:layout_constraintBottom_toTopOf="@id/edt_prenume_register"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +67,8 @@
             android:drawableStart="@drawable/user"
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/prenume"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
+            android:textIsSelectable="true"
 
             app:layout_constraintBottom_toTopOf="@id/edt_email_register"
             app:layout_constraintEnd_toEndOf="parent"
@@ -86,9 +88,9 @@
             android:drawableStart="@drawable/email"
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/email_example"
-
             android:inputType="textEmailAddress"
             android:textIsSelectable="true"
+
             app:layout_constraintBottom_toTopOf="@id/edt_password_register"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -106,6 +108,7 @@
             android:drawablePadding="@dimen/dimen_padding_10"
             android:hint="@string/parola"
             android:inputType="textPassword"
+            android:textIsSelectable="false"
 
             app:layout_constraintBottom_toTopOf="@id/btn_register"
             app:layout_constraintEnd_toEndOf="parent"
@@ -114,25 +117,93 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edt_email_register" />
 
+        <TextView
+            android:id="@+id/tv_toggle_password_register"
+            style="@style/btnStyleShowPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dimen_margin_10"
+            android:elevation="@dimen/dimen_margin_39"
+            android:text="@string/show_password"
+
+
+            app:layout_constraintBottom_toBottomOf="@id/edt_password_register"
+            app:layout_constraintRight_toRightOf="@id/edt_password_register"
+            app:layout_constraintTop_toTopOf="@id/edt_password_register" />
+
         <Button
             android:id="@+id/btn_register"
             style="@style/btnStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dimen_margin_78"
+            android:layout_marginBottom="@dimen/dimen_padding_20"
             android:text="@string/inregistreaza_te"
+            android:visibility="visible"
 
-            app:layout_constraintBottom_toTopOf="@id/tv_register"
+            app:layout_constraintBottom_toTopOf="@id/cl_reCaptcha"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edt_password_register"
 
             />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_reCaptcha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_margin_20"
+            android:background="@color/colorWhite"
+            android:orientation="horizontal"
+            android:visibility="gone"
+
+            app:layout_constraintBottom_toTopOf="@id/tv_iHave_account"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_register">
+
+            <CheckBox
+                android:id="@+id/ck_not_robot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_margin_10"
+                android:buttonTint="@color/colorGreyDarkOpacity_50"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tv_not_a_robot"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_not_a_robot"
+                style="@style/infoNormal_OpenSans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_margin_10"
+                android:text="@string/nu_sunt_robot"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/ck_not_robot"
+                app:layout_constraintRight_toLeftOf="@id/img_reCaptcha"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/img_reCaptcha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_margin_10"
+                android:layout_marginRight="@dimen/dimen_margin_10"
+                android:background="@drawable/recaptcha"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/tv_not_a_robot"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/tv_register"
-            style="@style/infoItalic_Monsterrat"
+            android:id="@+id/tv_iHave_account"
+            style="@style/infoNormal_Monsterrat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -141,16 +212,37 @@
             android:textColor="@color/colorWhite"
 
 
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_register"
+            app:layout_constraintTop_toBottomOf="@id/cl_reCaptcha"
 
             />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <FrameLayout
+        android:id="@+id/progressBarHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.4"
+        android:animateLayoutChanges="true"
+        android:background="@color/colorGreyDark"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/colorGreen" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

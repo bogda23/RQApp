@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1084119986143",
+    "firebase_url": "https://rqapp-285509.firebaseio.com",
+    "project_id": "rqapp-285509",
+    "storage_bucket": "rqapp-285509.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084119986143:android:945451be9d294b7a58de6a",
+        "android_client_info": {
+          "package_name": "com.usv.rqapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084119986143-e3iqpdl4fv8gm74fo8l0brqgti7gph88.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.usv.rqapp",
+            "certificate_hash": "7013fc2c2557bc3382cf425d9a586a8771895701"
+          }
+        },
+        {
+          "client_id": "1084119986143-jvn742ccsglvfuf2vl27mhhkst4mne8v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBj0yy9QJwoiduNe391sXz5gMjl2li0Ipk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084119986143-3ggnahhkm7tibs8kmaqb6oconkavqbcd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

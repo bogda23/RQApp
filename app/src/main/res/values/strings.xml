@@ -1,13 +1,17 @@
 <resources>
-    <string name="app_name">RQApp</string>
+    <string name="app_name">Road Quality App</string>
+    <string name="recaptcha_site_key">6Lf29eQUAAAAAM83w-hHl8B9sN4RFyP4ca6DX7Fm</string>
 
     <!--Login Strings-->
     <string name="email_example">example@email.com</string>
     <string name="parola">Parolă</string>
+    <string name="show_password">show</string>
+    <string name="hide_password">hide</string>
     <string name="logeaza_te">Loghează-te</string>
     <string name="nu_esti_membru_inca">Nu ești membru încă?</string>
 
     <string name="inregistreaza_te_underline"><u>Înregistrează-te</u></string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -37,6 +41,67 @@
     <string name="title_activity_maps">Map</string>
 
     <!-- Map related strings -->
-    <string name="destinatie">Destinație</string>
+    <string name="destinatie" formatted="true">Unde vrei să mergem?</string>
+    <string name="introduceti_locatie">Introduceți o locație</string>
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">161520014978516</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb161520014978516</string>
+
+    <!-- Internet status -->
+    <string name="nu_e_ti_conectat_la_internet">Nu ești conectat la internet!</string>
+    <string name="date_mobile_activate">Date mobile activate</string>
+    <string name="wifi_activat">Wifi activat</string>
+    <string name="nu_sunt_robot">Nu sunt robot</string>
+    <string name="ai_uitat_parola">Ai uitat parola?</string>
+    <string name="verificare_email"><![CDATA[Pentru a intra în cont trebuie să verificăm dacă adresa de email îți aparține!</br>]]></string>
+
+    <!-- Permissions related -->
+    <string name="allow_location_message" formatted="true">Pentru a vă oferi serviciile dorite este necesar accesul  la locația dispozitivului.\n Vă mulțumim pentru înțelegere.</string>
+    <string name="grant_permission">Acordă permisiuni</string>
+
+    <!-- Account -->
+    <string name="sterge_contul">Șterge contul</string>
+    <string name="delogheazate">Delogheză-te</string>
+    <string name="anuleaza">Anulează</string>
+    <string name="alege_data_na_terii">Alege data nașterii</string>
+
+    <!-- News Feed -->
+    <string name="strada_x_numarul_y">Strada x, numarul y</string>
+    <string name="news_feed_title">Intersecția Alexandru Lăpușneanu și strada Soveja din Constanța închisă pentru lucrări</string>
+    <string name="postat_de">Postat de:</string>
+    <string name="nu_am_gasit_eveniment">Ne pare rău!\nNu am găsit nici un element</string>
+
+    <!-- Add news feed -->
+    <string name="adaug_eveniment">Adaugă eveniment</string>
+    <string name="utilizator">Utilizator</string>
+    <string name="descrierea_evenimentului">Descrierea Evenimentului</string>
+    <string name="titlul_evenimentului">Titlul Evenimentului</string>
+    <string name="adaug_un_eveniment">Adaugă un eveniment</string>
+    <string name="alege_loca_ia_curent">Alege locația curentă</string>
+    <string name="alege_o_imagine">Alege o imagine</string>
+
+    <!-- MapBox-->
+    <string name="access_token">pk.eyJ1IjoiYm9nZGEyMyIsImEiOiJja2JzZGNwYzAwMGlsMzZucmJjczNiYjM2In0.xiuE0G_GPxL2kpG8_4L3aA</string>
+    <string name="none">none</string>
+    <string name="none_compass">None Compass</string>
+    <string name="none_gps">None Gps</string>
+    <string name="tracking">Tracking</string>
+    <string name="tracking_compass">Tracking Compass</string>
+    <string name="tracking_gps">Tracking Gps</string>
+    <string name="tracking_gps_north">Tracking Gps North</string>
+    <string name="theme_light">mapbox://styles/bogda23/ckc0k7qup0j1j1js7ach9jiem</string>
+    <string name="theme_dark">mapbox://styles/bogda23/ckcjagc600s5d1io6eqoflmhh</string>
+
+    <!-- Favorite locations -->
+    <string name="locatiile_preferate">Locațiile preferate</string>
+    <string name="incepe_calatoria">Începe călătoria</string>
+
+    <!-- Vibration permissions -->
+    <string name="permisiuni_esentiale">Permisiuni esențiale</string>
+    <string name="vibration_permission_message">Pentru a îmbunătăți sistemul de detecție al calității drumului este necesară permisiunea dumnevoastră.\n
+        Acest sistem v-a colecta vibrațiile de pe parcursul călătoriei dumneavoastră în mod anonim.</string>
+    <string name="sterge_elementul">Șterge elementul</string>
+
 
 </resources>

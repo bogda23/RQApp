@@ -1,21 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!-- Font dimens -->
-<dimen name="dimen_font_12">16sp</dimen>
-<dimen name="dimen_font_14">18sp</dimen>
-<dimen name="dimen_font_title">35sp</dimen>
-<dimen name="dimen_font_logo">65sp</dimen>
-<!-- Padding -->
-<dimen name="dimen_padding_0">0dp</dimen>
-<dimen name="dimen_padding_10">10dp</dimen>
-<dimen name="dimen_padding_15">15dp</dimen>
-<dimen name="dimen_padding_20">20dp</dimen>
-<!-- Margin -->
-<dimen name="dimen_margin_0">0dp</dimen>
-<dimen name="dimen_margin_10">10dp</dimen>
-<dimen name="dimen_margin_20">20dp</dimen>
-<dimen name="dimen_margin_39">39dp</dimen>
-<dimen name="dimen_margin_78">78dp</dimen>
-<!--Round radius-->
-<dimen name="round_radius_medium">32dp</dimen>
+    <!-- Font dimens -->
+    <dimen name="dimen_font_8">10sp</dimen>
+    <dimen name="dimen_font_10">12sp</dimen>
+    <dimen name="dimen_font_12">16sp</dimen>
+    <dimen name="dimen_font_14">18sp</dimen>
+    <dimen name="dimen_font_title_small">24sp</dimen>
+    <dimen name="dimen_font_title">35sp</dimen>
+    <dimen name="dimen_font_logo">65sp</dimen>
+    <!-- Padding -->
+    <dimen name="dimen_padding_0">0dp</dimen>
+    <dimen name="dimen_padding_5">5dp</dimen>
+    <dimen name="dimen_padding_10">10dp</dimen>
+    <dimen name="dimen_padding_12">12dp</dimen>
+    <dimen name="dimen_padding_15">15dp</dimen>
+    <dimen name="dimen_padding_20">20dp</dimen>
+    <dimen name="dimen_padding_30">30dp</dimen>
+    <dimen name="dimen_padding_45">45dp</dimen>
+    <!-- Margin -->
+    <dimen name="dimen_margin_0">0dp</dimen>
+    <dimen name="dimen_margin_5">5dp</dimen>
+    <dimen name="dimen_margin_10">10dp</dimen>
+    <dimen name="dimen_margin_20">20dp</dimen>
+    <dimen name="dimen_margin_39">39dp</dimen>
+    <dimen name="dimen_margin_78">78dp</dimen>
+
+    <!-- Dimension of scroll-->
+    <dimen name="dimen_edt_scroll_80">80dp</dimen>
+    <dimen name="dimen_edt_scroll_150">150dp</dimen>
+    <!--Round radius-->
+    <dimen name="round_radius_medium">32dp</dimen>
+    <dimen name="round_radius_small">12dp</dimen>
+    <!-- Elevation -->
+    <dimen name="elevation_5">5dp</dimen>
+    <dimen name="elevation_25">25dp</dimen>
+
+    <!-- Navigator height -->
+    <dimen name="dimen_navigator_height">44dp</dimen>
 </resources>

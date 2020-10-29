@@ -3,21 +3,26 @@
     <color name="transparent">#00FBFBFB</color>
 
     <!--Main colors-->
+    <color name="colorRoads">#c5c8ce</color>
     <color name="colorGreyDark">#393939</color>
+    <color name="colorPurple">#907CA6</color>
     <color name="colorGrey">#9B99A9</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreyLight">#FBFBFB</color>
-    <color name="colorPurple">#CC907CA6</color>     <!--Opacity 80%-->
-    <color name="colorRed">#CCFF6F91</color>        <!--Opacity 80%-->
+    <color name="colorPurpleOpacity_80">#CC907CA6</color>       <!--Opacity 80%-->
+    <color name="colorRed">#CCFF6F91</color>          <!--Opacity 80%-->
+    <color name="colorGreen">#CC00CA9D</color>        <!--Opacity 80%-->
 
     <!--Opacity colors-->
     <color name="colorGreyLightOpacity_90">#E6FBFBFB</color>
     <color name="colorGreyDarkOpacity_90">#E6393939</color>
     <color name="colorPurpleOpacity_50">#80907CA6</color>
     <color name="colorRedOpacity_50">#80FF6F91</color>
+    <color name="colorGreyLightOpacity_50">#80FBFBFB</color>
+    <color name="colorGreyDarkOpacity_50">#80393939</color>
 
     <!-- Main Gradient Colors -->
-    <color name="gradientStartOpacity_80">@color/colorPurple</color>
+    <color name="gradientStartOpacity_80">@color/colorPurpleOpacity_80</color>
     <color name="gradientEndOpacity_80">@color/colorRed</color>
 
     <!-- Second Gradient Colors -->

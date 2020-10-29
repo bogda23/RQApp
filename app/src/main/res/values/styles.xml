@@ -3,9 +3,10 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimary">@color/colorGreyDark</item>
         <item name="colorPrimaryDark">@color/colorPurpleOpacity_50</item>
-        <item name="colorAccent">@color/colorGreyDarkOpacity_90</item>
+        <item name="colorAccent">@color/colorGrey</item>
+        <item name="android:actionBarWidgetTheme">@style/searchStyle_Light</item>
     </style>
 
     <!-- Information Styles-->
@@ -31,6 +32,13 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="infoSemiBold_Monsterrat">
+        <item name="android:textSize">@dimen/dimen_font_14</item>
+        <item name="fontFamily">@font/font_mosterat_semibold</item>
+        <item name="android:textColor">@color/colorGreyDark</item>
+        <item name="android:gravity">left</item>
+    </style>
+
     <style name="infoNormal_OpenSans">
         <item name="android:textSize">@dimen/dimen_font_14</item>
         <item name="fontFamily">@font/font_opensans_regular</item>
@@ -38,9 +46,21 @@
         <item name="android:textColor">@color/colorGreyDark</item>
         <item name="android:gravity">center</item>
     </style>
+    <style name="infoRegular_Monsterrat">
+        <item name="android:textSize">@dimen/dimen_font_10</item>
+        <item name="fontFamily">@font/montserrat_regular</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorGreyDark</item>
+        <item name="android:gravity">left</item>
+    </style>
 
     <!-- EditText Styles -->
     <style name="edtStyle_Light">
+
+        <item name="android:shadowColor">@color/text_shadow_color</item>
+        <item name="android:shadowDx">0.1</item>
+        <item name="android:shadowDy">0.1</item>
+        <item name="android:shadowRadius">0.1</item>
         <item name="android:fontFamily">@font/font_opensans_regular</item>
         <item name="android:textSize">@dimen/dimen_font_14</item>
         <item name="android:padding">@dimen/dimen_padding_15</item>
@@ -62,6 +82,23 @@
         <item name="android:drawablePadding">@dimen/dimen_padding_10</item>
     </style>
 
+    <!-- SearchView Styles -->
+    <style name="searchStyle_Light">
+        <item name="android:fontFamily">@font/montserrat_extra_light</item>
+        <item name="android:textSize">@dimen/dimen_font_14</item>
+        <item name="android:textColor">@color/colorGreyDark</item>
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="android:layout_marginStart">@dimen/dimen_margin_10</item>
+        <item name="android:layout_marginEnd">@dimen/dimen_margin_10</item>
+        <item name="android:background">@drawable/round_edt_light</item>
+        <item name="android:drawablePadding">@dimen/dimen_padding_10</item>
+        <!--This line changes the color of text in Toolbar-->
+        <item name="android:textColorPrimary">@color/colorGreyDark</item>
+        <!--This line changes the color of icons in toolbar (back, overflow menu icons)-->
+        <item name="android:textColorSecondary">@color/colorGreyDark</item>
+
+    </style>
+
     <!--Button Styles-->
     <style name="btnStyle">
         <item name="android:padding">@dimen/dimen_padding_15</item>
@@ -69,6 +106,30 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:background">@drawable/round_btn_grey_dark</item>
+    </style>
+
+    <!--Button Styles Search -->
+    <style name="btnStyleSearch">
+        <item name="android:padding">@dimen/dimen_padding_12</item>
+        <item name="android:textSize">@dimen/dimen_font_14</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:background">@drawable/round_edt_light</item>
+    </style>
+
+    <style name="btnStyleShowPassword">
+        <item name="android:fontFamily">@font/font_opensans_regular</item>
+        <item name="android:padding">@dimen/dimen_padding_10</item>
+        <item name="android:textSize">@dimen/dimen_font_10</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/colorGreyLight</item>
+        <item name="android:background">@drawable/round_btn_show_password</item>
+    </style>
+    <!--Button Float Styles-->
+    <style name="btnFloatStyle">
+        <item name="fab_colorNormal">@color/white</item>
+        <item name="fab_colorPressed">@color/colorGreyLightOpacity_90</item>
+        <item name="android:tint">@color/colorPurple</item>
 
     </style>
 
@@ -81,4 +142,45 @@
 
     </style>
 
+    <!-- Titles Style -->
+    <style name="smallTitleStyle">
+        <item name="android:layout_gravity">start</item>
+        <item name="android:textColor">@color/colorGreyDarkOpacity_90</item>
+        <item name="fontFamily">@font/font_mosterat_semibold</item>
+        <item name="android:textSize">@dimen/dimen_font_title_small</item>
+
+    </style>
+    <!-- Account Data Style -->
+    <style name="accountDataStyle">
+        <item name="android:textColor">@color/colorRedOpacity_50</item>
+        <item name="fontFamily">@font/font_mosterat_semibold</item>
+        <item name="android:textSize">@dimen/dimen_font_12</item>
+
+    </style>
+
+
+    <!-- Error messages -->
+    <style name="errorStyle">
+        <item name="android:fontFamily">@font/font_opensans_regular</item>
+        <item name="android:textSize">@dimen/dimen_font_14</item>
+        <item name="android:padding">@dimen/dimen_padding_12</item>
+        <item name="android:paddingStart">@dimen/dimen_padding_20</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="android:background">@color/colorRed</item>
+        <item name="android:drawablePadding">@dimen/dimen_padding_10</item>
+    </style>
+
+    <!-- reCaptcha -->
+    <style name="reCaptchaStyle">
+        <item name="android:fontFamily">@font/font_opensans_regular</item>
+        <item name="android:textSize">@dimen/dimen_font_12</item>
+        <item name="android:padding">@dimen/dimen_padding_10</item>
+        <item name="android:paddingStart">@dimen/dimen_padding_10</item>
+        <item name="android:textColor">@color/colorGreyDark</item>
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="android:background">@drawable/round_edt_light</item>
+    </style>
+
+    <color name="text_shadow_color">#000000</color>
 </resources>

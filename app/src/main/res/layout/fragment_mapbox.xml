@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_mapbox_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/map_box"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/dimen_margin_5"
+        android:layoutMode="opticalBounds"
+        android:translationZ="@dimen/dimen_margin_78"
+        app:fab_addButtonColorNormal="@color/colorWhite"
+        app:fab_addButtonColorPressed="@color/colorGreyLight"
+        app:fab_addButtonPlusIconColor="@color/colorRedOpacity_50"
+        app:fab_labelStyle="@style/btnStyle"
+
+        app:layout_constraintBottom_toTopOf="@id/img_custom_location"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <!--  <com.getbase.floatingactionbutton.FloatingActionButton
+              android:id="@+id/btn_car_crash"
+              style="@style/btnFloatStyle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+
+              android:src="@drawable/car_crash" />
+
+          <com.getbase.floatingactionbutton.FloatingActionButton
+              android:id="@+id/btn_cloud_rain"
+              style="@style/btnFloatStyle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+
+              android:src="@drawable/cloud_rain" />
+
+          <com.getbase.floatingactionbutton.FloatingActionButton
+              android:id="@+id/btn_heavy_snow"
+              style="@style/btnFloatStyle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+
+              android:src="@drawable/heavy_snow" />-->
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add_news_feed_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/add_news_feed"
+            app:fab_title="Adaugă eveniment"
+
+            />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add_location_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
+            android:translationY="@dimen/dimen_margin_39"
+            android:src="@drawable/icon_round_favorite"
+            app:fab_title="Adaugă locație favorită"
+
+            />
+
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+    <LinearLayout
+        android:id="@+id/map_holder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/border_white"
+        android:elevation="@dimen/dimen_margin_39"
+        android:orientation="horizontal"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="@id/map_box"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- New material search bar -->
+    <com.mancj.materialsearchbar.MaterialSearchBar
+        android:id="@+id/material_search_bar"
+        style="@style/searchStyle_Light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_margin_20"
+        android:layout_marginTop="@dimen/dimen_margin_39"
+        android:layout_marginEnd="@dimen/dimen_margin_20"
+        android:outlineAmbientShadowColor="@color/colorPurple"
+        android:translationZ="@dimen/dimen_margin_78"
+        app:layout_constraintLeft_toLeftOf="@+id/map_box"
+        app:layout_constraintRight_toRightOf="@id/map_box"
+        app:layout_constraintTop_toTopOf="@+id/map_box"
+        app:mt_backIconDrawable="@drawable/btn_back"
+        app:mt_backIconUseTint="false"
+        app:mt_clearIconTint="@color/colorRed"
+        app:mt_clearIconUseTint="true"
+        app:mt_hint="@string/introduceti_locatie"
+        app:mt_hintColor="@color/colorGreyDarkOpacity_50"
+        app:mt_maxSuggestionsCount="10"
+        app:mt_menuIconDrawable="@drawable/search_location"
+        app:mt_navIconEnabled="true"
+        app:mt_navIconTint="@color/colorRed"
+        app:mt_placeholder="@string/destinatie"
+        app:mt_placeholderColor="@color/colorGreyDarkOpacity_50"
+
+        app:mt_roundedSearchBarEnabled="true"
+        app:mt_searchIconDrawable="@drawable/search_location"
+        app:mt_searchIconTint="@color/colorRed"
+        app:mt_speechMode="false"
+        app:mt_textColor="@color/colorGreyDark" />
+
+
+    <ImageView
+
+        android:id="@+id/img_location_shadow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="@dimen/elevation_25"
+        android:hint="@string/destinatie"
+        android:outlineAmbientShadowColor="@color/colorGreyDark"
+        android:outlineSpotShadowColor="@color/colorGreyDark"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/img_custom_location"
+        app:layout_constraintLeft_toLeftOf="@id/img_custom_location"
+        app:layout_constraintRight_toRightOf="@id/img_custom_location"
+        app:layout_constraintTop_toTopOf="@id/img_custom_location" />
+
+    <ImageView
+        android:id="@+id/img_custom_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:background="@drawable/btn_custom_location_light"
+        android:elevation="@dimen/elevation_25"
+        android:outlineAmbientShadowColor="@color/colorGreyDark"
+
+        android:outlineSpotShadowColor="@color/colorGreyDark"
+
+
+        app:layout_constraintBottom_toBottomOf="@id/map_box"
+        app:layout_constraintEnd_toEndOf="@id/map_box" />
+
+    <com.skydoves.powerspinner.PowerSpinnerView
+        android:id="@+id/spinner_layer_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_margin_10"
+        android:background="@drawable/round_transparent"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:hint="Alege stratificarea"
+        android:paddingStart="@dimen/dimen_padding_5"
+
+
+        android:paddingTop="@dimen/dimen_padding_5"
+        android:paddingEnd="@dimen/dimen_padding_5"
+        android:textAlignment="center"
+        android:textColor="@color/colorGreyDarkOpacity_50"
+        android:textColorHint="@color/colorGreyDarkOpacity_50"
+        android:textSize="@dimen/dimen_font_12"
+        app:layout_constraintLeft_toLeftOf="@id/material_search_bar"
+
+        app:layout_constraintRight_toRightOf="@id/material_search_bar"
+        app:layout_constraintTop_toBottomOf="@id/material_search_bar"
+        app:spinner_arrow_gravity="bottom"
+
+        app:spinner_arrow_tint="@color/colorRedOpacity_50"
+        app:spinner_divider_color="@color/colorWhite"
+
+        app:spinner_divider_show="true"
+        app:spinner_divider_size="0.4dp"
+
+
+        app:spinner_item_array="@array/layer_types"
+        app:spinner_popup_animation="dropdown"
+        app:spinner_popup_background="@color/colorWhite"
+        app:spinner_popup_elevation="@dimen/elevation_5"
+
+        />
+
+    <Button
+        android:id="@+id/btn_start_road_trip"
+        style="@style/btnStyleSearch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_margin_10"
+        android:layout_marginEnd="@dimen/dimen_margin_10"
+        android:elevation="@dimen/elevation_25"
+        android:outlineAmbientShadowColor="@color/colorGreyDark"
+        android:outlineSpotShadowColor="@color/colorGreyDark"
+        android:shadowColor="@color/colorRedOpacity_50"
+        android:text="@string/incepe_calatoria"
+        android:textColor="@color/colorWhite"
+        android:tint="@color/colorRedOpacity_50"
+        android:visibility="gone"
+        app:backgroundTint="@color/colorPurple"
+
+
+        app:layout_constraintBottom_toTopOf="@id/img_custom_location"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/img_custom_location" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
